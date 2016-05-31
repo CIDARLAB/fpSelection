@@ -5,6 +5,7 @@
  */
 package org.cidarlab.fpSelection.dom;
 
+import java.util.HashMap;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -12,35 +13,18 @@ import lombok.Setter;
  *
  * @author david
  */
-public class Detector {
+public class Fluorophore {
     
     @Getter
     @Setter
-    private String identifier;
+    private String name;
     
     @Getter
     @Setter
-    private int channel;
+    private String spectrumType;    //Emission or Excitation
     
     @Getter
     @Setter
-    private int mirror;
-    
-    @Getter
-    @Setter
-    private int filterMidpoint;
-    
-    @Getter
-    @Setter
-    private int filterWidth;
-    
-    public Detector()
-    {
-        identifier = null;
-        channel = 0;
-        mirror = 0;
-        filterMidpoint = 0;
-        filterWidth = 0;
-    }
+    private HashMap<Integer, Float> spectrum;
     
 }

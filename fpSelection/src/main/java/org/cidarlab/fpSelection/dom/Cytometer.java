@@ -5,7 +5,7 @@
  */
 package org.cidarlab.fpSelection.dom;
 
-import java.util.List;
+import java.util.LinkedList;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,7 +35,7 @@ public class Cytometer {
     
     @Getter
     @Setter
-    private int nozSize;
+    private int nozzleSize;
     
     @Getter
     @Setter
@@ -43,7 +43,29 @@ public class Cytometer {
     
     @Getter
     @Setter
-    private List<Laser> lasers;
+    private LinkedList<Laser> lasers;
+    
+    public Cytometer()
+    {
+        software = null;
+        cytometerName = null;
+        serial = null;
+        sheathPressure = 0;
+        nozzleSize = 0;
+        winExtension = 0;
+        lasers = new LinkedList<>();
+    }
+    
+    public Cytometer(String software, String name, String ser, int sheathPress, int nozSize, int winExt, LinkedList<Laser> laserList)
+    {
+        this.software = software;
+        cytometerName = name;
+        serial = ser;
+        sheathPressure = sheathPress;
+        nozzleSize = nozSize;
+        winExtension = winExt;
+        lasers = laserList;
+    }
     
     public void addLaser(Laser newLaser)
     {
