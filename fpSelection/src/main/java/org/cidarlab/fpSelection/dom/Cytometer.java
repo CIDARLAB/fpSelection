@@ -17,17 +17,6 @@ public class Cytometer {
     
 //    Lombok helps produce functions to minimize the excess code we write. If you look at the Navigator in netbeans, we now have a bunch of useful get/set functions.
     
-    @Getter
-    @Setter
-    private String software;
-    
-    @Getter
-    @Setter
-    private String cytometerName;
-    
-    @Getter
-    @Setter
-    private String serial;
     
     @Getter
     @Setter
@@ -39,7 +28,7 @@ public class Cytometer {
     
     @Getter
     @Setter
-    private int winExtension;
+    private int windowExt;
     
     @Getter
     @Setter
@@ -47,23 +36,17 @@ public class Cytometer {
     
     public Cytometer()
     {
-        software = null;
-        cytometerName = null;
-        serial = null;
         sheathPressure = 0;
         nozzleSize = 0;
-        winExtension = 0;
+        windowExt = 0;
         lasers = new LinkedList<>();
     }
     
-    public Cytometer(String software, String name, String ser, int sheathPress, int nozSize, int winExt, LinkedList<Laser> laserList)
+    public Cytometer(int sheathPress, int nozSize, int winExt, LinkedList<Laser> laserList)
     {
-        this.software = software;
-        cytometerName = name;
-        serial = ser;
         sheathPressure = sheathPress;
         nozzleSize = nozSize;
-        winExtension = winExt;
+        windowExt = winExt;
         lasers = laserList;
     }
     
