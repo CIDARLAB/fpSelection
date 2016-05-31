@@ -19,12 +19,14 @@ public class Fluorophore {
     @Setter
     private String name;
     
-    @Getter
-    @Setter
-    private String spectrumType;    //Emission or Excitation
+    //Emission or Excitation
     
     @Getter
     @Setter
-    private HashMap<Integer, Float> spectrum;
+    private HashMap<Integer, Float> EMspectrum;
+    
+    @Getter
+    @Setter
+    private HashMap<Integer, Float> EXspectrum;
     
 }
