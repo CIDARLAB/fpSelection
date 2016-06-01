@@ -17,6 +17,10 @@ public class Laser {
     
     @Getter
     @Setter
+    private String name;
+    
+    @Getter
+    @Setter
     private String type;
     
     @Getter
@@ -30,6 +34,10 @@ public class Laser {
     @Getter
     @Setter
     private String detectorArray;
+    
+    @Getter
+    @Setter
+    private int position;
     
     @Getter
     @Setter
