@@ -15,18 +15,12 @@ import lombok.Setter;
  */
 public class Fluorophore {
     
-    @Getter
-    @Setter
-    private String name;
+    public String name;
     
     //Emission or Excitation
     
-    @Getter
-    @Setter
-    private HashMap<Integer, Float> EMspectrum;
-    
-    @Getter
-    @Setter
-    private HashMap<Integer, Float> EXspectrum;
+    public HashMap<Double, Double> EMspectrum;
+
+    public HashMap<Double, Double> EXspectrum;
     
 }
