@@ -50,15 +50,26 @@ public class javaplotSandbox {
         myPlot.addPlot(arr2);
         myPlot.addPlot("sin(x)");
 
+        //Commands for setting up dimensions and labeling.
         myPlot.setTitle("Test Plot", "Arial", 14);
         myPlot.getAxis("x").setLabel("Position");
         myPlot.getAxis("x").setBoundaries(-6, 6);
         myPlot.getAxis("y").setLabel("How often people trip");
         myPlot.getAxis("y").setBoundaries(-3, 5);
 
-        //Trying to use JPlot
-        myPlot.setPersist(true);
-        myPlot.plot();
+        //Bring plot up to screen and stay.
+//        myPlot.setPersist(true);
+//        myPlot.plot();
+        
+        JPlot plot = new JPlot(myPlot);
+        plot.plot();
+        plot.repaint();
+
+        JFrame frame = new JFrame("My frame pls");
+        frame.getContentPane().add(plot);
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
 
         //It seems to graphically display the JPlot, you would use paint(java.awt.Graphics g).
         //Is that an easy window into painting onto a GUI?
