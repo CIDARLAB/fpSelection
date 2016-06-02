@@ -27,8 +27,7 @@ public class fpSelectionAdaptor {
         File input = new File("src/main/resources/fp_spectra.csv"); 
         HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
     }
-    
-    
+     
     /*
      * This method is for uploading fluorescence spectrum data to be associated with Fluorphore objects
      */
@@ -64,8 +63,7 @@ public class fpSelectionAdaptor {
                         spectralMaps.get(spectraTrimmedStrings[j]).EXspectrum.put(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[j]));
                     } else if (spectra[j].contains("EM")) {
                         spectralMaps.get(spectraTrimmedStrings[j]).EMspectrum.put(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[j]));
-                    }
-                    
+                    }                  
                 }
             }
             line = reader.readLine();
