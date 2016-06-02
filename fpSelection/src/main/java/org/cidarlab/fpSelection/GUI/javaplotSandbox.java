@@ -9,6 +9,58 @@ package org.cidarlab.fpSelection.GUI;
  *
  * @author david
  */
+import com.panayotis.gnuplot.JavaPlot;
+import com.panayotis.gnuplot.swing.JPlot;
+import com.panayotis.gnuplot.terminal.ImageTerminal;
+import java.awt.FlowLayout;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JLabel;
+
 public class javaplotSandbox {
-    
+
+    public static void main(String[] args) {
+        //Path to gnuplot for Javaplot  -- NO LONGER NEEDED. instead of compiling from source I used sudo apt-get install and everything was fixed. I was missing dependencies
+        //String gnuPlotPath = "/usr/local/bin/gnuplot";
+
+        JavaPlot myPlot = new JavaPlot();
+
+        //Default terminal has 0 use for you if your default terminal in gnuplot is set to unknown. 
+        //But then again a lot of things in gnuplot would be broken if that is true.
+        //If your default is set to something, then you will be A OK.
+        System.out.println(myPlot.getTerminal());
+
+        //Let's plot something simple
+        double[][] arr = new double[3][2];
+        arr[0][0] = -3;
+        arr[0][1] = 2;
+        arr[1][0] = -2;
+        arr[1][1] = 1;
+        arr[2][0] = 1.5;
+        arr[2][1] = 4;
+
+        double[][] arr2 = {
+            {3, 4},
+            {2, 3},
+            {1, 2},
+            {0, 1}
+        };
+
+        myPlot.addPlot(arr);
+        myPlot.addPlot(arr2);
+        myPlot.addPlot("sin(x)");
+
+        myPlot.setTitle("Test Plot", "Arial", 14);
+        myPlot.getAxis("x").setLabel("Position");
+        myPlot.getAxis("x").setBoundaries(-6, 6);
+        myPlot.getAxis("y").setLabel("How often people trip");
+        myPlot.getAxis("y").setBoundaries(-3, 5);
+
+        //Trying to use JPlot
+        myPlot.setPersist(true);
+        myPlot.plot();
+
+        //It seems to graphically display the JPlot, you would use paint(java.awt.Graphics g).
+        //Is that an easy window into painting onto a GUI?
+    }
 }
