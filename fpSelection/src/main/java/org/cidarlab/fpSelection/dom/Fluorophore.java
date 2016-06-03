@@ -5,6 +5,10 @@
  */
 package org.cidarlab.fpSelection.dom;
 
+import com.panayotis.gnuplot.JavaPlot;
+import com.panayotis.gnuplot.dataset.Point;
+import com.panayotis.gnuplot.dataset.PointDataSet;
+import com.panayotis.gnuplot.swing.JPlot;
 import java.util.HashMap;
 import lombok.Getter;
 import lombok.Setter;
@@ -15,12 +19,13 @@ import lombok.Setter;
  */
 public class Fluorophore {
     
-    public String name;
+    @Getter
+    @Setter
+    private String name;
     
     //Emission or Excitation
-    
-    public HashMap<Double, Double> EMspectrum;
+    public PointDataSet EMspectrum;
 
-    public HashMap<Double, Double> EXspectrum;
+    public PointDataSet EXspectrum;
     
 }
