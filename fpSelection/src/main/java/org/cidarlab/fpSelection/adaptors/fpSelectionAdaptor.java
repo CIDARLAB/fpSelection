@@ -5,17 +5,27 @@
  */
 package org.cidarlab.fpSelection.adaptors;
 
+import com.panayotis.gnuplot.GNUPlotParameters;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
-import org.cidarlab.fpSelection.dom.Cytometer;
-import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.Laser;
 import java.util.regex.Pattern; 
+import com.panayotis.gnuplot.JavaPlot;
+import com.panayotis.gnuplot.dataset.Point;
+import com.panayotis.gnuplot.dataset.PointDataSet;
+import com.panayotis.gnuplot.swing.JPlot;
+import javax.swing.JFrame;
+import com.panayotis.gnuplot.plot.DataSetPlot;
+import com.panayotis.gnuplot.plot.AbstractPlot;
+import com.panayotis.gnuplot.style.PlotStyle;
+import com.panayotis.gnuplot.style.Smooth;
+import com.panayotis.gnuplot.style.Style;
+import java.util.Iterator;
+
 
 /**
  *
@@ -47,27 +57,80 @@ public class fpSelectionAdaptor {
             Fluorophore f = new Fluorophore();
             
             spectraTrimmedStrings[i] = p.matcher(spectra[i]).replaceAll(""); //remove above regex pattern
-            f.name = spectraTrimmedStrings[i];
-            f.EMspectrum = new HashMap<>();
-            f.EXspectrum = new HashMap<>();
+            f.setName(spectraTrimmedStrings[i]);
+            f.EMspectrum = new PointDataSet();
+            f.EXspectrum = new PointDataSet();
             spectralMaps.put(spectraTrimmedStrings[i],f);
         }
         line = reader.readLine();
 
         //Read each line of the input file to parse parts
+        Point p; 
         while (line != null) {
             String[] tokens = line.split(",");
             for (int j = 1; j < tokens.length; j++) {
                 if (!tokens[j].isEmpty()) {
                     if (spectra[j].contains("EX") || spectra[j].contains("AB")) {
-                        spectralMaps.get(spectraTrimmedStrings[j]).EXspectrum.put(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[j]));
+                        p = new Point(Double.parseDouble(tokens[0]),Double.parseDouble(tokens[j])*100);
+                        spectralMaps.get(spectraTrimmedStrings[j]).EXspectrum.add(p);
                     } else if (spectra[j].contains("EM")) {
-                        spectralMaps.get(spectraTrimmedStrings[j]).EMspectrum.put(Double.parseDouble(tokens[0]), Double.parseDouble(tokens[j]));
+                        p = new Point(Double.parseDouble(tokens[0]),Double.parseDouble(tokens[j])*100);
+                        spectralMaps.get(spectraTrimmedStrings[j]).EMspectrum.add(p);
                     }                  
                 }
             }
             line = reader.readLine();
         }
+        
+        
+        JavaPlot javaPlot = new JavaPlot();
+        javaPlot.setTitle("FP Spectrum", "Helvetica", 14);
+        javaPlot.getAxis("x").setLabel("Wavelength (nm)");
+        javaPlot.getAxis("x").setBoundaries(0, 1000);
+        javaPlot.getAxis("y").setLabel("Intensity (%)");
+        javaPlot.getAxis("y").setBoundaries(0, 100);
+        javaPlot.set("key font", "',7'");
+        //javaPlot.set("term qt size", "600,400");
+
+
+        
+        PlotStyle myPlotStyle = new PlotStyle();
+        myPlotStyle.setStyle(Style.LINES);  
+        myPlotStyle.setLineWidth(1);
+        
+        //myPlotStyle.setStyle(Smooth.ACSPLINES);
+        //javaPlot.set("smooth", "csplines");
+        Iterator it = spectralMaps.entrySet().iterator();
+        while (it.hasNext()) {
+            HashMap.Entry pair = (HashMap.Entry)it.next();
+            Fluorophore f = (Fluorophore) pair.getValue();
+            AbstractPlot emDataSetPlot = new DataSetPlot(f.EMspectrum);
+            AbstractPlot exDataSetPlot = new DataSetPlot(f.EXspectrum);
+            emDataSetPlot.setTitle(pair.getKey() + " (EM)");
+            exDataSetPlot.setTitle(pair.getKey() + " (EX)");
+            emDataSetPlot.setPlotStyle(myPlotStyle);
+            exDataSetPlot.setPlotStyle(myPlotStyle);
+            emDataSetPlot.setSmooth(Smooth.UNIQUE);
+            exDataSetPlot.setSmooth(Smooth.UNIQUE);
+            javaPlot.addPlot(emDataSetPlot);
+            javaPlot.addPlot(exDataSetPlot);
+            it.remove(); // avoids a ConcurrentModificationException
+        }
+        
+        //javaPlot.plot();
+        
+        JPlot jPlot = new JPlot(javaPlot);
+        //jPlot.setBounds(20,20,5000,5000);
+        jPlot.plot();
+        jPlot.repaint();
+        JFrame frame = new JFrame("FP Spectrum");
+        frame.getContentPane().add(jPlot);
+        frame.pack();
+       
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+        
+        
         return spectralMaps;
     }
 }
