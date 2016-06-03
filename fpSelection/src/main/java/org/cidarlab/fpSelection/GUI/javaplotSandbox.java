@@ -10,6 +10,8 @@ package org.cidarlab.fpSelection.GUI;
  * @author david
  */
 import com.panayotis.gnuplot.JavaPlot;
+import com.panayotis.gnuplot.dataset.Point;
+import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.swing.JPlot;
 import com.panayotis.gnuplot.terminal.ImageTerminal;
 import java.awt.FlowLayout;
@@ -31,23 +33,34 @@ public class javaplotSandbox {
         System.out.println(myPlot.getTerminal());
 
         //Let's plot something simple
-        double[][] arr = new double[3][2];
-        arr[0][0] = -3;
-        arr[0][1] = 2;
-        arr[1][0] = -2;
-        arr[1][1] = 1;
-        arr[2][0] = 1.5;
-        arr[2][1] = 4;
+//        double[][] arr = new double[3][2];
+//        arr[0][0] = -3;
+//        arr[0][1] = 2;
+//        arr[1][0] = -2;
+//        arr[1][1] = 1;
+//        arr[2][0] = 1.5;
+//        arr[2][1] = 4;
+//
+//        double[][] arr2 = {
+//            {3, 4},
+//            {2, 3},
+//            {1, 2},
+//            {0, 1}
+//        };
+//
+//        myPlot.addPlot(arr);
+//        myPlot.addPlot(arr2);
 
-        double[][] arr2 = {
-            {3, 4},
-            {2, 3},
-            {1, 2},
-            {0, 1}
-        };
-
-        myPlot.addPlot(arr);
-        myPlot.addPlot(arr2);
+        //Plot testing PointDataSet
+        PointDataSet myDataSet = new PointDataSet();
+        for(double i = -5; i < 5; i += .1)
+        {
+            myDataSet.add(new Point(i,i*i));
+        }
+        
+        myPlot.addPlot(myDataSet);
+        
+        
         myPlot.addPlot("sin(x)");
 
         //Commands for setting up dimensions and labeling.
