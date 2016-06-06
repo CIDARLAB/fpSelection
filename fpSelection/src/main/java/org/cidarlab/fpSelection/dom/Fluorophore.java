@@ -28,4 +28,11 @@ public class Fluorophore {
 
     public PointDataSet EXspectrum;
     
+    public double express(Laser theLaser, Detector theDetector)
+    {
+        //Do some things, return the sum of emission intensity within the detector.
+        
+        return 10; //temp
+    }
+    
 }
