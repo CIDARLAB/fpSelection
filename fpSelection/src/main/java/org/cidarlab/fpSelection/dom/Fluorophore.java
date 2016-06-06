@@ -30,9 +30,18 @@ public class Fluorophore {
     
     public double express(Laser theLaser, Detector theDetector)
     {
-        //Do some things, return the sum of emission intensity within the detector.
+        double sum = 0;
+        int min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth()/2;
+        int max = min + theDetector.getFilterWidth();
         
-        return 10; //temp
+        for(int i = min; i <= max; i++)
+        {
+            sum += Double.parseDouble(EMspectrum.getPointValue(i, 1));
+            System.out.println(i + " : " + EMspectrum.getPointValue(i, 1));
+            
+        }
+        
+        return sum;
     }
     
 }
