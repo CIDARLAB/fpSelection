@@ -97,7 +97,6 @@ public class fpFortessaParse {
         category = fields[0];
         boolean end = false;
 
-        
         System.out.println("Saving Laser + Detector configurations");
         //The rest of the file should be Laser + Detector configurations
         while (line != null) {

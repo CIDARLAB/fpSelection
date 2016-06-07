@@ -5,6 +5,14 @@ import webbrowser
 import requests
 import bs4
 import os
+# ,adPPYba,  ,adPPYba,  88       88 8b,dPPYba,   
+# I8[    "" a8"     "8a 88       88 88P'    "8a  
+#  `"Y8ba,  8b       d8 88       88 88       d8  
+# aa    ]8I "8a,   ,a8" "8a,   ,a88 88b,   ,a8"  
+# `"YbbdP"'  `"YbbdP"'   `"YbbdP'Y8 88`YbbdP"'   
+#                                   88           
+#                                   88      
+
 
 #######
 ###	Beautiful Soup is amazing
@@ -19,7 +27,9 @@ substancesPage = bs4.BeautifulSoup(res.text)
 fpDir = substancesPage.select('.title')
 
 #Get each fluorophore row
-for title in fpDir:
+#Connection timed out/dropped around item ~570
+#Just reverse fpDir and then work your way backwards to complete the entire list.
+for title in reversed(fpDir):
 
 	#Find the link to the fluorophore page
 	link = title.select('a')[0]

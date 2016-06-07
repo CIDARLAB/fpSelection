@@ -5,6 +5,8 @@
  */
 package org.cidarlab.fpSelection.dom;
 
+import com.panayotis.gnuplot.dataset.Point;
+import com.panayotis.gnuplot.dataset.PointDataSet;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -41,6 +43,29 @@ public class Detector {
         mirror = 0;
         filterMidpoint = 0;
         filterWidth = 0;
+    }
+    
+    public PointDataSet drawBounds()
+    {
+        PointDataSet draw = new PointDataSet();
+        int min = filterMidpoint - filterWidth/2;
+        int max = filterMidpoint + filterWidth/2;
+        
+        for(int i = 0; i < 121; i++)
+        {
+            draw.add(new Point(min, i));
+        }
+        for(int j = min; j < max; j++)
+        {
+            draw.add(new Point(j,120));
+        }
+        for(int k = 121; k > 0; k--)
+        {
+            draw.add(new Point(max, k));
+        }
+        
+        return draw;
+        
     }
     
 }

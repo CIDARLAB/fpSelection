@@ -28,7 +28,7 @@ public class ProteinComparator implements Comparator<Fluorophore>{
         
         //return pos, 0, or neg
         //Larger priority goes to front of q
-        return (int)(num1 - num2);
+        return (int)(num2 - num1);
     }
   
 }

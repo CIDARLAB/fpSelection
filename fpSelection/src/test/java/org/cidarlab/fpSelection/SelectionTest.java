@@ -20,21 +20,20 @@ import org.cidarlab.fpSelection.selectors.ProteinSelector;
  * @author david
  */
 public class SelectionTest {
-    
+
     public static void main(String[] args) throws IOException {
-        File input = new File("src/main/resources/fp_spectra.csv"); 
+        File input = new File("src/main/resources/fp_spectra.csv");
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        
+
         HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
         Cytometer testCyto = fpFortessaParse.parseFortessa(cyto);
         Laser testLaser = testCyto.getLasers().getFirst();
-        
+
         System.out.println(spectralMaps.isEmpty());
         System.out.println(testCyto.getSheathPressure());
-        
-        ProteinSelector.selectFPs(spectralMaps, testLaser);
-        
-        
+
+        ProteinSelector.laserFiltersToFPs(spectralMaps, testLaser);
+
     }
-    
+
 }
