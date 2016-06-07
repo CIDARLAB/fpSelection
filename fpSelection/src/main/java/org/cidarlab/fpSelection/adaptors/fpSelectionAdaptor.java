@@ -5,7 +5,6 @@
  */
 package org.cidarlab.fpSelection.adaptors;
 
-import com.panayotis.gnuplot.GNUPlotParameters;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,8 +14,6 @@ import java.util.HashMap;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import java.util.regex.Pattern;
 import com.panayotis.gnuplot.JavaPlot;
-import com.panayotis.gnuplot.dataset.Point;
-import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.swing.JPlot;
 import javax.swing.JFrame;
 import com.panayotis.gnuplot.plot.DataSetPlot;

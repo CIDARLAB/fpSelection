@@ -5,11 +5,8 @@
  */
 package org.cidarlab.fpSelection.dom;
 
-import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
-import com.panayotis.gnuplot.swing.JPlot;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import lombok.Getter;
@@ -50,12 +47,13 @@ public class Fluorophore {
         return dataSet;
     }
 
-    //Produces Riemann sum of emission values within a certain range of the spectrum.
+    //Produces a Riemann sum of emission values within a certain range of the spectrum.
     public double express(Laser theLaser, Detector theDetector) {
         double sum = 0;
         int min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth() / 2;
         int max = min + theDetector.getFilterWidth();
 
+        //For every relevant point, add the y-value to a running sum. Then return the sum.
         for (double i = min; i <= max; i++) {
             if (EMspectrum.containsKey(i)) {
                 sum += EMspectrum.get(i);
@@ -68,6 +66,7 @@ public class Fluorophore {
         return sum;
     }
     
+    //Calculates the percentage of fluorescence generated outside of the filter desired.
     public double leakageCalc(Detector theDetector)
     {
         double total = 0;
@@ -77,19 +76,20 @@ public class Fluorophore {
         
         for(Map.Entry<Double, Double> entry : EMspectrum.entrySet())
         {
+            //If within bounds, do nothing
             if(entry.getKey() >= min && entry.getKey() <= max)
             {
             }
-            else
+            else //If not within bounds, add to sumOutside
             {
                 sumOutside += entry.getValue();
             }
+            //Get total sum for later comparison
             total += entry.getValue();
             
         }
         
-        double percentage = sumOutside/total*100;
-        return percentage;
+        return sumOutside/total*100;
     }
 
 }
