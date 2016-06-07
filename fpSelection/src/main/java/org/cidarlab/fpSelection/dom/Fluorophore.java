@@ -25,8 +25,12 @@ public class Fluorophore {
     
     //Emission or Excitation
     public PointDataSet EMspectrum;
+    public int EMstartx;
+    
 
     public PointDataSet EXspectrum;
+    public int EXstartx;
+    
     
     public double express(Laser theLaser, Detector theDetector)
     {
@@ -34,7 +38,12 @@ public class Fluorophore {
         int min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth()/2;
         int max = min + theDetector.getFilterWidth();
         
-        for(int i = min; i <= max; i++)
+        if(max > EMstartx + EMspectrum.size())
+        {
+            return 0;
+        }
+        
+        for(int i = (min-EMstartx); i <= (max-EMstartx); i++)
         {
             sum += Double.parseDouble(EMspectrum.getPointValue(i, 1));
             System.out.println(i + " : " + EMspectrum.getPointValue(i, 1));

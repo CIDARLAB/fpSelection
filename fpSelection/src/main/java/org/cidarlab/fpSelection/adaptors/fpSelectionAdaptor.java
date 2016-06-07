@@ -73,9 +73,17 @@ public class fpSelectionAdaptor {
                     if (spectra[j].contains("EX") || spectra[j].contains("AB")) {
                         p = new Point(Double.parseDouble(tokens[0]),Double.parseDouble(tokens[j])*100);
                         spectralMaps.get(spectraTrimmedStrings[j]).EXspectrum.add(p);
+                        if(j == 1)
+                        {
+                            spectralMaps.get(spectraTrimmedStrings[j]).EXstartx = Integer.parseInt(tokens[0]);
+                        }
                     } else if (spectra[j].contains("EM")) {
                         p = new Point(Double.parseDouble(tokens[0]),Double.parseDouble(tokens[j])*100);
                         spectralMaps.get(spectraTrimmedStrings[j]).EMspectrum.add(p);
+                        if(j == 1)
+                        {
+                            spectralMaps.get(spectraTrimmedStrings[j]).EMstartx = Integer.parseInt(tokens[0]);
+                        }
                     }                  
                 }
             }
@@ -114,7 +122,7 @@ public class fpSelectionAdaptor {
             exDataSetPlot.setSmooth(Smooth.UNIQUE);
             javaPlot.addPlot(emDataSetPlot);
             javaPlot.addPlot(exDataSetPlot);
-            it.remove(); // avoids a ConcurrentModificationException
+            //it.remove(); // avoids a ConcurrentModificationException
         }
         
         //javaPlot.plot();

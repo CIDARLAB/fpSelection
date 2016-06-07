@@ -23,6 +23,17 @@ public class ProteinSelector {
     //Given a Laser & Filters, Suggest List of Proteins
     public static void selectFPs(HashMap<String, Fluorophore> masterList, Laser theLaser)
     {
+        if(masterList.isEmpty())
+        {
+            System.out.println("y u empty");
+        }
+        else
+        {
+            System.out.println("phew not empty");
+            System.out.println("here's what's inside");
+            System.out.println("");
+            System.out.println(masterList.toString());
+        }
         //Pull Detector objects out.
         LinkedList<Detector> listDetectors = theLaser.getDetectors();
         
@@ -38,6 +49,8 @@ public class ProteinSelector {
         //  For each filter, create list of proteins ranked in terms of expression.  
         //  O(nFilters * nProteins * PriorityQAdd).
         
+        System.out.println("Initial");
+        
         for(Detector theDetector : listDetectors)
         {
             //Priority Queue comparator is based on expression in filter - need laser & filter references
@@ -46,12 +59,16 @@ public class ProteinSelector {
             qCompare.detect = theDetector;
             
             tempList = new ArrayList<>();
+            System.out.println("Made temp list");
             
-            for(Fluorophore fp : masterList.values())
+            for(Map.Entry<String, Fluorophore> entry : masterList.entrySet())
             {
-                tempList.add(fp);
+                Fluorophore value = entry.getValue();
+                System.out.println(value.getName());
+                tempList.add(value);
             }
             tempList.sort(qCompare);
+            System.out.println("Sorted temp list");
             
             //Put into ranked hashmap
             rankedProteins.put(theDetector, tempList);
@@ -59,6 +76,7 @@ public class ProteinSelector {
             //The first element should be the best thanks to qCompare
             optimals.put(theDetector, 0);
         }
+        System.out.println("hashmaps done");
         
         //After all of that, check noise intensity in other filters. If too large, move to next protein in filter's list. O(nFilters * nProteins)
         //

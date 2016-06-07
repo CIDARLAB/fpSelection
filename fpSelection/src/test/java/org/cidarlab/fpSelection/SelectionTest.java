@@ -29,6 +29,9 @@ public class SelectionTest {
         Cytometer testCyto = fpFortessaParse.parseFortessa(cyto);
         Laser testLaser = testCyto.getLasers().getFirst();
         
+        System.out.println(spectralMaps.isEmpty());
+        System.out.println(testCyto.getSheathPressure());
+        
         ProteinSelector.selectFPs(spectralMaps, testLaser);
         
         
