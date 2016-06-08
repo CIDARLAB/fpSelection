@@ -30,6 +30,9 @@ public class ProteinSelector {
     //Assume that # filters = numFPsWanted
     //Given a Laser & Filters, Suggest List of Proteins
     //Suggest proteins based on a laser & filters
+    
+    
+    
     public static void laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser) {
 //        if (masterList.isEmpty()) {
 //            System.out.println("y u empty");
@@ -39,6 +42,9 @@ public class ProteinSelector {
 //            System.out.println("");
 //            System.out.println(masterList.size() + " fluorophores");
 //        }
+
+
+
 
         //Pull Detector objects out.
         LinkedList<Detector> listDetectors = theLaser.getDetectors();
@@ -52,8 +58,6 @@ public class ProteinSelector {
         ArrayList<Fluorophore> tempList;
 
         //  For each filter, create list of proteins ranked in terms of expression.  
-        //  O(nFilters * nProteins * PriorityQAdd).
-        System.out.println("Initial");
 
         for (Detector theDetector : listDetectors) {
             //Comparator is based on expression in filter - need laser & filter references
@@ -61,18 +65,16 @@ public class ProteinSelector {
             qCompare.laser = theLaser;
             qCompare.detect = theDetector;
             qCompare.setDefaults();
+            qCompare.absolute = true;
 
             tempList = new ArrayList<>();
-            System.out.println("Made temp list");
 
             for (Map.Entry<String, Fluorophore> entry : masterList.entrySet()) {
                 Fluorophore value = entry.getValue();
-                System.out.println(value.getName());
                 tempList.add(value);
             }
 
             tempList.sort(qCompare);
-            System.out.println("Sorted temp list");
 
             //Put into ranked hashmap
             rankedProteins.put(theDetector, tempList);
@@ -80,7 +82,6 @@ public class ProteinSelector {
             //The first element should be the best thanks to qCompare
             optimals.put(theDetector, 0);
         }
-        System.out.println("hashmaps done");
 
         //After all of that, check noise intensity in other filters. If too large, move to next protein in filter's list. O(nFilters * nProteins)
         //
