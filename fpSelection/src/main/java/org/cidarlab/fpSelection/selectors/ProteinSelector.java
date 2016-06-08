@@ -17,7 +17,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import javax.swing.JFrame;
-import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
@@ -30,17 +29,17 @@ public class ProteinSelector {
 
     //Assume that # filters = numFPsWanted
     //Given a Laser & Filters, Suggest List of Proteins
-
     //Suggest proteins based on a laser & filters
     public static void laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser) {
-        if (masterList.isEmpty()) {
-            System.out.println("y u empty");
-        } else {
-            System.out.println("phew not empty");
-            System.out.println("here's what's inside");
-            System.out.println("");
-            System.out.println(masterList.toString());
-        }
+//        if (masterList.isEmpty()) {
+//            System.out.println("y u empty");
+//        } else {
+//            System.out.println("phew not empty");
+//            System.out.println("here's what's inside");
+//            System.out.println("");
+//            System.out.println(masterList.size() + " fluorophores");
+//        }
+
         //Pull Detector objects out.
         LinkedList<Detector> listDetectors = theLaser.getDetectors();
 
@@ -57,10 +56,11 @@ public class ProteinSelector {
         System.out.println("Initial");
 
         for (Detector theDetector : listDetectors) {
-            //Priority Queue comparator is based on expression in filter - need laser & filter references
+            //Comparator is based on expression in filter - need laser & filter references
             ProteinComparator qCompare = new ProteinComparator();
             qCompare.laser = theLaser;
             qCompare.detect = theDetector;
+            qCompare.setDefaults();
 
             tempList = new ArrayList<>();
             System.out.println("Made temp list");
@@ -97,44 +97,7 @@ public class ProteinSelector {
         //
         //
         //
-        JavaPlot newPlot = new JavaPlot();
-        newPlot.setTitle("Selected Proteins");
-        newPlot.getAxis("x").setLabel("Wavelength (nm)");
-        newPlot.getAxis("y").setLabel("Intensity (%)");
-
-        PlotStyle myStyle = new PlotStyle(Style.LINES);
-
-        for (Map.Entry<Detector, Integer> entry : optimals.entrySet()) {
-            //                      Filter Midpoint as identifier               Fluorophore Name as suggestion
-            System.out.println(entry.getKey().getFilterMidpoint() + " : " + rankedProteins.get(entry.getKey()).get(entry.getValue()).getName());
-            System.out.println("% leakage = " + rankedProteins.get(entry.getKey()).get(entry.getValue()).leakageCalc(entry.getKey()));
-            PointDataSet EMDataSet = (rankedProteins.get(entry.getKey()).get(entry.getValue()).makeEMDataSet());
-
-            AbstractPlot emPlot = new DataSetPlot(EMDataSet);
-
-            emPlot.setTitle(rankedProteins.get(entry.getKey()).get(entry.getValue()).getName());
-            emPlot.setPlotStyle(myStyle);
-            
-            newPlot.addPlot(emPlot);
-            
-            PointDataSet bounds = entry.getKey().drawBounds();
-            AbstractPlot boundsPlot = new DataSetPlot(bounds);
-            boundsPlot.setPlotStyle(myStyle);
-            
-            newPlot.addPlot(boundsPlot);
-
-        }
-
-        JPlot graph = new JPlot(newPlot);
-        graph.plot();
-        graph.repaint();
-
-        JFrame frame = new JFrame("FP Spectrum");
-        frame.getContentPane().add(graph);
-        frame.pack();
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+        plotSelection(optimals, rankedProteins);
     }
 
     //Try to revise list for better SNR. Work in progress....
@@ -142,5 +105,49 @@ public class ProteinSelector {
 //        
 //        return;
 //    }
+    static void plotSelection(HashMap<Detector, Integer> optimals, HashMap<Detector, ArrayList<Fluorophore>> rankedProteins) {
+        JavaPlot newPlot = new JavaPlot();
+        newPlot.setTitle("Selected Proteins");
+        newPlot.getAxis("x").setLabel("Wavelength (nm)");
+        newPlot.getAxis("y").setLabel("Intensity (%)");
+        newPlot.getAxis("y").setBoundaries(0, 125);
 
+        PlotStyle myStyle = new PlotStyle(Style.LINES);
+
+        for (Map.Entry<Detector, Integer> entry : optimals.entrySet()) {
+            Fluorophore fp = rankedProteins.get(entry.getKey()).get(entry.getValue());
+            
+            //                Filter Midpoint as identifier               Fluorophore Name as suggestion
+            System.out.println(entry.getKey().getFilterMidpoint() + " : " + fp.getName());
+            System.out.println("% leakage = " + fp.leakageCalc(entry.getKey()));
+            System.out.println("Avg. Intensity = " + fp.express(new Laser(), entry.getKey()));
+
+            //Graph continuous line & attach name in legend
+            PointDataSet EMDataSet = (fp.makeEMDataSet());
+            AbstractPlot emPlot = new DataSetPlot(EMDataSet);
+            emPlot.setTitle(fp.getName());
+            emPlot.setPlotStyle(myStyle);
+
+            newPlot.addPlot(emPlot);
+
+            //Graph filter bounds
+            PointDataSet bounds = entry.getKey().drawBounds();
+            AbstractPlot boundsPlot = new DataSetPlot(bounds);
+            boundsPlot.setPlotStyle(myStyle);
+
+            newPlot.addPlot(boundsPlot);
+
+        }
+
+        //Throw up in JFrame onto screen
+        JPlot graph = new JPlot(newPlot);
+        graph.plot();
+        graph.repaint();
+
+        JFrame frame = new JFrame("FP Spectrum");
+        frame.getContentPane().add(graph);
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
+    }
 }

@@ -47,7 +47,7 @@ public class Fluorophore {
         return dataSet;
     }
 
-    //Produces a Riemann sum of emission values within a certain range of the spectrum.
+    //Produces an averaged Riemann sum of emission values within a certain range of the spectrum.
     public double express(Laser theLaser, Detector theDetector) {
         double sum = 0;
         int min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth() / 2;
@@ -63,7 +63,8 @@ public class Fluorophore {
             }
         }
 
-        return sum;
+        //Average it to 0-100 by dividing by range
+        return sum/(theDetector.getFilterWidth());
     }
     
     //Calculates the percentage of fluorescence generated outside of the filter desired.
@@ -89,6 +90,7 @@ public class Fluorophore {
             
         }
         
+        //Push it up to [0-100] range for comparison w/ brightness.
         return sumOutside/total*100;
     }
 

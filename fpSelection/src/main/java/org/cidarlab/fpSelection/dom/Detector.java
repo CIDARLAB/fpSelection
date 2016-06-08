@@ -59,7 +59,7 @@ public class Detector {
         {
             draw.add(new Point(j,120));
         }
-        for(int k = 121; k > 0; k--)
+        for(int k = 120; k > 0; k--)
         {
             draw.add(new Point(max, k));
         }
