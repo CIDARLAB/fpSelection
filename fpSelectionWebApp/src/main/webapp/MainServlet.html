@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+    <head>
+
+        <!--Boostrap, Ajax and JQuery libraries-->
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        
+        <!--Links to JS files in scripts -->
+        <script type="text/javascript" src="scripts/test.js"></script>
+        <title>CIDAR - FP Selection</title>
+    </head>
+    <body>
+        <h1>PLOT!</h1>
+        <img id="img" src="" alt="plot" height="400"/>
+        <form id="form" enctype="multipart/form-data" action="MainServlet" method="post" name="form">
+            <input id="file" name="file" type="file" />
+            <input id="formsubmit" type="submit" value="Upload" />
+        </form>
+        <p id="p" style="white-space: pre"></p>
+    </body>
+</html>
