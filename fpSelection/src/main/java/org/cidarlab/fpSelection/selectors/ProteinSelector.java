@@ -27,9 +27,10 @@ import org.cidarlab.fpSelection.dom.Laser;
  */
 public class ProteinSelector {
 
-    //Assume that # filters = numFPsWanted
+    
     //Given a Laser & Filters, Suggest List of Proteins
     //Suggest proteins based on a laser & filters
+    //Works best for n >= 2;
     public static void laserFiltersToFPs(int n, HashMap<String, Fluorophore> masterList, LinkedList<Laser> theLasers) {
 
         //I don't know the expression formula yet, so I haven't actually integrated the laser wavelength into the calculations.
@@ -37,24 +38,50 @@ public class ProteinSelector {
 
         //Pull Detector objects out.
         LinkedList<Detector> listDetectors = new LinkedList<>();
-        Detector shortest = defaultLaser.getDetectors().getFirst();
-        Detector longest = defaultLaser.getDetectors().getFirst();
-        
-        int[] targetFilterMPs = new int[n-1];
+
+        //Populate the array to prep for sorting
+        Detector[] selectedDetectors = new Detector[n];
+        for (int j = 0; j < n; j++) {
+            selectedDetectors[j] = defaultLaser.getDetectors().getFirst();
+        }
 
         for (Laser eachLaser : theLasers) {
             for (Detector eachDetector : eachLaser.getDetectors()) {
                 listDetectors.add(eachDetector);
 
-                if (eachDetector.getFilterMidpoint() < shortest.getFilterMidpoint()) {
-                    shortest = eachDetector;
+                if (eachDetector.getFilterMidpoint() < selectedDetectors[0].getFilterMidpoint()) {
+                    selectedDetectors[0] = eachDetector;
                 }
-                if (eachDetector.getFilterMidpoint() > longest.getFilterMidpoint()) {
-                    longest = eachDetector;
+                if (eachDetector.getFilterMidpoint() > selectedDetectors[n - 1].getFilterMidpoint()) {
+                    selectedDetectors[n - 1] = eachDetector;
                 }
             }
         }
-        
+        if (n > 2) {
+
+            int[] targetPeaks = new int[n - 2];
+            int split = (selectedDetectors[n - 1].getFilterMidpoint() - selectedDetectors[0].getFilterMidpoint()) / n;
+
+            for (int i = 0; i < n - 2; i++) {
+                //We want the FP peaks to be as far apart as possible -> even distances
+                targetPeaks[i] += selectedDetectors[0].getFilterMidpoint() + split * (i + 1);
+            }
+
+            for (Detector eachDetector : listDetectors) {
+
+                for (int i = 0; i < n - 2; i++) {
+                    int difference = Math.abs(eachDetector.getFilterMidpoint() - targetPeaks[i]);
+                    int selectDiff = Math.abs(selectedDetectors[i + 1].getFilterMidpoint() - targetPeaks[i]);
+
+                    //If it's closer to our target than what's currently existing there, replace.
+                    if (difference < selectDiff) {
+                        selectedDetectors[i + 1] = eachDetector;
+                    }
+                }
+
+            }
+
+        }
 
         //Each Detector has a list of ranked fluorophores:
         HashMap<Detector, ArrayList<Fluorophore>> rankedProteins = new HashMap<>();
@@ -65,7 +92,7 @@ public class ProteinSelector {
         ArrayList<Fluorophore> tempList;
 
         //  For each filter, create list of proteins ranked in terms of expression.  
-        for (Detector aDetector : listDetectors) {
+        for (Detector aDetector : selectedDetectors) {
             //Comparator is based on expression in filter - need laser & filter references
             ProteinComparator qCompare = new ProteinComparator();
             qCompare.laser = defaultLaser;
@@ -105,13 +132,27 @@ public class ProteinSelector {
         //
         //
         plotSelection(optimals, rankedProteins);
+        printSNR(optimals, rankedProteins);
     }
 
-    //Try to revise list for better SNR. Work in progress....
-//    void checkOptimals(HashMap<Detector, ArrayList<Fluorophore>> ranked, HashMap<Detector, Integer> optimals) {
-//        
-//        return;
-//    }
+    static void printSNR(HashMap<Detector, Integer> optimals, HashMap<Detector, ArrayList<Fluorophore>> rankedProteins) {
+        Laser fakeLaser = new Laser();
+        //currently all of the best proteins are rank 0, so no need to search.
+        for (Map.Entry<Detector, Integer> optimalEntry : optimals.entrySet()) {
+            Fluorophore desired = rankedProteins.get(optimalEntry.getKey()).get(optimalEntry.getValue());
+            double noiseSum = 0;
+            for (Map.Entry<Detector, ArrayList<Fluorophore>> rankedEntry : rankedProteins.entrySet()) {
+                if (rankedEntry.getKey() != optimalEntry.getKey()) {
+
+                    noiseSum += rankedEntry.getValue().get(0).express(fakeLaser, optimalEntry.getKey());
+                }
+            }
+
+            System.out.println(optimalEntry.getKey().getFilterMidpoint()+ "'s SNR : " + (desired.express(fakeLaser, optimalEntry.getKey())) / noiseSum);
+
+        }
+    }
+
     static void plotSelection(HashMap<Detector, Integer> optimals, HashMap<Detector, ArrayList<Fluorophore>> rankedProteins) {
         JavaPlot newPlot = new JavaPlot();
         newPlot.setTitle("Selected Proteins");
