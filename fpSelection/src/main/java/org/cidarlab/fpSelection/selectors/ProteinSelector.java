@@ -30,24 +30,31 @@ public class ProteinSelector {
     //Assume that # filters = numFPsWanted
     //Given a Laser & Filters, Suggest List of Proteins
     //Suggest proteins based on a laser & filters
-    
-    
-    
-    public static void laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser) {
-//        if (masterList.isEmpty()) {
-//            System.out.println("y u empty");
-//        } else {
-//            System.out.println("phew not empty");
-//            System.out.println("here's what's inside");
-//            System.out.println("");
-//            System.out.println(masterList.size() + " fluorophores");
-//        }
+    public static void laserFiltersToFPs(int n, HashMap<String, Fluorophore> masterList, LinkedList<Laser> theLasers) {
 
-
-
+        //I don't know the expression formula yet, so I haven't actually integrated the laser wavelength into the calculations.
+        Laser defaultLaser = theLasers.getFirst();
 
         //Pull Detector objects out.
-        LinkedList<Detector> listDetectors = theLaser.getDetectors();
+        LinkedList<Detector> listDetectors = new LinkedList<>();
+        Detector shortest = defaultLaser.getDetectors().getFirst();
+        Detector longest = defaultLaser.getDetectors().getFirst();
+        
+        int[] targetFilterMPs = new int[n-1];
+
+        for (Laser eachLaser : theLasers) {
+            for (Detector eachDetector : eachLaser.getDetectors()) {
+                listDetectors.add(eachDetector);
+
+                if (eachDetector.getFilterMidpoint() < shortest.getFilterMidpoint()) {
+                    shortest = eachDetector;
+                }
+                if (eachDetector.getFilterMidpoint() > longest.getFilterMidpoint()) {
+                    longest = eachDetector;
+                }
+            }
+        }
+        
 
         //Each Detector has a list of ranked fluorophores:
         HashMap<Detector, ArrayList<Fluorophore>> rankedProteins = new HashMap<>();
@@ -58,12 +65,11 @@ public class ProteinSelector {
         ArrayList<Fluorophore> tempList;
 
         //  For each filter, create list of proteins ranked in terms of expression.  
-
-        for (Detector theDetector : listDetectors) {
+        for (Detector aDetector : listDetectors) {
             //Comparator is based on expression in filter - need laser & filter references
             ProteinComparator qCompare = new ProteinComparator();
-            qCompare.laser = theLaser;
-            qCompare.detect = theDetector;
+            qCompare.laser = defaultLaser;
+            qCompare.detect = aDetector;
             qCompare.setDefaults();
             qCompare.absolute = true;
 
@@ -77,10 +83,10 @@ public class ProteinSelector {
             tempList.sort(qCompare);
 
             //Put into ranked hashmap
-            rankedProteins.put(theDetector, tempList);
+            rankedProteins.put(aDetector, tempList);
 
             //The first element should be the best thanks to qCompare
-            optimals.put(theDetector, 0);
+            optimals.put(aDetector, 0);
         }
 
         //After all of that, check noise intensity in other filters. If too large, move to next protein in filter's list. O(nFilters * nProteins)
@@ -117,7 +123,7 @@ public class ProteinSelector {
 
         for (Map.Entry<Detector, Integer> entry : optimals.entrySet()) {
             Fluorophore fp = rankedProteins.get(entry.getKey()).get(entry.getValue());
-            
+
             //                Filter Midpoint as identifier               Fluorophore Name as suggestion
             System.out.println(entry.getKey().getFilterMidpoint() + " : " + fp.getName());
             System.out.println("% leakage = " + fp.leakageCalc(entry.getKey()));
