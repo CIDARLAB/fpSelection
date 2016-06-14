@@ -27,43 +27,30 @@ import org.cidarlab.fpSelection.dom.Laser;
  */
 public class ProteinSelector {
 
-    //Assume that # filters = numFPsWanted
     //Given a Laser & Filters, Suggest List of Proteins
     //Suggest proteins based on a laser & filters
-    
-    
-    
-    public static void laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser) {
-//        if (masterList.isEmpty()) {
-//            System.out.println("y u empty");
-//        } else {
-//            System.out.println("phew not empty");
-//            System.out.println("here's what's inside");
-//            System.out.println("");
-//            System.out.println(masterList.size() + " fluorophores");
-//        }
-
-
-
+    //Works best for n >= 2;
+    public static HashMap<Laser, HashMap<Detector, Fluorophore>> laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser, double threshold) {
 
         //Pull Detector objects out.
-        LinkedList<Detector> listDetectors = theLaser.getDetectors();
+        LinkedList<Detector> listDetectors = new LinkedList<>();
 
-        //Each Detector has a list of ranked fluorophores:
-        HashMap<Detector, ArrayList<Fluorophore>> rankedProteins = new HashMap<>();
+        //Populate the array to prep for sorting
+        for (Detector eachDetector : theLaser.getDetectors()) {
+            listDetectors.add(eachDetector);
+        }
 
-        //Keep track of each detector's "best" protein
-        HashMap<Detector, Integer> optimals = new HashMap<>();
+        //Each Detector has a best fluorophore:
+        HashMap<Detector, Fluorophore> bestFP = new HashMap<>();
 
         ArrayList<Fluorophore> tempList;
 
         //  For each filter, create list of proteins ranked in terms of expression.  
-
-        for (Detector theDetector : listDetectors) {
+        for (Detector aDetector : listDetectors) {
             //Comparator is based on expression in filter - need laser & filter references
             ProteinComparator qCompare = new ProteinComparator();
             qCompare.laser = theLaser;
-            qCompare.detect = theDetector;
+            qCompare.detect = aDetector;
             qCompare.setDefaults();
             qCompare.absolute = true;
 
@@ -76,37 +63,30 @@ public class ProteinSelector {
 
             tempList.sort(qCompare);
 
-            //Put into ranked hashmap
-            rankedProteins.put(theDetector, tempList);
-
-            //The first element should be the best thanks to qCompare
-            optimals.put(theDetector, 0);
+            //Put into the rankedProteins hashmap
+            bestFP.put(aDetector, tempList.get(0));
         }
 
-        //After all of that, check noise intensity in other filters. If too large, move to next protein in filter's list. O(nFilters * nProteins)
+        HashMap<Laser, HashMap<Detector, Fluorophore>> returnMap = new HashMap<>();
+        returnMap.put(theLaser, bestFP);
+
+        //After all of that, check noise intensity in other filters. If too large, move to next protein in filter's list.
         //
         //
         //
         //      FOR NOW, let's not. We'll figure it out after the simplest case.
         //
         //
-        //
-        //
-        //
-        //
         //OUTPUTS FOR DEBUG
         //
         //
         //
-        plotSelection(optimals, rankedProteins);
+        plotSelection(theLaser, returnMap);
+        return returnMap;
+
     }
 
-    //Try to revise list for better SNR. Work in progress....
-//    void checkOptimals(HashMap<Detector, ArrayList<Fluorophore>> ranked, HashMap<Detector, Integer> optimals) {
-//        
-//        return;
-//    }
-    static void plotSelection(HashMap<Detector, Integer> optimals, HashMap<Detector, ArrayList<Fluorophore>> rankedProteins) {
+    static void plotSelection(Laser theLaser, HashMap<Laser, HashMap<Detector, Fluorophore>> rankedProteins) {
         JavaPlot newPlot = new JavaPlot();
         newPlot.setTitle("Selected Proteins");
         newPlot.getAxis("x").setLabel("Wavelength (nm)");
@@ -115,16 +95,16 @@ public class ProteinSelector {
 
         PlotStyle myStyle = new PlotStyle(Style.LINES);
 
-        for (Map.Entry<Detector, Integer> entry : optimals.entrySet()) {
-            Fluorophore fp = rankedProteins.get(entry.getKey()).get(entry.getValue());
-            
+        for (Map.Entry<Laser, HashMap<Detector, Fluorophore>> entry : rankedProteins.entrySet()) {
+            Fluorophore fp = entry.getValue().get(0);
+
             //                Filter Midpoint as identifier               Fluorophore Name as suggestion
             System.out.println(entry.getKey().getFilterMidpoint() + " : " + fp.getName());
-            System.out.println("% leakage = " + fp.leakageCalc(entry.getKey()));
-            System.out.println("Avg. Intensity = " + fp.express(new Laser(), entry.getKey()));
+            System.out.println("% Leakage = " + fp.leakageCalc(entry.getKey()));
+            System.out.println("Avg. Intensity = " + fp.express(theLaser, entry.getKey()));
 
             //Graph continuous line & attach name in legend
-            PointDataSet EMDataSet = (fp.makeEMDataSet());
+            PointDataSet EMDataSet = (fp.makeEMDataSet(theLaser));
             AbstractPlot emPlot = new DataSetPlot(EMDataSet);
             emPlot.setTitle(fp.getName());
             emPlot.setPlotStyle(myStyle);

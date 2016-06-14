@@ -23,6 +23,7 @@ import com.panayotis.gnuplot.style.Smooth;
 import com.panayotis.gnuplot.style.Style;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import org.cidarlab.fpSelection.dom.Laser;
 
 /**
  *
@@ -100,13 +101,16 @@ public class fpSelectionAdaptor {
         myPlotStyle.setStyle(Style.LINES);
         myPlotStyle.setLineWidth(1);
 
+        Laser newLaser = new Laser();
+        newLaser.setWavelength(500);
+        
         //myPlotStyle.setStyle(Smooth.ACSPLINES);
         //javaPlot.set("smooth", "csplines");
         Iterator it = spectralMaps.entrySet().iterator();
         while (it.hasNext()) {
             HashMap.Entry pair = (HashMap.Entry) it.next();
             Fluorophore f = (Fluorophore) pair.getValue();
-            AbstractPlot emDataSetPlot = new DataSetPlot(f.makeEMDataSet());
+            AbstractPlot emDataSetPlot = new DataSetPlot(f.makeEMDataSet(newLaser));
             AbstractPlot exDataSetPlot = new DataSetPlot(f.makeEXDataSet());
             emDataSetPlot.setTitle(pair.getKey() + " (EM)");
             exDataSetPlot.setTitle(pair.getKey() + " (EX)");

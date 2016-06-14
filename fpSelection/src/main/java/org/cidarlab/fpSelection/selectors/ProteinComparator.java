@@ -79,6 +79,7 @@ public class ProteinComparator implements Comparator<Fluorophore> {
 
         //If absolute is true, we just return a comparison based on single attributes.
         if (absolute == true) {
+            
             switch (compareTerms.get(0)) {
                 case Brightness:
                     //Descending order - brightest first
