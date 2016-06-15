@@ -21,7 +21,7 @@ public class Fluorophore {
     @Getter
     @Setter
     private String name;
-    
+
     private boolean isProtein = false;
 
     //Emission or Excitation 
@@ -55,7 +55,7 @@ public class Fluorophore {
 
         for (Map.Entry<Double, Double> entry : EMspectrum.entrySet()) {
 
-            dataSet.add(new Point(entry.getKey(), multiplier/100 * entry.getValue()));
+            dataSet.add(new Point(entry.getKey(), multiplier / 100 * entry.getValue()));
         }
         return dataSet;
     }
@@ -65,7 +65,7 @@ public class Fluorophore {
         if (!EXspectrum.containsKey(theLaser.getWavelength())) {
             return 0;
         }
-        double multiplier = EXspectrum.get(theLaser.getWavelength())/100;
+        double multiplier = EXspectrum.get(theLaser.getWavelength()) / 100;
         double sum = 0;
         int min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth() / 2;
         int max = min + theDetector.getFilterWidth();

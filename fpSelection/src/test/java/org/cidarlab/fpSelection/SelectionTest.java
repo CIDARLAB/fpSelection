@@ -18,6 +18,7 @@ import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
+import org.cidarlab.fpSelection.selectors.SelectionInfo;
 
 /**
  *
@@ -38,7 +39,7 @@ public class SelectionTest {
 //        System.out.println("Give an integer n for the number of you would like: ");
 //        int n = scanner.nextInt();
         for (Laser lase : testCyto.getLasers()) {
-            HashMap<Laser, HashMap<Detector, Fluorophore>> rankedProteins = ProteinSelector.laserFiltersToFPs(spectralMaps, lase, .5);
+            HashMap<Laser, ArrayList<SelectionInfo>>> rankedProteins = ProteinSelector.laserFiltersToFPs(spectralMaps, lase);
             System.out.println();
             System.out.println();
             System.out.println();
