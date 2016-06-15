@@ -103,8 +103,8 @@ public class ProteinSelector {
         for (SelectionInfo entry : info) {
 
             Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
-            //                Filter Midpoint as identifier               Fluorophore Name as suggestion
-            
+            System.out.println(fp.getName() + " : " + fp.express(entry.selectedLaser, entry.selectedDetector));
+
             //Graph continuous line & attach name in legend
             PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
             AbstractPlot emPlot = new DataSetPlot(EMDataSet);
@@ -119,29 +119,19 @@ public class ProteinSelector {
             boundsPlot.setPlotStyle(myStyle);
 
             newPlot.addPlot(boundsPlot);
-        
 
-    }
+        }
 
-    //Throw up in JFrame onto screen
-    JPlot graph = new JPlot(newPlot);
-
-    graph.plot ();
-
-    graph.repaint ();
-
-    JFrame frame = new JFrame("FP Spectrum");
-
-    frame.getContentPane ()
-
-    .add(graph);
-    frame.pack ();
-
-    frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
-
-    frame.setVisible (
-
-true);
+        //Throw up in JFrame onto screen
+        JPlot graph = new JPlot(newPlot);
+        graph.plot();
+        graph.repaint();
+        JFrame frame = new JFrame("FP Spectrum");
+        frame.getContentPane()
+                .add(graph);
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
     }
 
     public static ArrayList<SelectionInfo> mishMashCombinatorics(HashMap<Laser, SelectionInfo> suggestions, int n) {

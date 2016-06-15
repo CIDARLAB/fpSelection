@@ -41,7 +41,7 @@ public class Fluorophore {
     }
 
     public PointDataSet makeEMDataSet(Laser aLaser) {
-        if (!EXspectrum.containsKey((double) aLaser.getWavelength())) { 
+        if (!EXspectrum.containsKey((double) aLaser.getWavelength())) {
             PointDataSet dataSet = new PointDataSet();
 
             for (Map.Entry<Double, Double> entry : EMspectrum.entrySet()) {
@@ -63,27 +63,30 @@ public class Fluorophore {
 
     //Produces an averaged Riemann sum of emission values within a certain range of the spectrum.
     public double express(Laser theLaser, Detector theDetector) {
-        if (!EXspectrum.containsKey((double)theLaser.getWavelength())) {
+        if (!EXspectrum.containsKey((double) theLaser.getWavelength())) {
             return 0;
         }
-        double multiplier = EXspectrum.get(theLaser.getWavelength()) / 100;
+        double multiplier = EXspectrum.get((double) theLaser.getWavelength()) / 100;
         double sum = 0;
         double min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth() / 2;
         double max = min + theDetector.getFilterWidth();
 
-        Map.Entry<Double,Double> previousEntry = EMspectrum.ceilingEntry(min);
-        Map.Entry<Double,Double> startEntry = EMspectrum.higherEntry(previousEntry.getKey());
-        for(Map.Entry<Double,Double> thisEntry : EMspectrum.tailMap(startEntry.getKey()).entrySet())
-        {
+        Map.Entry<Double, Double> previousEntry = EMspectrum.ceilingEntry(min);
+        Map.Entry<Double, Double> startEntry = EMspectrum.higherEntry(previousEntry.getKey());
+        for (Map.Entry<Double, Double> thisEntry : EMspectrum.tailMap(startEntry.getKey()).entrySet()) {
             double width = thisEntry.getKey() - previousEntry.getKey();
             double height = previousEntry.getValue() * multiplier;
             sum += width * height;
-            
-            if(thisEntry.getKey() >= max) break;
+
+            if (thisEntry.getKey() >= max) {
+                break;
+            }
         }
 
         //Average it to 0-100 by dividing by range
-        return sum / (theDetector.getFilterWidth());
+        System.out.println(sum / (theDetector.getFilterWidth()));
+        return multiplier * sum / (theDetector.getFilterWidth());
+
     }
 
     //Calculates the percentage of fluorescence generated outside of the filter desired.
