@@ -22,7 +22,6 @@ import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Smooth;
 import com.panayotis.gnuplot.style.Style;
 import java.util.Iterator;
-import java.util.LinkedHashMap;
 import java.util.TreeMap;
 import org.cidarlab.fpSelection.dom.Laser;
 

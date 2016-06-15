@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import javax.swing.JFrame;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 

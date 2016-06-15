@@ -39,19 +39,14 @@ public class SelectionTest {
 //        System.out.println("Give an integer n for the number of you would like: ");
 //        int n = scanner.nextInt();
 
-        HashMap<Laser, SelectionInfo> total = new HashMap<>();
+        ArrayList<SelectionInfo> total = new ArrayList<>();
         for (Laser lase : testCyto.getLasers()) {
-            total.putAll(ProteinSelector.laserFiltersToFPs(spectralMaps, lase));
+            total.addAll(ProteinSelector.laserFiltersToFPs(spectralMaps, lase));
 
         }
-
-        ArrayList<SelectionInfo> selected = ProteinSelector.mishMashCombinatorics(total, 5);
-
-        for (SelectionInfo select : selected) {
-            
-            String name = select.rankedFluorophores.get(select.selectedIndex).getName();
-            System.out.println(name);
-        }
+        //Prune the arrayList of the worst FPs until the size of the ArrayList is equal to 'n'
+        ArrayList<SelectionInfo> selected = ProteinSelector.mishMashCombinatorics(total, 1);
+        
         ProteinSelector.plotSelection(selected);
     }
 

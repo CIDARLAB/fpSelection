@@ -22,4 +22,5 @@ public class SelectionInfo {
 
     public int selectedIndex;
     public double score;
+    public double SNR;
 }

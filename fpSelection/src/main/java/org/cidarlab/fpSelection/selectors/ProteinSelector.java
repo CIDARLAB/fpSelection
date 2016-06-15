@@ -30,19 +30,19 @@ public class ProteinSelector {
     //Given a Laser & Filters, Suggest List of Proteins that works optimally for each filter
     //Suggest proteins based on a laser & filters
     //Works best for n >= 2;
-    public static HashMap<Laser, SelectionInfo> laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser) {
+    public static ArrayList<SelectionInfo> laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser) {
 
         //Pull Detector objects out.
         LinkedList<Detector> listDetectors = new LinkedList<>();
 
         //Populate the array to prep for sorting
-        for (Detector eachDetector : theLaser.getDetectors()) { 
+        for (Detector eachDetector : theLaser.getDetectors()) {
             listDetectors.add(eachDetector);
         }
 
         //Each Detector has a best fluorophore:
-        HashMap<Laser, SelectionInfo> bestFPs = new HashMap<>();
-
+        ArrayList<SelectionInfo> bestFPs = new ArrayList<>();
+        
         ArrayList<Fluorophore> tempList;
         SelectionInfo choiceInfo;
 
@@ -71,7 +71,7 @@ public class ProteinSelector {
             choiceInfo.rankedFluorophores = tempList;
             choiceInfo.selectedIndex = 0;
 
-            bestFPs.put(theLaser, choiceInfo);
+            bestFPs.add(choiceInfo);
         }
 
         //After all of that, check noise intensity in other filters. If too large, move to next protein in filter's list.
@@ -92,66 +92,90 @@ public class ProteinSelector {
     }
 
     public static void plotSelection(ArrayList<SelectionInfo> info) {
-        JavaPlot newPlot = new JavaPlot();
-        newPlot.setTitle("Selected Proteins");
-        newPlot.getAxis("x").setLabel("Wavelength (nm)");
-        newPlot.getAxis("y").setLabel("Intensity (%)");
-        newPlot.getAxis("y").setBoundaries(0, 125);
+        ArrayList<Laser> lazies = new ArrayList<>();
+        ArrayList<JavaPlot> plotsies = new ArrayList<>();
 
         PlotStyle myStyle = new PlotStyle(Style.LINES);
 
         for (SelectionInfo entry : info) {
+            if (!lazies.contains(entry.selectedLaser)) {
+                lazies.add(entry.selectedLaser);
 
-            Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
-            System.out.println(fp.getName() + " : " + fp.express(entry.selectedLaser, entry.selectedDetector));
+                JavaPlot newPlot = new JavaPlot();
+                newPlot.setTitle(entry.selectedLaser.getName());
+                newPlot.getAxis("x").setLabel("Wavelength (nm)");
+                newPlot.getAxis("y").setLabel("Intensity (%)");
+                newPlot.getAxis("y").setBoundaries(0, 125);
 
-            //Graph continuous line & attach name in legend
-            PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
-            AbstractPlot emPlot = new DataSetPlot(EMDataSet);
-            emPlot.setTitle(fp.getName());
-            emPlot.setPlotStyle(myStyle);
+                plotsies.add(newPlot);
 
-            newPlot.addPlot(emPlot);
+                Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
+                System.out.println(fp.getName() + " : " + fp.express(entry.selectedLaser, entry.selectedDetector));
 
-            //Graph filter bounds
-            PointDataSet bounds = entry.selectedDetector.drawBounds();
-            AbstractPlot boundsPlot = new DataSetPlot(bounds);
-            boundsPlot.setPlotStyle(myStyle);
+                //Graph continuous line & attach name in legend
+                PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
+                AbstractPlot emPlot = new DataSetPlot(EMDataSet);
+                emPlot.setTitle(fp.getName());
+                emPlot.setPlotStyle(myStyle);
 
-            newPlot.addPlot(boundsPlot);
+                newPlot.addPlot(emPlot);
 
-        }
+                //Graph filter bounds
+                PointDataSet bounds = entry.selectedDetector.drawBounds();
+                AbstractPlot boundsPlot = new DataSetPlot(bounds);
+                boundsPlot.setPlotStyle(myStyle);
 
-        //Throw up in JFrame onto screen
-        JPlot graph = new JPlot(newPlot);
-        graph.plot();
-        graph.repaint();
-        JFrame frame = new JFrame("FP Spectrum");
-        frame.getContentPane()
-                .add(graph);
-        frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-    }
+                newPlot.addPlot(boundsPlot);
 
-    public static ArrayList<SelectionInfo> mishMashCombinatorics(HashMap<Laser, SelectionInfo> suggestions, int n) {
-        //Build list of things to check.
-        ArrayList<Laser> lasersToTest = new ArrayList<>();
-        ArrayList<Detector> filtersToCheck = new ArrayList<>();
+            } else {
+                int index = lazies.indexOf(entry.selectedLaser);
+                JavaPlot plot = plotsies.get(index);
 
-        for (Laser aLaser : suggestions.keySet()) {
-            lasersToTest.add(aLaser);
-            for (Detector aDetector : aLaser.getDetectors()) {
-                filtersToCheck.add(aDetector);
+                Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
+                System.out.println(fp.getName() + " SNR : " + entry.SNR);
+
+                //Graph continuous line & attach name in legend
+                PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
+                AbstractPlot emPlot = new DataSetPlot(EMDataSet);
+                emPlot.setTitle(fp.getName());
+                emPlot.setPlotStyle(myStyle);
+
+                plot.addPlot(emPlot);
+
+                //Graph filter bounds
+                PointDataSet bounds = entry.selectedDetector.drawBounds();
+                AbstractPlot boundsPlot = new DataSetPlot(bounds);
+                boundsPlot.setPlotStyle(myStyle);
+
+                plot.addPlot(boundsPlot);
+
             }
         }
+
+        for (JavaPlot plot : plotsies) {
+            //Throw up in JFrame onto screen
+            JPlot graph = new JPlot(plot);
+            graph.plot();
+            graph.repaint();
+            JFrame frame = new JFrame("FP Spectrum");
+            frame.getContentPane()
+                    .add(graph);
+            frame.pack();
+            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+            frame.setVisible(true);
+        }
+
+    }
+
+    public static ArrayList<SelectionInfo> mishMashCombinatorics(ArrayList<SelectionInfo> suggestions, int n) {
+        //Build list of things to check.
 
         double sumSNR = 0;
         ArrayList<SelectionInfo> allInfo = new ArrayList<>();
         ArrayList<SelectionInfo> iterateInfo = new ArrayList<>();
 
         //Test each FP with the other lasers based on simple SNR, keep the best.
-        for (SelectionInfo info : suggestions.values()) {
+        for (SelectionInfo info : suggestions) {
             allInfo.add(info);
             iterateInfo.add(info);
         }
@@ -217,7 +241,8 @@ public class ProteinSelector {
 
                 }
             }
-            sumSNR += signal / noise;
+            info.SNR = signal/noise;
+            sumSNR += info.SNR;
         }
 
         return sumSNR;

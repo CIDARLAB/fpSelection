@@ -7,7 +7,6 @@ package org.cidarlab.fpSelection.dom;
 
 import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 import lombok.Getter;
@@ -61,7 +60,7 @@ public class Fluorophore {
         return dataSet;
     }
 
-    //Produces an averaged Riemann sum of emission values within a certain range of the spectrum.
+    //Produces an averaged left Riemann sum of emission values within a certain range of the spectrum.
     public double express(Laser theLaser, Detector theDetector) {
         if (!EXspectrum.containsKey((double) theLaser.getWavelength())) {
             return 0;
@@ -71,8 +70,21 @@ public class Fluorophore {
         double min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth() / 2;
         double max = min + theDetector.getFilterWidth();
 
+        //Get the least entry that has a key >= the parameter key or null if none exists.
         Map.Entry<Double, Double> previousEntry = EMspectrum.ceilingEntry(min);
+        if(previousEntry == null)
+        {
+            //nothing to iterate through.
+            return 0;
+        }
+        //Get the least entry that has a key > the parameter key or null if none exists.
         Map.Entry<Double, Double> startEntry = EMspectrum.higherEntry(previousEntry.getKey());
+        if(startEntry == null)
+        {
+            //nothing to iterate through
+            return 0;
+        }
+        
         for (Map.Entry<Double, Double> thisEntry : EMspectrum.tailMap(startEntry.getKey()).entrySet()) {
             double width = thisEntry.getKey() - previousEntry.getKey();
             double height = previousEntry.getValue() * multiplier;
@@ -84,7 +96,6 @@ public class Fluorophore {
         }
 
         //Average it to 0-100 by dividing by range
-        System.out.println(sum / (theDetector.getFilterWidth()));
         return multiplier * sum / (theDetector.getFilterWidth());
 
     }
