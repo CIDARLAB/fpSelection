@@ -9,6 +9,7 @@ import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.TreeMap;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,8 +26,8 @@ public class Fluorophore {
     private boolean isProtein = false;
 
     //Emission or Excitation 
-    public LinkedHashMap<Double, Double> EMspectrum;
-    public LinkedHashMap<Double, Double> EXspectrum;
+    public TreeMap<Double, Double> EMspectrum;
+    public TreeMap<Double, Double> EXspectrum;
 
     //Generates PointDataSets for javaplot graphing
     public PointDataSet makeEXDataSet() {
@@ -40,7 +41,7 @@ public class Fluorophore {
     }
 
     public PointDataSet makeEMDataSet(Laser aLaser) {
-        if (!EXspectrum.containsKey((double) aLaser.getWavelength())) {
+        if (!EXspectrum.containsKey((double) aLaser.getWavelength())) { 
             PointDataSet dataSet = new PointDataSet();
 
             for (Map.Entry<Double, Double> entry : EMspectrum.entrySet()) {
@@ -62,26 +63,27 @@ public class Fluorophore {
 
     //Produces an averaged Riemann sum of emission values within a certain range of the spectrum.
     public double express(Laser theLaser, Detector theDetector) {
-        if (!EXspectrum.containsKey(theLaser.getWavelength())) {
+        if (!EXspectrum.containsKey((double)theLaser.getWavelength())) {
             return 0;
         }
-        double multiplier = EXspectrum.get(theLaser.getWavelength())/100;
+        double multiplier = EXspectrum.get((double)theLaser.getWavelength())/100;
         double sum = 0;
-        int min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth() / 2;
-        int max = min + theDetector.getFilterWidth();
+        double min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth() / 2;
+        double max = min + theDetector.getFilterWidth();
 
-        //For every relevant point, add the y-value to a running sum. Then return the sum.
-        for (double i = min; i <= max; i++) {
-            if (EMspectrum.containsKey(i)) {
-                sum += EMspectrum.get(i);
-
-            } else {
-                continue;
-            }
+        Map.Entry<Double,Double> previousEntry = EMspectrum.ceilingEntry(min);
+        Map.Entry<Double,Double> startEntry = EMspectrum.higherEntry(previousEntry.getKey());
+        for(Map.Entry<Double,Double> thisEntry : EMspectrum.tailMap(startEntry.getKey()).entrySet())
+        {
+            double width = thisEntry.getKey() - previousEntry.getKey();
+            double height = previousEntry.getValue() * multiplier;
+            sum += width * height;
+            
+            if(thisEntry.getKey() >= max) break;
         }
 
         //Average it to 0-100 by dividing by range
-        return multiplier * sum / (theDetector.getFilterWidth());
+        return sum / (theDetector.getFilterWidth());
     }
 
     //Calculates the percentage of fluorescence generated outside of the filter desired.

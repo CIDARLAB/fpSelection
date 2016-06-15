@@ -46,15 +46,15 @@ public class ScrapedCSVParse {
         BufferedReader reader;
         Fluorophore fp;
         
-        JFrame frame = new JFrame("FP Spectrum");
+        //JFrame frame = new JFrame("FP Spectrum");
 
         for (File next : listOfFiles) {
             String name = next.getName().replace(".csv", "");
             fp = new Fluorophore();
             fp.setName(name);
 
-            LinkedHashMap<Double, Double> EMSpectrum = new LinkedHashMap<>();
-            LinkedHashMap<Double, Double> EXSpectrum = new LinkedHashMap<>();
+            TreeMap<Double, Double> EMSpectrum = new TreeMap<>();
+            TreeMap<Double, Double> EXSpectrum = new TreeMap<>();
 
             reader = new BufferedReader(new FileReader(next));
 

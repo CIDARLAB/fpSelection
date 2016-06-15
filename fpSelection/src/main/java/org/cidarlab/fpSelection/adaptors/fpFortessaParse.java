@@ -28,7 +28,7 @@ public class fpFortessaParse {
         Cytometer shinyCytometer;
         shinyCytometer = parseFortessa(input);
 
-        System.out.println("Sheath Pressure: " + shinyCytometer.getSheathPressure());
+        System.out.println("Sheath Pressure: " + shinyCytometer.getSheathPressure()); 
         System.out.println("Nozzle Size: " + shinyCytometer.getNozzleSize());
         System.out.println("Window Extension: " + shinyCytometer.getWindowExt());
 

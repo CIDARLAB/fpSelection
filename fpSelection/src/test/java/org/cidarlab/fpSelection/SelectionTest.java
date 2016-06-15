@@ -37,7 +37,7 @@ public class SelectionTest {
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Give an integer n for the number of you would like: ");
 //        int n = scanner.nextInt();
-        for (Laser lase : testCyto.getLasers()) {
+        for (Laser lase : testCyto.getLasers()) { 
             HashMap<Laser, HashMap<Detector, Fluorophore>> rankedProteins = ProteinSelector.laserFiltersToFPs(spectralMaps, lase, .5);
             System.out.println();
             System.out.println();

@@ -23,6 +23,7 @@ import com.panayotis.gnuplot.style.Smooth;
 import com.panayotis.gnuplot.style.Style;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import org.cidarlab.fpSelection.dom.Laser;
 
 /**
@@ -53,12 +54,12 @@ public class fpSelectionAdaptor {
         String[] spectraTrimmedStrings = new String[spectra.length];
         int numSpectra = spectra.length;
         for (int i = 1; i < numSpectra; i++) {
-            Fluorophore f = new Fluorophore();
+            Fluorophore f = new Fluorophore(); 
 
             spectraTrimmedStrings[i] = p.matcher(spectra[i]).replaceAll(""); //remove above regex pattern
             f.setName(spectraTrimmedStrings[i]);
-            f.EMspectrum = new LinkedHashMap<>();
-            f.EXspectrum = new LinkedHashMap<>();
+            f.EMspectrum = new TreeMap<>();
+            f.EXspectrum = new TreeMap<>();
             spectralMaps.put(spectraTrimmedStrings[i], f);
         }
         line = reader.readLine();
