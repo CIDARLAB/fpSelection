@@ -19,7 +19,7 @@ public class Fluorophore {
 
 public String name;
 
-    private boolean isProtein = false;
+    public boolean isProtein = false;
 
     //Emission or Excitation 
     public TreeMap<Double, Double> EMspectrum;
