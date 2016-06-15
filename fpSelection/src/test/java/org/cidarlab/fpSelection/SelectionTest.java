@@ -45,7 +45,7 @@ public class SelectionTest {
 
         }
         //Prune the arrayList of the worst FPs until the size of the ArrayList is equal to 'n'
-        ArrayList<SelectionInfo> selected = ProteinSelector.mishMashCombinatorics(total, 1);
+        ArrayList<SelectionInfo> selected = ProteinSelector.mishMashCombinatorics(total, 4);
         
         ProteinSelector.plotSelection(selected);
     }
