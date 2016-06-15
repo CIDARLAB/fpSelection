@@ -22,7 +22,7 @@ public class Fluorophore {
     @Setter
     private String name;
 
-    private boolean isProtein = false;
+    public boolean isProtein = false;
 
     //Emission or Excitation 
     public LinkedHashMap<Double, Double> EMspectrum;
@@ -62,10 +62,10 @@ public class Fluorophore {
 
     //Produces an averaged Riemann sum of emission values within a certain range of the spectrum.
     public double express(Laser theLaser, Detector theDetector) {
-        if (!EXspectrum.containsKey(theLaser.getWavelength())) {
+        if (!EXspectrum.containsKey((double)theLaser.getWavelength())) {
             return 0;
         }
-        double multiplier = EXspectrum.get(theLaser.getWavelength()) / 100;
+        double multiplier = EXspectrum.get((double)theLaser.getWavelength()) / 100;
         double sum = 0;
         int min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth() / 2;
         int max = min + theDetector.getFilterWidth();
@@ -81,6 +81,7 @@ public class Fluorophore {
         }
 
         //Average it to 0-100 by dividing by range
+        System.out.println(sum/(theDetector.getFilterWidth()));
         return multiplier * sum / (theDetector.getFilterWidth());
     }
 
