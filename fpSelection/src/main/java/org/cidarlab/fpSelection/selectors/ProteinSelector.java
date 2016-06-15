@@ -36,7 +36,7 @@ public class ProteinSelector {
         LinkedList<Detector> listDetectors = new LinkedList<>();
 
         //Populate the array to prep for sorting
-        for (Detector eachDetector : theLaser.getDetectors()) {
+        for (Detector eachDetector : theLaser.getDetectors()) { 
             listDetectors.add(eachDetector);
         }
 

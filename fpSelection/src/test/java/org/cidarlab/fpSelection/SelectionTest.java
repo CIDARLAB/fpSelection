@@ -38,6 +38,7 @@ public class SelectionTest {
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Give an integer n for the number of you would like: ");
 //        int n = scanner.nextInt();
+
         HashMap<Laser, SelectionInfo> total = new HashMap<>();
         for (Laser lase : testCyto.getLasers()) {
             total.putAll(ProteinSelector.laserFiltersToFPs(spectralMaps, lase));
