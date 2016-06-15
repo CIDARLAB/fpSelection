@@ -38,13 +38,20 @@ public class SelectionTest {
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Give an integer n for the number of you would like: ");
 //        int n = scanner.nextInt();
+        HashMap<Laser, SelectionInfo> total = new HashMap<>();
         for (Laser lase : testCyto.getLasers()) {
-            HashMap<Laser, ArrayList<SelectionInfo>>> rankedProteins = ProteinSelector.laserFiltersToFPs(spectralMaps, lase);
-            System.out.println();
-            System.out.println();
-            System.out.println();
+            total.putAll(ProteinSelector.laserFiltersToFPs(spectralMaps, lase));
+
         }
 
+        ArrayList<SelectionInfo> selected = ProteinSelector.mishMashCombinatorics(total, 5);
+
+        for (SelectionInfo select : selected) {
+            
+            String name = select.rankedFluorophores.get(select.selectedIndex).getName();
+            System.out.println(name);
+        }
+        ProteinSelector.plotSelection(selected);
     }
 
 }

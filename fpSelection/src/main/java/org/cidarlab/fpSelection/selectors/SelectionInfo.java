@@ -5,6 +5,7 @@
  */
 package org.cidarlab.fpSelection.selectors;
 
+import java.util.ArrayList;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;

@@ -69,6 +69,7 @@ public class ProteinSelector {
             choiceInfo.selectedLaser = theLaser;
             choiceInfo.selectedDetector = aDetector;
             choiceInfo.rankedFluorophores = tempList;
+            choiceInfo.selectedIndex = 0;
 
             bestFPs.put(theLaser, choiceInfo);
         }
@@ -90,7 +91,7 @@ public class ProteinSelector {
 
     }
 
-    static void plotSelection(Laser theLaser, HashMap<Laser, HashMap<Detector, ArrayList<Fluorophore>>> rankedProteins) {
+    public static void plotSelection(ArrayList<SelectionInfo> info) {
         JavaPlot newPlot = new JavaPlot();
         newPlot.setTitle("Selected Proteins");
         newPlot.getAxis("x").setLabel("Wavelength (nm)");
@@ -99,41 +100,48 @@ public class ProteinSelector {
 
         PlotStyle myStyle = new PlotStyle(Style.LINES);
 
-        for (Map.Entry<Laser, HashMap<Detector, ArrayList<Fluorophore>>> entry : rankedProteins.entrySet()) {
-            for (Map.Entry<Detector, ArrayList<Fluorophore>> DFentry : entry.getValue().entrySet()) {
-                Fluorophore fp = DFentry.getValue().get(0);
-                //                Filter Midpoint as identifier               Fluorophore Name as suggestion
-                System.out.println(DFentry.getKey().getFilterMidpoint() + " : " + fp.getName());
-                System.out.println("% Leakage = " + fp.leakageCalc(DFentry.getKey()));
-                System.out.println("Avg. Intensity = " + fp.express(theLaser, DFentry.getKey()));
-                //Graph continuous line & attach name in legend
-                PointDataSet EMDataSet = (fp.makeEMDataSet(theLaser));
-                AbstractPlot emPlot = new DataSetPlot(EMDataSet);
-                emPlot.setTitle(fp.getName());
-                emPlot.setPlotStyle(myStyle);
+        for (SelectionInfo entry : info) {
 
-                newPlot.addPlot(emPlot);
+            Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
+            //                Filter Midpoint as identifier               Fluorophore Name as suggestion
+            
+            //Graph continuous line & attach name in legend
+            PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
+            AbstractPlot emPlot = new DataSetPlot(EMDataSet);
+            emPlot.setTitle(fp.getName());
+            emPlot.setPlotStyle(myStyle);
 
-                //Graph filter bounds
-                PointDataSet bounds = DFentry.getKey().drawBounds();
-                AbstractPlot boundsPlot = new DataSetPlot(bounds);
-                boundsPlot.setPlotStyle(myStyle);
+            newPlot.addPlot(emPlot);
 
-                newPlot.addPlot(boundsPlot);
-            }
+            //Graph filter bounds
+            PointDataSet bounds = entry.selectedDetector.drawBounds();
+            AbstractPlot boundsPlot = new DataSetPlot(bounds);
+            boundsPlot.setPlotStyle(myStyle);
 
-        }
+            newPlot.addPlot(boundsPlot);
+        
 
-        //Throw up in JFrame onto screen
-        JPlot graph = new JPlot(newPlot);
-        graph.plot();
-        graph.repaint();
+    }
 
-        JFrame frame = new JFrame("FP Spectrum");
-        frame.getContentPane().add(graph);
-        frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+    //Throw up in JFrame onto screen
+    JPlot graph = new JPlot(newPlot);
+
+    graph.plot ();
+
+    graph.repaint ();
+
+    JFrame frame = new JFrame("FP Spectrum");
+
+    frame.getContentPane ()
+
+    .add(graph);
+    frame.pack ();
+
+    frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+
+    frame.setVisible (
+
+true);
     }
 
     public static ArrayList<SelectionInfo> mishMashCombinatorics(HashMap<Laser, SelectionInfo> suggestions, int n) {
@@ -164,7 +172,7 @@ public class ProteinSelector {
         //After each loop of clipping, whichever had the most positive change stays clipped.
         //Positive change = sumSNR++
         double SNR;
-        
+
         //Pick the N best proteins.
         while (allInfo.size() > n) {
             SelectionInfo highestScore = iterateInfo.get(0);
@@ -194,7 +202,7 @@ public class ProteinSelector {
             sumSNR += highestScore.score;
 
         }
-        
+
         return allInfo;
     }
 
