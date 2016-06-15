@@ -7,7 +7,6 @@ package org.cidarlab.fpSelection.dom;
 
 import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
-import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
 
@@ -57,19 +56,32 @@ public String name;
         return dataSet;
     }
 
-    //Produces an averaged Riemann sum of emission values within a certain range of the spectrum.
+    //Produces an averaged left Riemann sum of emission values within a certain range of the spectrum.
     public double express(Laser theLaser, Detector theDetector) {
 
         if (!EXspectrum.containsKey((double)theLaser.wavelength)) {
             return 0;
         }
-        double multiplier = EXspectrum.get(theLaser.wavelength) / 100;
+        double multiplier = EXspectrum.get((double)theLaser.wavelength) / 100;
         double sum = 0;
         double min = theDetector.filterMidpoint - theDetector.filterWidth / 2;
         double max = min + theDetector.filterWidth;
 
+        //Get the least entry that has a key >= the parameter key or null if none exists.
         Map.Entry<Double, Double> previousEntry = EMspectrum.ceilingEntry(min);
+        if(previousEntry == null)
+        {
+            //nothing to iterate through.
+            return 0;
+        }
+        //Get the least entry that has a key > the parameter key or null if none exists.
         Map.Entry<Double, Double> startEntry = EMspectrum.higherEntry(previousEntry.getKey());
+        if(startEntry == null)
+        {
+            //nothing to iterate through
+            return 0;
+        }
+        
         for (Map.Entry<Double, Double> thisEntry : EMspectrum.tailMap(startEntry.getKey()).entrySet()) {
             double width = thisEntry.getKey() - previousEntry.getKey();
             double height = previousEntry.getValue() * multiplier;
@@ -82,7 +94,7 @@ public String name;
 
         //Average it to 0-100 by dividing by range
 
-        return sum / (theDetector.filterWidth);
+        return multiplier * sum / (theDetector.filterWidth);
 
     }
 
