@@ -27,10 +27,10 @@ import org.cidarlab.fpSelection.dom.Laser;
  */
 public class ProteinSelector {
 
-    //Given a Laser & Filters, Suggest List of Proteins
+    //Given a Laser & Filters, Suggest List of Proteins that works optimally for each filter
     //Suggest proteins based on a laser & filters
     //Works best for n >= 2;
-    public static HashMap<Laser, HashMap<Detector, Fluorophore>> laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser, double threshold) {
+    public static HashMap<Laser, SelectionInfo> laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser) {
 
         //Pull Detector objects out.
         LinkedList<Detector> listDetectors = new LinkedList<>();
@@ -41,9 +41,10 @@ public class ProteinSelector {
         }
 
         //Each Detector has a best fluorophore:
-        HashMap<Detector, Fluorophore> bestFP = new HashMap<>();
+        HashMap<Laser, SelectionInfo> bestFPs = new HashMap<>();
 
         ArrayList<Fluorophore> tempList;
+        SelectionInfo choiceInfo;
 
         //  For each filter, create list of proteins ranked in terms of expression.  
         for (Detector aDetector : listDetectors) {
@@ -63,12 +64,15 @@ public class ProteinSelector {
 
             tempList.sort(qCompare);
 
-            //Put into the rankedProteins hashmap
-            bestFP.put(aDetector, tempList.get(0));
-        }
+            //Put into the selectionInfo object, one for each channel
+            choiceInfo = new SelectionInfo();
+            choiceInfo.selectedLaser = theLaser;
+            choiceInfo.selectedDetector = aDetector;
+            choiceInfo.rankedFluorophores = tempList;
+            choiceInfo.selectedIndex = 0;
 
-        HashMap<Laser, HashMap<Detector, Fluorophore>> returnMap = new HashMap<>();
-        returnMap.put(theLaser, bestFP);
+            bestFPs.put(theLaser, choiceInfo);
+        }
 
         //After all of that, check noise intensity in other filters. If too large, move to next protein in filter's list.
         //
@@ -81,12 +85,13 @@ public class ProteinSelector {
         //
         //
         //
-        plotSelection(theLaser, returnMap);
-        return returnMap;
+//        I gotta fix this thing before we can use it >.>
+//        plotSelection(theLaser, returnMap);
+        return bestFPs;
 
     }
 
-    static void plotSelection(Laser theLaser, HashMap<Laser, HashMap<Detector, Fluorophore>> rankedProteins) {
+    public static void plotSelection(ArrayList<SelectionInfo> info) {
         JavaPlot newPlot = new JavaPlot();
         newPlot.setTitle("Selected Proteins");
         newPlot.getAxis("x").setLabel("Wavelength (nm)");
@@ -95,40 +100,136 @@ public class ProteinSelector {
 
         PlotStyle myStyle = new PlotStyle(Style.LINES);
 
-        for (Map.Entry<Laser, HashMap<Detector, Fluorophore>> entry : rankedProteins.entrySet()) {
-            for (Map.Entry<Detector, Fluorophore> DFentry : entry.getValue().entrySet()) {
-                Fluorophore fp = DFentry.getValue();
-                //                Filter Midpoint as identifier               Fluorophore Name as suggestion
-                System.out.println(DFentry.getKey().getFilterMidpoint() + " : " + fp.getName());
-                System.out.println("% Leakage = " + fp.leakageCalc(DFentry.getKey()));
-                System.out.println("Avg. Intensity = " + fp.express(theLaser, DFentry.getKey()));
-                //Graph continuous line & attach name in legend
-                PointDataSet EMDataSet = (fp.makeEMDataSet(theLaser));
-                AbstractPlot emPlot = new DataSetPlot(EMDataSet);
-                emPlot.setTitle(fp.getName());
-                emPlot.setPlotStyle(myStyle);
+        for (SelectionInfo entry : info) {
 
-                newPlot.addPlot(emPlot);
+            Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
+            //                Filter Midpoint as identifier               Fluorophore Name as suggestion
+            
+            //Graph continuous line & attach name in legend
+            PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
+            AbstractPlot emPlot = new DataSetPlot(EMDataSet);
+            emPlot.setTitle(fp.getName());
+            emPlot.setPlotStyle(myStyle);
 
-                //Graph filter bounds
-                PointDataSet bounds = DFentry.getKey().drawBounds();
-                AbstractPlot boundsPlot = new DataSetPlot(bounds);
-                boundsPlot.setPlotStyle(myStyle);
+            newPlot.addPlot(emPlot);
 
-                newPlot.addPlot(boundsPlot);
+            //Graph filter bounds
+            PointDataSet bounds = entry.selectedDetector.drawBounds();
+            AbstractPlot boundsPlot = new DataSetPlot(bounds);
+            boundsPlot.setPlotStyle(myStyle);
+
+            newPlot.addPlot(boundsPlot);
+        
+
+    }
+
+    //Throw up in JFrame onto screen
+    JPlot graph = new JPlot(newPlot);
+
+    graph.plot ();
+
+    graph.repaint ();
+
+    JFrame frame = new JFrame("FP Spectrum");
+
+    frame.getContentPane ()
+
+    .add(graph);
+    frame.pack ();
+
+    frame.setDefaultCloseOperation (JFrame.EXIT_ON_CLOSE);
+
+    frame.setVisible (
+
+true);
+    }
+
+    public static ArrayList<SelectionInfo> mishMashCombinatorics(HashMap<Laser, SelectionInfo> suggestions, int n) {
+        //Build list of things to check.
+        ArrayList<Laser> lasersToTest = new ArrayList<>();
+        ArrayList<Detector> filtersToCheck = new ArrayList<>();
+
+        for (Laser aLaser : suggestions.keySet()) {
+            lasersToTest.add(aLaser);
+            for (Detector aDetector : aLaser.getDetectors()) {
+                filtersToCheck.add(aDetector);
             }
+        }
+
+        double sumSNR = 0;
+        ArrayList<SelectionInfo> allInfo = new ArrayList<>();
+        ArrayList<SelectionInfo> iterateInfo = new ArrayList<>();
+
+        //Test each FP with the other lasers based on simple SNR, keep the best.
+        for (SelectionInfo info : suggestions.values()) {
+            allInfo.add(info);
+            iterateInfo.add(info);
+        }
+
+        sumSNR = calcSumSNR(allInfo);
+
+        //Start with all of the proteins, clip one by one and record how the SNR changes.
+        //After each loop of clipping, whichever had the most positive change stays clipped.
+        //Positive change = sumSNR++
+        double SNR;
+
+        //Pick the N best proteins.
+        while (allInfo.size() > n) {
+            SelectionInfo highestScore = iterateInfo.get(0);
+
+            for (SelectionInfo info : iterateInfo) {
+
+                //Remove the protein in question from the arraylist
+                allInfo.remove(info);
+
+                //Calculate the total SNR from that removal
+                SNR = calcSumSNR(allInfo);
+
+                //Add the protein back into the arraylist
+                allInfo.add(info);
+
+                //if removal positive, score should be positive since SNR should have increased
+                //The more positive the impact, the higher the score.
+                info.score = SNR - sumSNR;
+
+                if (info.score > highestScore.score) {
+                    highestScore = info;
+                }
+
+            }
+            iterateInfo.remove(highestScore);
+            allInfo.remove(highestScore);
+            sumSNR += highestScore.score;
 
         }
 
-        //Throw up in JFrame onto screen
-        JPlot graph = new JPlot(newPlot);
-        graph.plot();
-        graph.repaint();
+        return allInfo;
+    }
 
-        JFrame frame = new JFrame("FP Spectrum");
-        frame.getContentPane().add(graph);
-        frame.pack();
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
+    static double calcSumSNR(ArrayList<SelectionInfo> allInfo) {
+        double sumSNR = 0;
+
+        for (SelectionInfo info : allInfo) {
+
+            Fluorophore fp = info.rankedFluorophores.get(info.selectedIndex);
+
+            //signal is info expressing in it's own channel with it's own laser.
+            double signal = fp.express(info.selectedLaser, info.selectedDetector);
+            double noise = 0;
+
+            for (SelectionInfo otherInfo : allInfo) {
+                if (info == otherInfo) {
+                    continue;
+                } else {
+
+                    //noise is otherInfo's fluorophore expressing in info's channel with info's laser
+                    noise += otherInfo.rankedFluorophores.get(otherInfo.selectedIndex).express(info.selectedLaser, info.selectedDetector);
+
+                }
+            }
+            sumSNR += signal / noise;
+        }
+
+        return sumSNR;
     }
 }
