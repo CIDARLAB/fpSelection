@@ -52,7 +52,7 @@ public class ProteinSelector {
             qCompare.laser = theLaser;
             qCompare.detect = aDetector;
             qCompare.setDefaults();
-            qCompare.absolute = true;
+//            qCompare.absolute = true;
 
             tempList = new ArrayList<>();
 
@@ -96,27 +96,27 @@ public class ProteinSelector {
         PlotStyle myStyle = new PlotStyle(Style.LINES);
 
         for (Map.Entry<Laser, HashMap<Detector, Fluorophore>> entry : rankedProteins.entrySet()) {
-            Fluorophore fp = entry.getValue().get(0);
+            for (Map.Entry<Detector, Fluorophore> DFentry : entry.getValue().entrySet()) {
+                Fluorophore fp = DFentry.getValue();
+                //                Filter Midpoint as identifier               Fluorophore Name as suggestion
+                System.out.println(DFentry.getKey().getFilterMidpoint() + " : " + fp.getName());
+                System.out.println("% Leakage = " + fp.leakageCalc(DFentry.getKey()));
+                System.out.println("Avg. Intensity = " + fp.express(theLaser, DFentry.getKey()));
+                //Graph continuous line & attach name in legend
+                PointDataSet EMDataSet = (fp.makeEMDataSet(theLaser));
+                AbstractPlot emPlot = new DataSetPlot(EMDataSet);
+                emPlot.setTitle(fp.getName());
+                emPlot.setPlotStyle(myStyle);
 
-            //                Filter Midpoint as identifier               Fluorophore Name as suggestion
-            System.out.println(entry.getKey().getFilterMidpoint() + " : " + fp.getName());
-            System.out.println("% Leakage = " + fp.leakageCalc(entry.getKey()));
-            System.out.println("Avg. Intensity = " + fp.express(theLaser, entry.getKey()));
+                newPlot.addPlot(emPlot);
 
-            //Graph continuous line & attach name in legend
-            PointDataSet EMDataSet = (fp.makeEMDataSet(theLaser));
-            AbstractPlot emPlot = new DataSetPlot(EMDataSet);
-            emPlot.setTitle(fp.getName());
-            emPlot.setPlotStyle(myStyle);
+                //Graph filter bounds
+                PointDataSet bounds = DFentry.getKey().drawBounds();
+                AbstractPlot boundsPlot = new DataSetPlot(bounds);
+                boundsPlot.setPlotStyle(myStyle);
 
-            newPlot.addPlot(emPlot);
-
-            //Graph filter bounds
-            PointDataSet bounds = entry.getKey().drawBounds();
-            AbstractPlot boundsPlot = new DataSetPlot(bounds);
-            boundsPlot.setPlotStyle(myStyle);
-
-            newPlot.addPlot(boundsPlot);
+                newPlot.addPlot(boundsPlot);
+            }
 
         }
 

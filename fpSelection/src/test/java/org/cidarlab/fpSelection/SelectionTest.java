@@ -26,11 +26,11 @@ import org.cidarlab.fpSelection.selectors.ProteinSelector;
 public class SelectionTest {
 
     public static void main(String[] args) throws IOException {
-        File input = new File("src/main/resources/fp_spectra.csv");
-        HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
+//        File input = new File("src/main/resources/fp_spectra.csv");
+//        HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
 
-//        File input = new File("src/main/resources/ScrapedCSVs/");
-//        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
+        File input = new File("src/main/resources/Fluorophores.org/");
+        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
         File cyto = new File("src/main/resources/ex_fortessa.csv");
         Cytometer testCyto = fpFortessaParse.parseFortessa(cyto);
 
