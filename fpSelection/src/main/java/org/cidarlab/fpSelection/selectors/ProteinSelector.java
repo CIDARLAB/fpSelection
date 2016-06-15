@@ -36,7 +36,7 @@ public class ProteinSelector {
         LinkedList<Detector> listDetectors = new LinkedList<>();
 
         //Populate the array to prep for sorting
-        for (Detector eachDetector : theLaser.getDetectors()) { 
+        for (Detector eachDetector : theLaser.detectors) { 
             listDetectors.add(eachDetector);
         }
 
@@ -108,7 +108,7 @@ public class ProteinSelector {
             //Graph continuous line & attach name in legend
             PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
             AbstractPlot emPlot = new DataSetPlot(EMDataSet);
-            emPlot.setTitle(fp.getName());
+            emPlot.setTitle(fp.name);
             emPlot.setPlotStyle(myStyle);
 
             newPlot.addPlot(emPlot);
@@ -151,7 +151,7 @@ true);
 
         for (Laser aLaser : suggestions.keySet()) {
             lasersToTest.add(aLaser);
-            for (Detector aDetector : aLaser.getDetectors()) {
+            for (Detector aDetector : aLaser.detectors) {
                 filtersToCheck.add(aDetector);
             }
         }

@@ -40,7 +40,7 @@ public class SelectionTest {
 //        int n = scanner.nextInt();
 
         HashMap<Laser, SelectionInfo> total = new HashMap<>();
-        for (Laser lase : testCyto.getLasers()) {
+        for (Laser lase : testCyto.lasers) {
             total.putAll(ProteinSelector.laserFiltersToFPs(spectralMaps, lase));
 
         }
@@ -49,7 +49,7 @@ public class SelectionTest {
 
         for (SelectionInfo select : selected) {
             
-            String name = select.rankedFluorophores.get(select.selectedIndex).getName();
+            String name = select.rankedFluorophores.get(select.selectedIndex).name;
             System.out.println(name);
         }
         ProteinSelector.plotSelection(selected);

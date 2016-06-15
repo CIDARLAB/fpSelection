@@ -10,8 +10,6 @@ import com.panayotis.gnuplot.dataset.PointDataSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.TreeMap;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  *
@@ -19,9 +17,7 @@ import lombok.Setter;
  */
 public class Fluorophore {
 
-    @Getter
-    @Setter
-    private String name;
+public String name;
 
     private boolean isProtein = false;
 
@@ -41,7 +37,7 @@ public class Fluorophore {
     }
 
     public PointDataSet makeEMDataSet(Laser aLaser) {
-        if (!EXspectrum.containsKey((double) aLaser.getWavelength())) { 
+        if (!EXspectrum.containsKey((double) aLaser.wavelength)) { 
             PointDataSet dataSet = new PointDataSet();
 
             for (Map.Entry<Double, Double> entry : EMspectrum.entrySet()) {
@@ -51,7 +47,7 @@ public class Fluorophore {
             return dataSet;
 
         }
-        double multiplier = EXspectrum.get((double) aLaser.getWavelength());
+        double multiplier = EXspectrum.get((double) aLaser.wavelength);
         PointDataSet dataSet = new PointDataSet();
 
         for (Map.Entry<Double, Double> entry : EMspectrum.entrySet()) {
@@ -63,13 +59,13 @@ public class Fluorophore {
 
     //Produces an averaged Riemann sum of emission values within a certain range of the spectrum.
     public double express(Laser theLaser, Detector theDetector) {
-        if (!EXspectrum.containsKey((double)theLaser.getWavelength())) {
+        if (!EXspectrum.containsKey((double)theLaser.wavelength)) {
             return 0;
         }
-        double multiplier = EXspectrum.get(theLaser.getWavelength()) / 100;
+        double multiplier = EXspectrum.get(theLaser.wavelength) / 100;
         double sum = 0;
-        double min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth() / 2;
-        double max = min + theDetector.getFilterWidth();
+        double min = theDetector.filterMidpoint - theDetector.filterWidth / 2;
+        double max = min + theDetector.filterWidth;
 
         Map.Entry<Double,Double> previousEntry = EMspectrum.ceilingEntry(min);
         Map.Entry<Double,Double> startEntry = EMspectrum.higherEntry(previousEntry.getKey());
@@ -83,15 +79,15 @@ public class Fluorophore {
         }
 
         //Average it to 0-100 by dividing by range
-        return sum / (theDetector.getFilterWidth());
+        return sum / (theDetector.filterWidth);
     }
 
     //Calculates the percentage of fluorescence generated outside of the filter desired.
     public double leakageCalc(Detector theDetector) {
         double total = 0;
         double sumOutside = 0;
-        int min = theDetector.getFilterMidpoint() - theDetector.getFilterWidth() / 2;
-        int max = theDetector.getFilterWidth() + min;
+        int min = theDetector.filterMidpoint - theDetector.filterWidth / 2;
+        int max = theDetector.filterWidth + min;
 
         for (Map.Entry<Double, Double> entry : EMspectrum.entrySet()) {
             //If within bounds, do nothing

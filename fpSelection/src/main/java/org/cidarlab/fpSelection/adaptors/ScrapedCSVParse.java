@@ -18,6 +18,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.TreeMap;
 import javax.swing.JFrame;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 
@@ -51,7 +52,7 @@ public class ScrapedCSVParse {
         for (File next : listOfFiles) {
             String name = next.getName().replace(".csv", "");
             fp = new Fluorophore();
-            fp.setName(name);
+            fp.name = name;
 
             TreeMap<Double, Double> EMSpectrum = new TreeMap<>();
             TreeMap<Double, Double> EXSpectrum = new TreeMap<>();
@@ -85,7 +86,7 @@ public class ScrapedCSVParse {
             fp.EMspectrum = EMSpectrum;
             fp.EXspectrum = EXSpectrum;
             
-            masterList.put(fp.getName(), fp);
+            masterList.put(fp.name, fp);
 
 //            JavaPlot plotPls = new JavaPlot();
 //            AbstractPlot styled = new DataSetPlot(fp.makeEMDataSet());

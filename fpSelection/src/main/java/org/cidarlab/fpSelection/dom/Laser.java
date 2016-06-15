@@ -6,8 +6,6 @@
 package org.cidarlab.fpSelection.dom;
 
 import java.util.LinkedList;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  *
@@ -15,33 +13,19 @@ import lombok.Setter;
  */
 public class Laser {
     
-    @Getter
-    @Setter
-    private String name;
+public String name;
     
-    @Getter
-    @Setter
-    private String type;
+public String type;
     
-    @Getter
-    @Setter
-    private int wavelength;
+public int wavelength;
     
-    @Getter
-    @Setter
-    private int power;
+public int power;
     
-    @Getter
-    @Setter
-    private String detectorArray;
+public String detectorArray;
     
-    @Getter
-    @Setter
-    private int position;
+public int position;
     
-    @Getter
-    @Setter
-    private LinkedList<Detector> detectors;
+public LinkedList<Detector> detectors;
     
     //Default initialization
     public Laser()

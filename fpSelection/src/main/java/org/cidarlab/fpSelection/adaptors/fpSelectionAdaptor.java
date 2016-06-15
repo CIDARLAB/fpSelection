@@ -57,7 +57,7 @@ public class fpSelectionAdaptor {
             Fluorophore f = new Fluorophore(); 
 
             spectraTrimmedStrings[i] = p.matcher(spectra[i]).replaceAll(""); //remove above regex pattern
-            f.setName(spectraTrimmedStrings[i]);
+            f.name = spectraTrimmedStrings[i];
             f.EMspectrum = new TreeMap<>();
             f.EXspectrum = new TreeMap<>();
             spectralMaps.put(spectraTrimmedStrings[i], f);
@@ -103,7 +103,7 @@ public class fpSelectionAdaptor {
         myPlotStyle.setLineWidth(1);
 
         Laser newLaser = new Laser();
-        newLaser.setWavelength(500);
+        newLaser.wavelength = 500;
         
         //myPlotStyle.setStyle(Smooth.ACSPLINES);
         //javaPlot.set("smooth", "csplines");

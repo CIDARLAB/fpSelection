@@ -7,8 +7,6 @@ package org.cidarlab.fpSelection.dom;
 
 import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  *
@@ -16,25 +14,15 @@ import lombok.Setter;
  */
 public class Detector {
     
-    @Getter
-    @Setter
-    private String identifier;
+public String identifier;
     
-    @Getter
-    @Setter
-    private int channel;
+public int channel;
     
-    @Getter
-    @Setter
-    private int mirror;
+public int mirror;
     
-    @Getter
-    @Setter
-    private int filterMidpoint;
+public int filterMidpoint;
     
-    @Getter
-    @Setter
-    private int filterWidth;
+public int filterWidth;
     
     public Detector()
     {
