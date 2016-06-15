@@ -53,12 +53,6 @@
     
     <dependencies>
         <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <version>1.16.6</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>de.h2b.java.lib.pa-toolbox</groupId>
             <artifactId>pa-toolbox-extern-javaplot</artifactId>
             <version>1.1.0</version>

@@ -28,26 +28,26 @@ public class fpFortessaParse {
         Cytometer shinyCytometer;
         shinyCytometer = parseFortessa(input);
 
-        System.out.println("Sheath Pressure: " + shinyCytometer.getSheathPressure()); 
-        System.out.println("Nozzle Size: " + shinyCytometer.getNozzleSize());
-        System.out.println("Window Extension: " + shinyCytometer.getWindowExt());
+        System.out.println("Sheath Pressure: " + shinyCytometer.sheathPressure); 
+        System.out.println("Nozzle Size: " + shinyCytometer.nozzleSize);
+        System.out.println("Window Extension: " + shinyCytometer.windowExt);
 
-        LinkedList<Laser> lasers = shinyCytometer.getLasers();
+        LinkedList<Laser> lasers = shinyCytometer.lasers;
         LinkedList<Detector> detectors;
         for (int i = 0; i < lasers.size(); i++) {
             Laser thisLaser = lasers.get(i);
-            System.out.println("Laser " + thisLaser.getPosition() + ": " + thisLaser.getName());
+            System.out.println("Laser " + thisLaser.position + ": " + thisLaser.name);
 
-            System.out.println(thisLaser.getType());
-            System.out.println(thisLaser.getWavelength());
-            System.out.println(thisLaser.getPower());
-            System.out.println(thisLaser.getDetectorArray());
-            detectors = thisLaser.getDetectors();
+            System.out.println(thisLaser.type);
+            System.out.println(thisLaser.wavelength);
+            System.out.println(thisLaser.power);
+            System.out.println(thisLaser.detectorArray);
+            detectors = thisLaser.detectors;
 
             for (int j = 0; j < detectors.size(); j++) {
                 Detector thisDetector = detectors.get(j);
 
-                System.out.println(thisDetector.getIdentifier() + ": " + thisDetector.getChannel() + " " + thisDetector.getMirror() + " " + thisDetector.getFilterMidpoint() + " " + thisDetector.getFilterWidth());
+                System.out.println(thisDetector.identifier + ": " + thisDetector.channel + " " + thisDetector.mirror + " " + thisDetector.filterMidpoint + " " + thisDetector.filterWidth);
             }
             System.out.println("");
         }
@@ -76,15 +76,15 @@ public class fpFortessaParse {
 
             if (category.equalsIgnoreCase("Sheath Pressure")) {
                 System.out.println("Saving system settings...");
-                configurations.setSheathPressure(Integer.parseInt(fields[1]));
+                configurations.sheathPressure = Integer.parseInt(fields[1]);
 
                 //Set Nozzle Size on next line
                 fields = reader.readLine().split(splitter);
-                configurations.setNozzleSize(Integer.parseInt(fields[1]));
+                configurations.nozzleSize = Integer.parseInt(fields[1]);
 
                 //Set Window Extension on next line
                 fields = reader.readLine().split(splitter);
-                configurations.setWindowExt(Integer.parseInt(fields[1]));
+                configurations.windowExt = Integer.parseInt(fields[1]);
             }
             if (category.equalsIgnoreCase("Laser Name")) {
                 //Next line should be first laser
@@ -103,27 +103,27 @@ public class fpFortessaParse {
 
             //Laser settings - functions are descriptive enough.
             Laser newLaser = new Laser();
-            newLaser.setName(fields[0]);
-            newLaser.setType(fields[1]);
-            newLaser.setWavelength(Integer.parseInt(fields[2]));
-            newLaser.setPower(Integer.parseInt(fields[3]));
-            newLaser.setDetectorArray(fields[4]);
-            newLaser.setPosition(Integer.parseInt(fields[12]));
+            newLaser.name = fields[0];
+            newLaser.type = fields[1];
+            newLaser.wavelength = Integer.parseInt(fields[2]);
+            newLaser.power = Integer.parseInt(fields[3]);
+            newLaser.detectorArray = fields[4];
+            newLaser.position = Integer.parseInt(fields[12]);
 
             //Receive all of the detector settings associated with the above Laser.
             do {
 
                 if (!end) {
                     Detector newDetector = new Detector();
-                    newDetector.setIdentifier(fields[5]);
-                    newDetector.setChannel(Integer.parseInt(fields[6]));
+                    newDetector.identifier = fields[5];
+                    newDetector.channel = Integer.parseInt(fields[6]);
 
                     //Mirror in the form of "### LP"
                     //parse substring before the " LP"
                     if (!fields[7].isEmpty()) {
-                        newDetector.setMirror(Integer.parseInt(fields[7].substring(0, (fields[7].length() - 3))));
+                        newDetector.mirror = Integer.parseInt(fields[7].substring(0, (fields[7].length() - 3)));
                     } else {
-                        newDetector.setMirror(0);
+                        newDetector.mirror = 0;
 
                         //end of this laser's detectors. If I check using fields[], I will go out of bounds as anything past fields[5] does not exist.
                         end = true;
@@ -132,9 +132,9 @@ public class fpFortessaParse {
                     int slash = fields[8].indexOf("/");
 
                     //parse substring before the '/' to get the midpoint
-                    newDetector.setFilterMidpoint(Integer.parseInt(fields[8].substring(0, slash)));
+                    newDetector.filterMidpoint = Integer.parseInt(fields[8].substring(0, slash));
                     //parse substring after the '/' and before the " BP"
-                    newDetector.setFilterWidth(Integer.parseInt(fields[8].substring(slash + 1, (fields[8].length() - 3))));
+                    newDetector.filterWidth = Integer.parseInt(fields[8].substring(slash + 1, (fields[8].length() - 3)));
 
                     //Add detector to laser and move forward
                     newLaser.addDetector(newDetector);

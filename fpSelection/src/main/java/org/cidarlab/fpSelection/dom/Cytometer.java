@@ -6,8 +6,6 @@
 package org.cidarlab.fpSelection.dom;
 
 import java.util.LinkedList;
-import lombok.Getter;
-import lombok.Setter;
 
 /**
  *
@@ -18,21 +16,13 @@ public class Cytometer {
 //    Lombok helps produce functions to minimize the excess code we write. If you look at the Navigator in netbeans, we now have a bunch of useful get/set functions.
     
     
-    @Getter
-    @Setter
-    private int sheathPressure;
+    public int sheathPressure;
     
-    @Getter
-    @Setter
-    private int nozzleSize;
+    public int nozzleSize;
     
-    @Getter
-    @Setter
-    private int windowExt;
+    public int windowExt;
     
-    @Getter
-    @Setter
-    private LinkedList<Laser> lasers;
+    public LinkedList<Laser> lasers;
     
     public Cytometer()
     {
