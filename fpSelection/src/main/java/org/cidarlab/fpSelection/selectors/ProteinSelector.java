@@ -99,14 +99,6 @@ public class ProteinSelector {
         ArrayList<Laser> lazies = new ArrayList<>();
         ArrayList<JavaPlot> plotsies = new ArrayList<>();
 
-        PlotStyle FPStyle = new PlotStyle(Style.BOXES);
-//        FillStyle transFill = new FillStyle(FillStyle.Fill.SOLID);
-//        transFill.setDensity(.05f);
-//        transFill.setPattern(1);
-//        FPStyle.setFill(transFill);
-        
-        PlotStyle lineStyle = new PlotStyle(Style.LINES);
-
         for (SelectionInfo entry : info) {
             if (!lazies.contains(entry.selectedLaser)) {
                 lazies.add(entry.selectedLaser);
@@ -116,6 +108,10 @@ public class ProteinSelector {
                 newPlot.getAxis("x").setLabel("Wavelength (nm)");
                 newPlot.getAxis("y").setLabel("Intensity (%)");
                 newPlot.getAxis("y").setBoundaries(0, 125);
+                newPlot.set("terminal","png transparent truecolor nocrop enhanced size 700,500 font 'arial,8'");
+                newPlot.set("style fill", "transparent solid 0.3");
+                newPlot.set("style data", "lines");
+                newPlot.set("style data filledcurves", "x1");
 
                 plotsies.add(newPlot);
 
@@ -126,24 +122,26 @@ public class ProteinSelector {
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
-                emPlot.setPlotStyle(FPStyle);
 
                 newPlot.addPlot(emPlot);
 
                 PointDataSet noiseDataSet = (entry.makeDataSet());
                 AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
                 noisePlot.setTitle("Noise from other Laser FPs");
-                noisePlot.setPlotStyle(FPStyle);
+                noisePlot.set("fs","transparent solid 0.1 noborder");
 
                 newPlot.addPlot(noisePlot);
 
                 //Graph filter bounds
+                PlotStyle ps = new PlotStyle(Style.LINES);
                 PointDataSet bounds = entry.selectedDetector.drawBounds();
                 AbstractPlot boundsPlot = new DataSetPlot(bounds);
+                boundsPlot.setPlotStyle(ps);
                 boundsPlot.setTitle("");
-                boundsPlot.setPlotStyle(lineStyle);
 
                 newPlot.addPlot(boundsPlot);
+                String something = newPlot.getCommands();
+                String space = "gimme some";
 
             } else {
                 int index = lazies.indexOf(entry.selectedLaser);
@@ -156,15 +154,15 @@ public class ProteinSelector {
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
-                emPlot.setPlotStyle(FPStyle);
 
                 plot.addPlot(emPlot);
 
                 //Graph filter bounds
+                PlotStyle ps = new PlotStyle(Style.LINES);
                 PointDataSet bounds = entry.selectedDetector.drawBounds();
                 AbstractPlot boundsPlot = new DataSetPlot(bounds);
+                boundsPlot.setPlotStyle(ps);
                 boundsPlot.setTitle("");
-                boundsPlot.setPlotStyle(lineStyle);
 
                 plot.addPlot(boundsPlot);
 
