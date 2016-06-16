@@ -12,6 +12,12 @@ package org.cidarlab.fpSelection.GUI;
 import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
+import com.panayotis.gnuplot.plot.AbstractPlot;
+import com.panayotis.gnuplot.plot.DataSetPlot;
+import com.panayotis.gnuplot.style.FillStyle;
+import com.panayotis.gnuplot.style.PlotColor;
+import com.panayotis.gnuplot.style.PlotStyle;
+import com.panayotis.gnuplot.style.Style;
 import com.panayotis.gnuplot.swing.JPlot;
 import com.panayotis.gnuplot.terminal.ImageTerminal;
 import java.awt.FlowLayout;
@@ -53,15 +59,29 @@ public class javaplotSandbox {
 
         //Plot testing PointDataSet
         PointDataSet myDataSet = new PointDataSet();
-        for(double i = -5; i < 5; i += .1)
+        for(double i = -15; i < 15; i += .1)
         {
-            myDataSet.add(new Point(i,i*i));
+            myDataSet.add(new Point(i,1/(i*i+1)));
         }
         
-        myPlot.addPlot(myDataSet);
+        AbstractPlot data = new DataSetPlot(myDataSet);
+        data.setTitle("");
+        
+        PlotStyle newStyle = new PlotStyle(Style.LINES);
+        newStyle.setLineWidth(1);
+        FillStyle fill = new FillStyle();
+        fill.setStyle(FillStyle.Fill.SOLID);
+        fill.setDensity(1);
+        
+        newStyle.setFill(fill);
+        
+        data.setPlotStyle(newStyle);
         
         
-        myPlot.addPlot("sin(x)");
+        
+        myPlot.addPlot(data);
+//        
+//        myPlot.addPlot("sin(x)");
 
         //Commands for setting up dimensions and labeling.
         myPlot.setTitle("Test Plot", "Arial", 14);

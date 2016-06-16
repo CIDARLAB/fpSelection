@@ -9,6 +9,7 @@ import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.plot.AbstractPlot;
 import com.panayotis.gnuplot.plot.DataSetPlot;
+import com.panayotis.gnuplot.style.FillStyle;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
 import com.panayotis.gnuplot.swing.JPlot;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
+import java.util.TreeMap;
 import javax.swing.JFrame;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
@@ -36,15 +38,14 @@ public class ProteinSelector {
         LinkedList<Detector> listDetectors = new LinkedList<>();
 
         //Populate the array to prep for sorting
-
-        for (Detector eachDetector : theLaser.detectors) { 
+        for (Detector eachDetector : theLaser.detectors) {
 
             listDetectors.add(eachDetector);
         }
 
         //Each Detector has a best fluorophore:
         ArrayList<SelectionInfo> bestFPs = new ArrayList<>();
-        
+
         ArrayList<Fluorophore> tempList;
         SelectionInfo choiceInfo;
 
@@ -72,6 +73,7 @@ public class ProteinSelector {
             choiceInfo.selectedDetector = aDetector;
             choiceInfo.rankedFluorophores = tempList;
             choiceInfo.selectedIndex = 0;
+            choiceInfo.noise = new TreeMap<>();
 
             bestFPs.add(choiceInfo);
         }
@@ -97,7 +99,13 @@ public class ProteinSelector {
         ArrayList<Laser> lazies = new ArrayList<>();
         ArrayList<JavaPlot> plotsies = new ArrayList<>();
 
-        PlotStyle myStyle = new PlotStyle(Style.LINES);
+        PlotStyle FPStyle = new PlotStyle(Style.BOXES);
+//        FillStyle transFill = new FillStyle(FillStyle.Fill.SOLID);
+//        transFill.setDensity(.05f);
+//        transFill.setPattern(1);
+//        FPStyle.setFill(transFill);
+        
+        PlotStyle lineStyle = new PlotStyle(Style.LINES);
 
         for (SelectionInfo entry : info) {
             if (!lazies.contains(entry.selectedLaser)) {
@@ -111,22 +119,29 @@ public class ProteinSelector {
 
                 plotsies.add(newPlot);
 
-
                 Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
-                System.out.println(fp.name + " : " + fp.express(entry.selectedLaser, entry.selectedDetector));
+                System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
 
                 //Graph continuous line & attach name in legend
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
-                emPlot.setPlotStyle(myStyle);
+                emPlot.setPlotStyle(FPStyle);
 
                 newPlot.addPlot(emPlot);
+
+                PointDataSet noiseDataSet = (entry.makeDataSet());
+                AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
+                noisePlot.setTitle("Noise from other Laser FPs");
+                noisePlot.setPlotStyle(FPStyle);
+
+                newPlot.addPlot(noisePlot);
 
                 //Graph filter bounds
                 PointDataSet bounds = entry.selectedDetector.drawBounds();
                 AbstractPlot boundsPlot = new DataSetPlot(bounds);
-                boundsPlot.setPlotStyle(myStyle);
+                boundsPlot.setTitle("");
+                boundsPlot.setPlotStyle(lineStyle);
 
                 newPlot.addPlot(boundsPlot);
 
@@ -135,20 +150,21 @@ public class ProteinSelector {
                 JavaPlot plot = plotsies.get(index);
 
                 Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
-                System.out.println(fp.name + " SNR : " + entry.SNR);
+                System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
 
                 //Graph continuous line & attach name in legend
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
-                emPlot.setPlotStyle(myStyle);
+                emPlot.setPlotStyle(FPStyle);
 
                 plot.addPlot(emPlot);
 
                 //Graph filter bounds
                 PointDataSet bounds = entry.selectedDetector.drawBounds();
                 AbstractPlot boundsPlot = new DataSetPlot(bounds);
-                boundsPlot.setPlotStyle(myStyle);
+                boundsPlot.setTitle("");
+                boundsPlot.setPlotStyle(lineStyle);
 
                 plot.addPlot(boundsPlot);
 
@@ -181,6 +197,52 @@ public class ProteinSelector {
         for (SelectionInfo info : suggestions) {
             allInfo.add(info);
             iterateInfo.add(info);
+        }
+
+        boolean duplicates = true;
+        ArrayList<SelectionInfo> removes = new ArrayList<>();
+        while (duplicates) {
+            duplicates = false;
+
+            for (SelectionInfo info : iterateInfo) {
+
+                Fluorophore fp1 = info.rankedFluorophores.get(info.selectedIndex);
+                for (SelectionInfo otherInfo : allInfo) {
+                    Fluorophore fp2 = otherInfo.rankedFluorophores.get(otherInfo.selectedIndex);
+
+                    //if the same FP is chosen 
+                    if (fp1 == fp2 && info.selectedDetector != otherInfo.selectedDetector) {
+
+                        if (fp1.express(info.selectedLaser, info.selectedDetector) > fp2.express(otherInfo.selectedLaser, otherInfo.selectedDetector)) {
+                            if (otherInfo.rankedFluorophores.size() - 1 == otherInfo.selectedIndex) {
+                                removes.add(otherInfo);
+                                continue;
+                            } else {
+
+                                otherInfo.selectedIndex++;
+                            }
+                        } else if (info.rankedFluorophores.size() - 1 == info.selectedIndex) {
+                            removes.add(info);
+                            continue;
+                        } else {
+
+                            info.selectedIndex++;
+                        }
+
+                        duplicates = true;
+                    }
+
+                }
+
+            }
+        }
+        for (SelectionInfo info : removes) {
+            if (iterateInfo.contains(info)) {
+                iterateInfo.remove(info);
+            }
+            if (allInfo.contains(info)) {
+                allInfo.remove(info);
+            }
         }
 
         sumSNR = calcSumSNR(allInfo);
@@ -219,6 +281,8 @@ public class ProteinSelector {
             sumSNR += highestScore.score;
 
         }
+        generateNoise(allInfo);
+        calcSumSNR(allInfo);
 
         return allInfo;
     }
@@ -237,17 +301,54 @@ public class ProteinSelector {
             for (SelectionInfo otherInfo : allInfo) {
                 if (info == otherInfo) {
                     continue;
-                } else {
-
-                    //noise is otherInfo's fluorophore expressing in info's channel with info's laser
-                    noise += otherInfo.rankedFluorophores.get(otherInfo.selectedIndex).express(info.selectedLaser, info.selectedDetector);
-
                 }
+
+                //noise is otherInfo's fluorophore expressing in info's channel with info's laser
+                Fluorophore noiseFP = otherInfo.rankedFluorophores.get(otherInfo.selectedIndex);
+                noise += noiseFP.express(info.selectedLaser, info.selectedDetector);
+                
+
             }
-            info.SNR = signal/noise;
+            info.SNR = signal / noise;
             sumSNR += info.SNR;
         }
 
         return sumSNR;
     }
+
+    static void generateNoise(ArrayList<SelectionInfo> selected) {
+        //noise is otherInfo's fluorophore expressing in info's channel with info's laser
+        for (SelectionInfo info : selected) {
+            //in case something got in there
+            info.noise.clear();
+
+            for (SelectionInfo otherInfo : selected) {
+                if (info.selectedLaser == otherInfo.selectedLaser) {
+                    continue;
+                }
+
+                Fluorophore noiseFp = otherInfo.rankedFluorophores.get(otherInfo.selectedIndex);
+
+                if (noiseFp.EXspectrum.containsKey((double) info.selectedLaser.wavelength)) {
+                    //Get a decimal of how excited the noiseFPs are
+                    double multiplier = noiseFp.EXspectrum.get((double) info.selectedLaser.wavelength) / 100;
+
+                    //Add the entire noise graph
+                    for (Map.Entry<Double, Double> entry : noiseFp.EMspectrum.entrySet()) {
+                        double addVal = entry.getValue() * multiplier;
+
+                        if (info.noise.containsKey(entry.getKey())) {
+                            //current amount of noise on point
+                            double currentVal = info.noise.get(entry.getKey());
+
+                            info.noise.put(entry.getKey(), (currentVal + addVal));
+                        } else {
+                            info.noise.put(entry.getKey(), addVal);
+                        }
+                    }
+                }
+            }
+        }
+    }
+
 }

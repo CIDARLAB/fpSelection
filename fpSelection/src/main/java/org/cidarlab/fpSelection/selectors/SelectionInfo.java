@@ -5,7 +5,11 @@
  */
 package org.cidarlab.fpSelection.selectors;
 
+import com.panayotis.gnuplot.dataset.Point;
+import com.panayotis.gnuplot.dataset.PointDataSet;
 import java.util.ArrayList;
+import java.util.Map;
+import java.util.TreeMap;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
@@ -23,4 +27,18 @@ public class SelectionInfo {
     public int selectedIndex;
     public double score;
     public double SNR;
+    
+    public TreeMap<Double, Double> noise;
+    
+    public PointDataSet makeDataSet()
+    {
+        PointDataSet dataSet = new PointDataSet();
+
+        for (Map.Entry<Double, Double> entry : noise.entrySet()) {
+
+            dataSet.add(new Point(entry.getKey(), entry.getValue()));
+        }
+        return dataSet;
+    }
+    
 }

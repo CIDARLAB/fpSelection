@@ -94,7 +94,7 @@ public String name;
 
         //Average it to 0-100 by dividing by range
 
-        return multiplier * sum / (theDetector.filterWidth);
+        return sum / (theDetector.filterWidth);
 
     }
 

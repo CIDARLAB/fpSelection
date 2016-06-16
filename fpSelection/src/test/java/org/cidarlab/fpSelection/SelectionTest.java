@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
+import javax.swing.JOptionPane;
 import static org.cidarlab.fpSelection.adaptors.ScrapedCSVParse.generateFPs;
 import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
 import static org.cidarlab.fpSelection.adaptors.fpSelectionAdaptor.uploadFluorescenceSpectrums;
@@ -38,7 +39,8 @@ public class SelectionTest {
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Give an integer n for the number of you would like: ");
 //        int n = scanner.nextInt();
-
+        String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
+        int n = Integer.parseInt(numString);
 
         ArrayList<SelectionInfo> total = new ArrayList<>();
         for (Laser lase : testCyto.lasers) {
@@ -46,7 +48,7 @@ public class SelectionTest {
 
         }
         //Prune the arrayList of the worst FPs until the size of the ArrayList is equal to 'n'
-        ArrayList<SelectionInfo> selected = ProteinSelector.mishMashCombinatorics(total, 4);
+        ArrayList<SelectionInfo> selected = ProteinSelector.mishMashCombinatorics(total, n);
         
 
         ProteinSelector.plotSelection(selected);
