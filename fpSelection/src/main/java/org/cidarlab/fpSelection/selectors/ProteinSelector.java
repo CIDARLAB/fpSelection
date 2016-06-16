@@ -56,15 +56,31 @@ public class ProteinSelector {
             qCompare.laser = theLaser;
             qCompare.detect = aDetector;
             qCompare.setDefaults();
-//            qCompare.absolute = true;
 
             tempList = new ArrayList<>();
+            int threshold = 70;
 
-            for (Map.Entry<String, Fluorophore> entry : masterList.entrySet()) {
-                Fluorophore value = entry.getValue();
-                tempList.add(value);
+            while (threshold > 40 && tempList.size() < 5) {
+                threshold--;
+
+                for (Map.Entry<String, Fluorophore> entry : masterList.entrySet()) {
+                    Fluorophore value = entry.getValue();
+                    if (theLaser.name.contains("Yellow-Green") && aDetector.filterMidpoint == 780) {
+
+                        System.out.println(value.name + " : " + value.express(theLaser, aDetector));
+                    }
+
+                    if (value.express(theLaser, aDetector) < threshold) {
+                        continue;
+                    } else {
+
+                        tempList.add(value);
+                    }
+                }
             }
-
+            if (tempList.isEmpty()) {
+                continue;
+            }
             tempList.sort(qCompare);
 
             //Put into the selectionInfo object, one for each channel
@@ -106,9 +122,10 @@ public class ProteinSelector {
                 JavaPlot newPlot = new JavaPlot();
                 newPlot.setTitle(entry.selectedLaser.name);
                 newPlot.getAxis("x").setLabel("Wavelength (nm)");
+                newPlot.getAxis("x").setBoundaries(300, 900);
                 newPlot.getAxis("y").setLabel("Intensity (%)");
                 newPlot.getAxis("y").setBoundaries(0, 125);
-                newPlot.set("terminal","png transparent truecolor nocrop enhanced size 700,500 font 'arial,8'");
+                newPlot.set("terminal", "png transparent truecolor nocrop enhanced size 700,500 font 'arial,8'");
                 newPlot.set("style fill", "transparent solid 0.3");
                 newPlot.set("style data", "lines");
                 newPlot.set("style data filledcurves", "x1");
@@ -128,7 +145,7 @@ public class ProteinSelector {
                 PointDataSet noiseDataSet = (entry.makeDataSet());
                 AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
                 noisePlot.setTitle("Noise from other Laser FPs");
-                noisePlot.set("fs","transparent solid 0.1 noborder");
+                noisePlot.set("fs", "transparent solid 0.2 noborder");
 
                 newPlot.addPlot(noisePlot);
 
@@ -199,6 +216,7 @@ public class ProteinSelector {
 
         boolean duplicates = true;
         ArrayList<SelectionInfo> removes = new ArrayList<>();
+
         while (duplicates) {
             duplicates = false;
 
@@ -211,7 +229,8 @@ public class ProteinSelector {
                     //if the same FP is chosen 
                     if (fp1 == fp2 && info.selectedDetector != otherInfo.selectedDetector) {
 
-                        if (fp1.express(info.selectedLaser, info.selectedDetector) > fp2.express(otherInfo.selectedLaser, otherInfo.selectedDetector)) {
+                        //if true, keep info. False, keep otherInfo
+                        if (ProteinComparator.dupeCompare(info, otherInfo, ProteinComparator.compareTypes.Brightness, true)) {
                             if (otherInfo.rankedFluorophores.size() - 1 == otherInfo.selectedIndex) {
                                 removes.add(otherInfo);
                                 continue;
@@ -234,6 +253,7 @@ public class ProteinSelector {
 
             }
         }
+
         for (SelectionInfo info : removes) {
             if (iterateInfo.contains(info)) {
                 iterateInfo.remove(info);
@@ -304,7 +324,6 @@ public class ProteinSelector {
                 //noise is otherInfo's fluorophore expressing in info's channel with info's laser
                 Fluorophore noiseFP = otherInfo.rankedFluorophores.get(otherInfo.selectedIndex);
                 noise += noiseFP.express(info.selectedLaser, info.selectedDetector);
-                
 
             }
             info.SNR = signal / noise;
@@ -330,6 +349,7 @@ public class ProteinSelector {
                 if (noiseFp.EXspectrum.containsKey((double) info.selectedLaser.wavelength)) {
                     //Get a decimal of how excited the noiseFPs are
                     double multiplier = noiseFp.EXspectrum.get((double) info.selectedLaser.wavelength) / 100;
+                    System.out.println(multiplier);
 
                     //Add the entire noise graph
                     for (Map.Entry<Double, Double> entry : noiseFp.EMspectrum.entrySet()) {

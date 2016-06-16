@@ -85,6 +85,8 @@ public String name;
         for (Map.Entry<Double, Double> thisEntry : EMspectrum.tailMap(startEntry.getKey()).entrySet()) {
             double width = thisEntry.getKey() - previousEntry.getKey();
             double height = previousEntry.getValue() * multiplier;
+            previousEntry = thisEntry;
+            
             sum += width * height;
 
             if (thisEntry.getKey() >= max) {
