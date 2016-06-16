@@ -113,24 +113,26 @@ public class ProteinSelector {
 
     public static void plotSelection(ArrayList<SelectionInfo> info) {
         ArrayList<Laser> lazies = new ArrayList<>();
-        ArrayList<JavaPlot> plotsies = new ArrayList<>();
-
+        JavaPlot newPlot = new JavaPlot();
+        boolean first = true;
         for (SelectionInfo entry : info) {
             if (!lazies.contains(entry.selectedLaser)) {
                 lazies.add(entry.selectedLaser);
 
-                JavaPlot newPlot = new JavaPlot();
+                if (first) first = false;
+                else newPlot.newGraph();
+                
                 newPlot.setTitle(entry.selectedLaser.name);
                 newPlot.getAxis("x").setLabel("Wavelength (nm)");
                 newPlot.getAxis("x").setBoundaries(300, 900);
                 newPlot.getAxis("y").setLabel("Intensity (%)");
                 newPlot.getAxis("y").setBoundaries(0, 125);
-                newPlot.set("terminal", "png transparent truecolor nocrop enhanced size 700,500 font 'arial,8'");
+
+                newPlot.set("terminal","png transparent truecolor nocrop enhanced size 1200,600 font 'arial,7'");
                 newPlot.set("style fill", "transparent solid 0.3");
                 newPlot.set("style data", "lines");
                 newPlot.set("style data filledcurves", "x1");
-
-                plotsies.add(newPlot);
+                newPlot.set("key","font ',8'");
 
                 Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
                 System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
@@ -157,12 +159,8 @@ public class ProteinSelector {
                 boundsPlot.setTitle("");
 
                 newPlot.addPlot(boundsPlot);
-                String something = newPlot.getCommands();
-                String space = "gimme some";
 
             } else {
-                int index = lazies.indexOf(entry.selectedLaser);
-                JavaPlot plot = plotsies.get(index);
 
                 Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
                 System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
@@ -172,7 +170,7 @@ public class ProteinSelector {
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
 
-                plot.addPlot(emPlot);
+                newPlot.addPlot(emPlot);
 
                 //Graph filter bounds
                 PlotStyle ps = new PlotStyle(Style.LINES);
@@ -181,24 +179,19 @@ public class ProteinSelector {
                 boundsPlot.setPlotStyle(ps);
                 boundsPlot.setTitle("");
 
-                plot.addPlot(boundsPlot);
+                newPlot.addPlot(boundsPlot);
 
             }
         }
 
-        for (JavaPlot plot : plotsies) {
-            //Throw up in JFrame onto screen
-            JPlot graph = new JPlot(plot);
-            graph.plot();
-            graph.repaint();
-            JFrame frame = new JFrame("FP Spectrum");
-            frame.getContentPane()
-                    .add(graph);
-            frame.pack();
-            frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-            frame.setVisible(true);
-        }
-
+        JPlot graph = new JPlot(newPlot);
+        graph.plot();
+        graph.repaint();
+        JFrame frame = new JFrame("FP Spectrum");
+        frame.getContentPane().add(graph);
+        frame.pack();
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setVisible(true);
     }
 
     public static ArrayList<SelectionInfo> mishMashCombinatorics(ArrayList<SelectionInfo> suggestions, int n) {
