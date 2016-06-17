@@ -13,6 +13,8 @@ import com.panayotis.gnuplot.style.FillStyle;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
 import com.panayotis.gnuplot.swing.JPlot;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -115,24 +117,37 @@ public class ProteinSelector {
         ArrayList<Laser> lazies = new ArrayList<>();
         JavaPlot newPlot = new JavaPlot();
         boolean first = true;
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = screenSize.width;
+        int height = screenSize.height;
+
+        newPlot.getAxis("x").setLabel("Wavelength (nm)");
+        newPlot.getAxis("x").setBoundaries(300, 900);
+        newPlot.getAxis("y").setLabel("Intensity (%)");
+        newPlot.getAxis("y").setBoundaries(0, 125);
+
+        newPlot.set("terminal", "png transparent truecolor nocrop enhanced size " + Integer.toString(width) + "," + Integer.toString(height) + "font 'arial,7'");
+        newPlot.set("style fill", "transparent solid 0.3");
+        newPlot.set("style data", "lines");
+        newPlot.set("style data filledcurves", "x1");
+        newPlot.set("key", "font ',8'");
+
         for (SelectionInfo entry : info) {
             if (!lazies.contains(entry.selectedLaser)) {
                 lazies.add(entry.selectedLaser);
 
-                if (first) first = false;
-                else newPlot.newGraph();
-                
-                newPlot.setTitle(entry.selectedLaser.name);
-                newPlot.getAxis("x").setLabel("Wavelength (nm)");
-                newPlot.getAxis("x").setBoundaries(300, 900);
-                newPlot.getAxis("y").setLabel("Intensity (%)");
-                newPlot.getAxis("y").setBoundaries(0, 125);
+                if (first) {
+                    first = false;
+                } else {
+                    newPlot.newGraph();
+                }
+                PointDataSet noiseDataSet = (entry.makeDataSet());
+                AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
+                noisePlot.setTitle("Noise in " + entry.selectedLaser.name);
+                noisePlot.set("fs", "transparent solid 0.2 noborder");
 
-                newPlot.set("terminal","png transparent truecolor nocrop enhanced size 1200,600 font 'arial,7'");
-                newPlot.set("style fill", "transparent solid 0.3");
-                newPlot.set("style data", "lines");
-                newPlot.set("style data filledcurves", "x1");
-                newPlot.set("key","font ',8'");
+                newPlot.addPlot(noisePlot);
 
                 Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
                 System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
@@ -143,13 +158,6 @@ public class ProteinSelector {
                 emPlot.setTitle(fp.name);
 
                 newPlot.addPlot(emPlot);
-
-                PointDataSet noiseDataSet = (entry.makeDataSet());
-                AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
-                noisePlot.setTitle("Noise from other Laser FPs");
-                noisePlot.set("fs", "transparent solid 0.2 noborder");
-
-                newPlot.addPlot(noisePlot);
 
                 //Graph filter bounds
                 PlotStyle ps = new PlotStyle(Style.LINES);
