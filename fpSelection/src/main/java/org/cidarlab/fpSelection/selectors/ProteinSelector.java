@@ -67,10 +67,6 @@ public class ProteinSelector {
 
                 for (Map.Entry<String, Fluorophore> entry : masterList.entrySet()) {
                     Fluorophore value = entry.getValue();
-                    if (theLaser.name.contains("Yellow-Green") && aDetector.filterMidpoint == 780) {
-
-                        System.out.println(value.name + " : " + value.express(theLaser, aDetector));
-                    }
 
                     if (value.express(theLaser, aDetector) < threshold) {
                         continue;
@@ -231,16 +227,22 @@ public class ProteinSelector {
                     if (fp1 == fp2 && info.selectedDetector != otherInfo.selectedDetector) {
 
                         //if true, keep info. False, keep otherInfo
-                        if (ProteinComparator.dupeCompare(info, otherInfo, ProteinComparator.compareTypes.Brightness, true)) {
+                        if (ProteinComparator.dupeCompare(info, otherInfo, ProteinComparator.compareTypes.Brightness, false)) {
                             if (otherInfo.rankedFluorophores.size() - 1 == otherInfo.selectedIndex) {
-                                removes.add(otherInfo);
+                                if (!removes.contains(otherInfo)) {
+
+                                    removes.add(otherInfo);
+                                }
                                 continue;
                             } else {
 
                                 otherInfo.selectedIndex++;
                             }
                         } else if (info.rankedFluorophores.size() - 1 == info.selectedIndex) {
-                            removes.add(info);
+                            if (!removes.contains(info)) {
+
+                                removes.add(info);
+                            }
                             continue;
                         } else {
 
@@ -297,11 +299,10 @@ public class ProteinSelector {
             }
             iterateInfo.remove(highestScore);
             allInfo.remove(highestScore);
-            sumSNR += highestScore.score;
 
         }
         generateNoise(allInfo);
-        calcSumSNR(allInfo);
+        sumSNR = calcSumSNR(allInfo);
 
         return allInfo;
     }
@@ -315,7 +316,7 @@ public class ProteinSelector {
 
             //signal is info expressing in it's own channel with it's own laser.
             double signal = fp.express(info.selectedLaser, info.selectedDetector);
-            double noise = 0;
+            double noise = 1;
 
             for (SelectionInfo otherInfo : allInfo) {
                 if (info == otherInfo) {
@@ -350,7 +351,6 @@ public class ProteinSelector {
                 if (noiseFp.EXspectrum.containsKey((double) info.selectedLaser.wavelength)) {
                     //Get a decimal of how excited the noiseFPs are
                     double multiplier = noiseFp.EXspectrum.get((double) info.selectedLaser.wavelength) / 100;
-                    System.out.println(multiplier);
 
                     //Add the entire noise graph
                     for (Map.Entry<Double, Double> entry : noiseFp.EMspectrum.entrySet()) {

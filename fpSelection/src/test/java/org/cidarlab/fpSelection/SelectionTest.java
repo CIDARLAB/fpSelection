@@ -41,7 +41,12 @@ public class SelectionTest {
 //        System.out.println("Give an integer n for the number of you would like: ");
 //        int n = scanner.nextInt();
         String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
+        if(numString == "")
+        {
+            numString = "1";
+        }
         int n = Integer.parseInt(numString);
+        
 
         ArrayList<SelectionInfo> total = new ArrayList<>();
         for (Laser lase : testCyto.lasers) {
