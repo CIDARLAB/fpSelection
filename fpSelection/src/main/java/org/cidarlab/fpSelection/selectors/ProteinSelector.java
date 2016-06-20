@@ -198,7 +198,7 @@ public class ProteinSelector {
         frame.setVisible(true);
     }
 
-    public static ArrayList<SelectionInfo> mishMashCombinatorics(ArrayList<SelectionInfo> suggestions, int n) {
+    public static ArrayList<SelectionInfo> hillClimber(ArrayList<SelectionInfo> suggestions, int n) {
         //Build list of things to check.
 
         double sumSNR = 0;
@@ -307,7 +307,7 @@ public class ProteinSelector {
         return allInfo;
     }
 
-    static double calcSumSNR(ArrayList<SelectionInfo> allInfo) {
+    public static double calcSumSNR(ArrayList<SelectionInfo> allInfo) {
         double sumSNR = 0;
 
         for (SelectionInfo info : allInfo) {
@@ -335,7 +335,7 @@ public class ProteinSelector {
         return sumSNR;
     }
 
-    static void generateNoise(ArrayList<SelectionInfo> selected) {
+    public static void generateNoise(ArrayList<SelectionInfo> selected) {
         //noise is otherInfo's fluorophore expressing in info's channel with info's laser
         for (SelectionInfo info : selected) {
             //in case something got in there

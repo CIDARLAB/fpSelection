@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection;
+package org.cidarlab.fpSelection.selectors;
 
 import java.io.File;
 import java.io.IOException;
@@ -54,7 +54,7 @@ public class SelectionTest {
 
         }
         //Prune the arrayList of the worst FPs until the size of the ArrayList is equal to 'n'
-        ArrayList<SelectionInfo> selected = ProteinSelector.mishMashCombinatorics(total, n);
+        ArrayList<SelectionInfo> selected = ProteinSelector.hillClimber(total, n);
         
 
         ProteinSelector.plotSelection(selected);
