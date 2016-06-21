@@ -10,15 +10,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
+import static org.cidarlab.fpSelection.adaptors.ScrapedCSVParse.generateFPs;
 import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
 import static org.cidarlab.fpSelection.adaptors.fpSelectionAdaptor.uploadFluorescenceSpectrums;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.Laser;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -52,9 +48,14 @@ public class SimulatedAnnealTest {
         //Anneal that shit
         ArrayList<SelectionInfo> selected = SimulatedAnneal.simulateAnnealing(spectralMaps, testCyto, n);
         
+//        System.out.println("Return didn't break me");
+        
         ProteinSelector.generateNoise(selected);
+        
+//        System.out.println("Noise didn't break me");
 
         SimulatedAnneal.plotSelection(selected);
+//        System.out.println("Nothing broke me wtf");
     }
 
 }

@@ -9,7 +9,6 @@ import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.plot.AbstractPlot;
 import com.panayotis.gnuplot.plot.DataSetPlot;
-import com.panayotis.gnuplot.style.FillStyle;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
 import com.panayotis.gnuplot.swing.JPlot;
@@ -90,7 +89,7 @@ public class ProteinSelector {
             choiceInfo.noise = new TreeMap<>();
 
             bestFPs.add(choiceInfo);
-        }
+        }   
 
         //After all of that, check noise intensity in other filters. If too large, move to next protein in filter's list.
         //
@@ -266,7 +265,7 @@ public class ProteinSelector {
             }
         }
 
-        sumSNR = calcSumSNR(allInfo);
+        sumSNR = calcSumSigNoise(allInfo);
 
         //Start with all of the proteins, clip one by one and record how the SNR changes.
         //After each loop of clipping, whichever had the most positive change stays clipped.
@@ -282,8 +281,8 @@ public class ProteinSelector {
                 //Remove the protein in question from the arraylist
                 allInfo.remove(info);
 
-                //Calculate the total SNR from that removal
-                SNR = calcSumSNR(allInfo);
+                //Calculate the total Signal - Noise from that removal
+                SNR = calcSumSigNoise(allInfo);
 
                 //Add the protein back into the arraylist
                 allInfo.add(info);
@@ -302,13 +301,14 @@ public class ProteinSelector {
 
         }
         generateNoise(allInfo);
-        sumSNR = calcSumSNR(allInfo);
+        sumSNR = calcSumSigNoise(allInfo);
 
         return allInfo;
     }
 
-    public static double calcSumSNR(ArrayList<SelectionInfo> allInfo) {
-        double sumSNR = 0;
+    public static double calcSumSigNoise(ArrayList<SelectionInfo> allInfo) {
+//        double sumSNR = 0;
+        double sumDiff = 0;
 
         for (SelectionInfo info : allInfo) {
 
@@ -329,10 +329,20 @@ public class ProteinSelector {
 
             }
             info.SNR = signal / noise;
-            sumSNR += info.SNR;
+            info.SNDiff = signal - noise;
+//            sumSNR += info.SNR;
+            sumDiff += info.SNDiff;
         }
 
-        return sumSNR;
+        //SOOOOOOOOO:
+        
+        //SNR provides higher average but not everything will be readable.
+        //Signal - Noise provides lower average, but all signals are readable.
+        //Ex: SNR yields 9 proteins, 1 has <1 SNR
+        //    Signal - Noise yeilds 9, minimum has SNR = 3.
+        
+        
+        return sumDiff;
     }
 
     public static void generateNoise(ArrayList<SelectionInfo> selected) {

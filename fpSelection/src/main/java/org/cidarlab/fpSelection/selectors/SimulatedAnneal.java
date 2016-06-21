@@ -14,7 +14,6 @@ import com.panayotis.gnuplot.style.Style;
 import com.panayotis.gnuplot.swing.JPlot;
 import java.awt.Dimension;
 import java.awt.Toolkit;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -31,6 +30,7 @@ import org.cidarlab.fpSelection.dom.Laser;
  */
 public class SimulatedAnneal {
 
+    //only really provides useful output for n < 4
     public static ArrayList<SelectionInfo> simulateAnnealing(HashMap<String, Fluorophore> masterList, Cytometer cyto, int n) {
 
         //Simulated Annealing in trying to achieve most cost efficient outcome
@@ -49,9 +49,9 @@ public class SimulatedAnneal {
         double temperature = Math.pow(700, 7);  //8.23543×10^19
 
         double tempEnd = Math.pow(10, -100);
-        double coolFactor = .999;
+        double coolFactor = .99;
 
-        int replace;
+        int replace = 0;
         int counter = 0;
 
         //Each partition of 100% will point to a fluorophore setup.
@@ -61,8 +61,6 @@ public class SimulatedAnneal {
         ArrayList<SelectionInfo> newSet = new ArrayList(n);
 
         Random generator = new Random();
-        ArrayList<Fluorophore> dupes = new ArrayList<>();
-        ArrayList<Detector> dupeD = new ArrayList<>();
 
         //Generate n random fluorophore setups.
         for (int i = 0; i < n; i++) {
@@ -77,91 +75,28 @@ public class SimulatedAnneal {
             info.noise = new TreeMap<>();
             info.SNR = 1;
 
-            if (dupes.contains(info.rankedFluorophores.get(info.selectedIndex))) {
-                i--;
-                continue;
-            }
-            if (dupeD.contains(info.selectedDetector)) {
-                i--;
-                continue;
-            }
-
             optimals.add(i, info);
             previousSet.add(i, info);
             newSet.add(i, info);
 
-            dupes.add(info.rankedFluorophores.get(info.selectedIndex));
-            dupeD.add(filter);
-
         }
 
-        double optimalSNR = ProteinSelector.calcSumSNR(optimals) / (n);
-        optimalSNR *= geometricSNR(optimals);
+        double optimalSNR = ProteinSelector.calcSumSigNoise(optimals)/n;
         double previousSNR = optimalSNR;
         double newSNR;
         double diff;
+        int threshold = 40;
 
         while (temperature > tempEnd) {
 
-            replace = (int) (Math.random() * 100 % n);
+            replace++;
 
-            Laser beam = cyto.lasers.get(generator.nextInt(cyto.lasers.size()));
-            Detector filter = beam.detectors.get(generator.nextInt(beam.detectors.size()));
+            changeSelection(newSet, replace % n, cyto, threshold);
 
-            SelectionInfo info = new SelectionInfo();
-            info.rankedFluorophores = new ArrayList<>(masterList.values());
-            info.selectedLaser = beam;
-            info.selectedDetector = filter;
-            info.selectedIndex = generator.nextInt(info.rankedFluorophores.size());
-            info.noise = new TreeMap<>();
-
-            if (dupeD.contains(filter)) {
-                for (SelectionInfo entry : previousSet) {
-                    if (entry.selectedDetector == filter) {
-                        replace = previousSet.indexOf(entry);
-                    }
-                }
-            } else if (dupes.contains(info.rankedFluorophores.get(info.selectedIndex))) {
-                for (SelectionInfo entry : previousSet) {
-                    if (entry.rankedFluorophores.get(entry.selectedIndex) == info.rankedFluorophores.get(info.selectedIndex)) {
-                        replace = previousSet.indexOf(entry);
-                    }
-                }
-            }
-
-            newSet.set(replace, info);
-
-//            //Generate n random fluorophore setups.
-//            dupes.clear();
-//            dupeD.clear();
-//            for (int i = 0; i < n; i++) {
-//                Laser beam = cyto.lasers.get(generator.nextInt(cyto.lasers.size()));
-//                Detector filter = beam.detectors.get(generator.nextInt(beam.detectors.size()));
-//
-//                SelectionInfo info = new SelectionInfo();
-//                info.rankedFluorophores = new ArrayList<>(masterList.values());
-//                info.selectedLaser = beam;
-//                info.selectedDetector = filter;
-//                info.selectedIndex = generator.nextInt(info.rankedFluorophores.size());
-//                info.noise = new TreeMap<>();
-//
-//                if (dupes.contains(info.rankedFluorophores.get(info.selectedIndex))) {
-//                    i--;
-//                    continue;
-//                }
-//                if (dupeD.contains(info.selectedDetector)) {
-//                    i--;
-//                    continue;
-//                }
-//
-//                newSet.set(i, info);
-//
-//                dupes.add(info.rankedFluorophores.get(info.selectedIndex));
-//                dupeD.add(filter);
-//
-//            }
-            newSNR = ProteinSelector.calcSumSNR(newSet) / (n);
-            newSNR *= geometricSNR(newSet);
+            //////////////////////////
+            //////////////////////////
+            //////////////////////////
+            newSNR = ProteinSelector.calcSumSigNoise(newSet)/n;
 
             diff = newSNR - previousSNR;
 
@@ -179,12 +114,12 @@ public class SimulatedAnneal {
             if (newSNR > optimalSNR) {
                 optimals = new ArrayList<>(newSet);
                 optimalSNR = newSNR;
-
-//                System.out.println(optimalSNR);
             }
 
             System.out.println("Current Temp : " + temperature);
             System.out.println(counter + " replacements completed");
+            System.out.println("Optimal SNR: "+optimalSNR);
+            
 
             for (SelectionInfo beep : optimals) {
                 System.out.println(optimals.indexOf(beep) + ": " + beep.SNR);
@@ -197,7 +132,17 @@ public class SimulatedAnneal {
             System.out.println();
 
             temperature = temperature * coolFactor;
+
             counter++;
+            if(counter % 2000 == 0 && threshold < 70)
+            {
+                threshold++;
+                
+            }
+//            if(counter % 20000 == 0)
+//            {
+//                newSet = new ArrayList<>(optimals);
+//            }
 
         }
 
@@ -305,6 +250,60 @@ public class SimulatedAnneal {
             geometric *= each.SNR;
         }
         return Math.pow(geometric, (1 / info.size()));
+    }
+
+    public static void changeSelection(ArrayList<SelectionInfo> listInfo, int replace, Cytometer cyto, int threshold) {
+        int change = (int) ((Math.random() * 10) % 3);
+        int count = 0;
+        Random generator = new Random();
+        
+        SelectionInfo info = new SelectionInfo();
+        SelectionInfo oldInfo = listInfo.get(replace);
+        info.noise = new TreeMap<>();
+        
+        
+        switch (change) {
+            case 0:
+                //change laser and filter
+
+                info.selectedLaser = cyto.lasers.get(generator.nextInt(cyto.lasers.size()));
+                info.selectedDetector = info.selectedLaser.detectors.get(generator.nextInt(info.selectedLaser.detectors.size()));
+                
+                info.rankedFluorophores = oldInfo.rankedFluorophores;
+                info.selectedIndex = oldInfo.selectedIndex;
+
+
+            case 1:
+                //change filter
+                info.selectedDetector = oldInfo.selectedLaser.detectors.get(generator.nextInt(oldInfo.selectedLaser.detectors.size()));
+
+                info.selectedLaser = oldInfo.selectedLaser;
+                info.rankedFluorophores = oldInfo.rankedFluorophores;
+                info.selectedIndex = oldInfo.selectedIndex;
+            case 2:
+                ArrayList<Integer> taken = new ArrayList<>();
+                for(SelectionInfo yes : listInfo)
+                {
+                    taken.add(yes.selectedIndex);
+                }
+                Fluorophore fp;
+                
+                //change FP
+                info.selectedLaser = oldInfo.selectedLaser;
+                info.selectedDetector = oldInfo.selectedDetector;
+                info.rankedFluorophores = oldInfo.rankedFluorophores;
+                
+                do {
+                    info.selectedIndex = generator.nextInt(info.rankedFluorophores.size());
+                    
+                    fp = info.rankedFluorophores.get(info.selectedIndex);
+                    count++;
+                } while (fp.express(info.selectedLaser, info.selectedDetector) < threshold && count <= 500 && taken.contains(info.selectedIndex));
+
+        }
+        
+        listInfo.set(replace, info);
+        
     }
 
 }
