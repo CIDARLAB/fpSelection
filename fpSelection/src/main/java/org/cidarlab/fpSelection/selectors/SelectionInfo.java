@@ -41,5 +41,12 @@ public class SelectionInfo {
         }
         return dataSet;
     }
-    
+    public Fluorophore getFP()
+    {
+        return rankedFluorophores.get(selectedIndex);
+    }
+    public Fluorophore getFP(int index)
+    {
+        return rankedFluorophores.get(index);
+    }
 }

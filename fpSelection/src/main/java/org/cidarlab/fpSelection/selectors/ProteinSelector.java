@@ -20,6 +20,7 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.JFrame;
+import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
@@ -33,6 +34,20 @@ public class ProteinSelector {
     //Given a Laser & Filters, Suggest List of Proteins that works optimally for each filter
     //Suggest proteins based on a laser & filters
     //Works best for n >= 2;
+    
+    public static ArrayList<SelectionInfo> chooseFPs(HashMap<String, Fluorophore> masterList, Cytometer cyto, int n)
+    {
+        ArrayList<SelectionInfo> total = new ArrayList<>();
+        for (Laser lase : cyto.lasers) {
+            total.addAll(laserFiltersToFPs(masterList, lase));
+
+        }
+        
+        //Prune the arrayList of the worst FPs until the size of the ArrayList is equal to 'n'
+        return hillClimber(total, n);
+    }
+    
+    
     public static ArrayList<SelectionInfo> laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser) {
 
         //Pull Detector objects out.
