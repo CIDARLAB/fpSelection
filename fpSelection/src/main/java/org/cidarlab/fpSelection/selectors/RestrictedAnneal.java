@@ -155,7 +155,7 @@ public class RestrictedAnneal {
             }
         }
 
-        double temperature = Math.pow(700, 7);
+        double temperature = Math.pow(700, 10);
         double tempEnd = Math.pow(10, -100);
         double coolFactor = .99;
 
