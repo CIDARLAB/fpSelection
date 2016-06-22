@@ -74,9 +74,9 @@ public class ProteinSelector {
             qCompare.setDefaults();
 
             tempList = new ArrayList<>();
-            int threshold = 70;
+            int threshold = 80;
 
-            while (threshold > 40 && tempList.size() < 5) {
+            while (threshold > 40 && tempList.size() < (.1 * masterList.size() + 5)) {
                 threshold--;
 
                 for (Map.Entry<String, Fluorophore> entry : masterList.entrySet()) {
