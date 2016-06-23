@@ -34,9 +34,6 @@ public class LaserSelector {
 
         HashMap<String, Fluorophore> choose = new HashMap<>();
         Random next = new Random();
-        for (int i = 0; i < 5; i++) {
-            choose.put("teehee", (Fluorophore) spectralMaps.values().toArray()[next.nextInt(spectralMaps.size())]);
-        }
 
         File cyto = new File("src/main/resources/ex_fortessa.csv");
         Cytometer testCyto = fpFortessaParse.parseFortessa(cyto);
@@ -118,6 +115,8 @@ public class LaserSelector {
                 testDetect = new Detector();
                 testDetect.filterMidpoint = i + 50;
                 testDetect.filterWidth = 100;
+                testDetect.identifier = "";
+                testDetect.mirror = -5;
 
                 for (Fluorophore fp : each.rankedFluorophores) {
                     double expression = fp.express(each.selectedLaser, testDetect);
@@ -139,18 +138,17 @@ public class LaserSelector {
         //Fit the filters to the most responsive ranges//
         /////////////////////////////////////////////////
 
-        SelectionInfo highestScore = new SelectionInfo();
-        highestScore.score = 0;
-        double detectMin = 0;
-        double detectMax = 0;
+        
 
         for (Detector detector : selectedDetectors) {
-            detectMin = detector.filterMidpoint - .5 * detector.filterWidth;
-            detectMax = detectMin + detector.filterWidth;
+            SelectionInfo highestScore = new SelectionInfo();
+            highestScore.score = 0;
+            double detectMin = detector.filterMidpoint - .5 * detector.filterWidth;
+            double detectMax = detectMin + detector.filterWidth;
             for (SelectionInfo each : EMspecific) {
                 Detector eachDetector = each.selectedDetector;
-                if (detectMin >= eachDetector.filterMidpoint - eachDetector.filterWidth / 2) {
-                    if (detectMax <= eachDetector.filterMidpoint + eachDetector.filterWidth / 2) {
+                if (detectMin >= (eachDetector.filterMidpoint - eachDetector.filterWidth / 2)) {
+                    if (detectMax <= (eachDetector.filterMidpoint + eachDetector.filterWidth / 2)) {
                         if (each.score > highestScore.score) {
                             highestScore = each;
                         }
@@ -160,24 +158,25 @@ public class LaserSelector {
             highestScore.selectedDetector = detector;
         }
 
-        ArrayList<Integer> delete = new ArrayList();
+        ArrayList<SelectionInfo> delete = new ArrayList();
 
         for (SelectionInfo check : EMspecific) {
-            if (check.selectedDetector.identifier == null) {
-                delete.add(EMspecific.indexOf(check));
+            if (check.selectedDetector.identifier == "" && check.selectedDetector.mirror == -5) {
+                delete.add(check);
             }
         }
-        for (Integer yes : delete) {
+        for (SelectionInfo yes : delete) {
             EMspecific.remove(yes);
+
         }
 
         ///////////////////////////////////////////////////////////
         //Scan wavelengths to finely adjust the n general lasers.//
         ///////////////////////////////////////////////////////////
-        ArrayList<SelectionInfo> averageMe = new ArrayList();
+        ArrayList<SelectionInfo> averageMe;
 
         for (Laser each : theLasers) {
-            averageMe.clear();
+            averageMe = new ArrayList();
             int laserlength = each.wavelength;
 
             for (SelectionInfo info : EMspecific) {
@@ -185,7 +184,7 @@ public class LaserSelector {
                     averageMe.add(info);
                 }
             }
-            int bestWave = 0;
+            int bestWave = laserlength;
             double highestResponse = 0;
 
             for (int i = (int) (laserlength - generalSpace / 2); i < laserlength + generalSpace / 2; i++) {
