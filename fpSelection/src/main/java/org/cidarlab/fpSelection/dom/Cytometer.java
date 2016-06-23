@@ -13,9 +13,6 @@ import java.util.LinkedList;
  */
 public class Cytometer {
     
-//    Lombok helps produce functions to minimize the excess code we write. If you look at the Navigator in netbeans, we now have a bunch of useful get/set functions.
-    
-    
     public int sheathPressure;
     
     public int nozzleSize;

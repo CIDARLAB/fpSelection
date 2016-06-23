@@ -40,7 +40,6 @@ public class fpSelectionAdaptor {
      * This method is for uploading fluorescence spectrum data to be associated with Fluorphore objects
      */
     public static final Pattern p = Pattern.compile(" \\((EX|EM|AB)\\)"); //regex pattern to remove (EX),(EM), and (AB)
-
     public static HashMap<String, Fluorophore> uploadFluorescenceSpectrums(File input) throws FileNotFoundException, IOException {
 
         //Import file, begin reading
@@ -87,7 +86,7 @@ public class fpSelectionAdaptor {
             }
             line = reader.readLine();
         }
-
+        /*
         JavaPlot javaPlot = new JavaPlot();
         javaPlot.setTitle("FP Spectrum", "Helvetica", 14);
         javaPlot.getAxis("x").setLabel("Wavelength (nm)");
@@ -95,11 +94,11 @@ public class fpSelectionAdaptor {
         javaPlot.getAxis("y").setLabel("Intensity (%)");
         javaPlot.getAxis("y").setBoundaries(0, 100);
         javaPlot.set("key font", "',7'");
-        //javaPlot.set("term qt size", "600,400");
 
         PlotStyle myPlotStyle = new PlotStyle();
         myPlotStyle.setStyle(Style.LINES);
         myPlotStyle.setLineWidth(1);
+        
 
         Laser newLaser = new Laser();
         newLaser.wavelength = 500;
@@ -120,12 +119,9 @@ public class fpSelectionAdaptor {
             exDataSetPlot.setSmooth(Smooth.UNIQUE);
             javaPlot.addPlot(emDataSetPlot);
             javaPlot.addPlot(exDataSetPlot);
-            //it.remove(); // avoids a ConcurrentModificationException
         }
 
-        //javaPlot.plot();
         JPlot jPlot = new JPlot(javaPlot);
-        //jPlot.setBounds(20,20,5000,5000);
         jPlot.plot();
         jPlot.repaint();
         JFrame frame = new JFrame("FP Spectrum");
@@ -134,7 +130,7 @@ public class fpSelectionAdaptor {
 
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
-
+        */
         return spectralMaps;
     }
 }

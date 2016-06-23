@@ -9,6 +9,7 @@ import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.plot.AbstractPlot;
 import com.panayotis.gnuplot.plot.DataSetPlot;
+import com.panayotis.gnuplot.plot.Graph;
 import com.panayotis.gnuplot.style.FillStyle;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
@@ -159,6 +160,8 @@ public class ProteinSelector {
                 boundsPlot.setTitle("");
 
                 newPlot.addPlot(boundsPlot);
+                
+                //newPlot.addGraph(graph);
 
             } else {
 
@@ -183,7 +186,7 @@ public class ProteinSelector {
 
             }
         }
-
+        String test = newPlot.getCommands();
         JPlot graph = new JPlot(newPlot);
         graph.plot();
         graph.repaint();
@@ -298,7 +301,7 @@ public class ProteinSelector {
         return allInfo;
     }
 
-    static double calcSumSNR(ArrayList<SelectionInfo> allInfo) {
+    public static double calcSumSNR(ArrayList<SelectionInfo> allInfo) {
         double sumSNR = 0;
 
         for (SelectionInfo info : allInfo) {
@@ -307,7 +310,7 @@ public class ProteinSelector {
 
             //signal is info expressing in it's own channel with it's own laser.
             double signal = fp.express(info.selectedLaser, info.selectedDetector);
-            double noise = 0;
+            double noise = 1;
 
             for (SelectionInfo otherInfo : allInfo) {
                 if (info == otherInfo) {
@@ -326,11 +329,12 @@ public class ProteinSelector {
         return sumSNR;
     }
 
-    static void generateNoise(ArrayList<SelectionInfo> selected) {
+    public static void generateNoise(ArrayList<SelectionInfo> selected) {
         //noise is otherInfo's fluorophore expressing in info's channel with info's laser
         for (SelectionInfo info : selected) {
             //in case something got in there
-            info.noise.clear();
+            if(info.noise != null) info.noise.clear();
+            else info.noise = new TreeMap<>();
 
             for (SelectionInfo otherInfo : selected) {
                 if (info.selectedLaser == otherInfo.selectedLaser) {
