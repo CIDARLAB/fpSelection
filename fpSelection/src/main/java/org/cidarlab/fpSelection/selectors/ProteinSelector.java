@@ -221,7 +221,6 @@ public class ProteinSelector {
                 boundsPlot.setPlotStyle(ps);
                 boundsPlot.setTitle("");
                 g.addPlot(boundsPlot);
-
             }
         }
         
