@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection;
+package org.cidarlab.fpSelection.selectors;
 
 import java.io.File;
 import java.io.IOException;
@@ -28,11 +28,11 @@ import org.cidarlab.fpSelection.selectors.SelectionInfo;
 public class SelectionTest {
 
     public static void main(String[] args) throws IOException {
-        File input = new File("src/main/resources/fp_spectra.csv");
-        HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
+//        File input = new File("src/main/resources/fp_spectra.csv");
+//        HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
 
-//        File input = new File("src/main/resources/Fluorophores.org/");
-//        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
+        File input = new File("src/main/resources/Fluorophores.org/");
+        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
         
         File cyto = new File("src/main/resources/ex_fortessa.csv");
         Cytometer testCyto = fpFortessaParse.parseFortessa(cyto);
@@ -41,18 +41,16 @@ public class SelectionTest {
 //        System.out.println("Give an integer n for the number of you would like: ");
 //        int n = scanner.nextInt();
         String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
-        int n = Integer.parseInt(numString);
-
-        ArrayList<SelectionInfo> total = new ArrayList<>();
-        for (Laser lase : testCyto.lasers) {
-            total.addAll(ProteinSelector.laserFiltersToFPs(spectralMaps, lase));
-
+        if(numString == "")
+        {
+            numString = "1";
         }
-        //Prune the arrayList of the worst FPs until the size of the ArrayList is equal to 'n'
-        ArrayList<SelectionInfo> selected = ProteinSelector.mishMashCombinatorics(total, n);
+        int n = Integer.parseInt(numString);
         
 
-        ProteinSelector.plotSelection(selected);
+        ArrayList<SelectionInfo> solution = ProteinSelector.chooseFPs(spectralMaps, testCyto, n);
+
+        ProteinSelector.plotSelection(solution);
     }
 
 }

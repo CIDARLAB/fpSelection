@@ -27,6 +27,7 @@ public class SelectionInfo {
     public int selectedIndex;
     public double score;
     public double SNR;
+    public double SNDiff;
     
     public TreeMap<Double, Double> noise;
     
@@ -40,5 +41,12 @@ public class SelectionInfo {
         }
         return dataSet;
     }
-    
+    public Fluorophore getFP()
+    {
+        return rankedFluorophores.get(selectedIndex);
+    }
+    public Fluorophore getFP(int index)
+    {
+        return rankedFluorophores.get(index);
+    }
 }
