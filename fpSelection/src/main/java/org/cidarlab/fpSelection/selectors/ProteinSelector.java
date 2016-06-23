@@ -152,6 +152,7 @@ public class ProteinSelector {
 
          //if first plot to be added
         boolean first = true;
+        boolean later = false;
         
         //iterate through laser/filter/protein combos
         for (SelectionInfo entry : info) {
@@ -189,6 +190,7 @@ public class ProteinSelector {
                     newPlot.getAxis("y").setLabel("Intensity (%)");
                     newPlot.getAxis("y").setBoundaries(0, 125);
                     first = false;
+                    later = true;
                 }
                 //otherwise add to graph object that is added to javaplot
                 else
@@ -202,6 +204,7 @@ public class ProteinSelector {
                     g.getAxis("y").setLabel("Intensity (%)");
                     g.getAxis("y").setBoundaries(0, 125);
                     newPlot.addGraph(g);
+                    later = false;
                 }
                 
             } else {
@@ -212,7 +215,7 @@ public class ProteinSelector {
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
-                g.addPlot(emPlot);
+                
 
                 //add filter bounds plot
                 PlotStyle ps = new PlotStyle(Style.LINES);
@@ -220,8 +223,18 @@ public class ProteinSelector {
                 AbstractPlot boundsPlot = new DataSetPlot(bounds);
                 boundsPlot.setPlotStyle(ps);
                 boundsPlot.setTitle("");
-                g.addPlot(boundsPlot);
-
+                
+                //in case the second graph shares the same laser as the first, it must be added to the javaplot
+                if (later)
+                {
+                    newPlot.addPlot(emPlot);
+                    newPlot.addPlot(boundsPlot);
+                }
+                else
+                {
+                    g.addPlot(emPlot);
+                    g.addPlot(boundsPlot);
+                }
             }
         }
         
