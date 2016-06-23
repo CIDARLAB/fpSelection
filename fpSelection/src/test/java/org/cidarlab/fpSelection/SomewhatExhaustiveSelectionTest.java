@@ -22,7 +22,7 @@ import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.WrappedFluorophore;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
-import org.cidarlab.fpSelection.selectors.SelectionInfo;
+import org.cidarlab.fpSelection.dom.SelectionInfo;
 
 /**
  *

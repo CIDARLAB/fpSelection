@@ -122,5 +122,20 @@ public String name;
         //Push it up to [0-100] range for comparison w/ brightness.
         return sumOutside / total * 100;
     }
+    
+    public double EXPeak()
+    {
+        double highestPeak = 0;
+        double peakPoint = 0;
+        for(Map.Entry<Double, Double> point : EXspectrum.entrySet())
+        {
+            if(point.getValue() > highestPeak)
+            {
+                highestPeak = point.getValue();
+                peakPoint = point.getKey();
+            }
+        }
+        return peakPoint;
+    }
 
 }

@@ -5,6 +5,8 @@
  */
 package org.cidarlab.fpSelection.selectors;
 
+import org.cidarlab.fpSelection.dom.ProteinComparator;
+import org.cidarlab.fpSelection.dom.SelectionInfo;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;

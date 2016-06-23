@@ -3,8 +3,9 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection.selectors;
+package org.cidarlab.fpSelection.dom;
 
+import org.cidarlab.fpSelection.dom.SelectionInfo;
 import java.util.ArrayList;
 import java.util.Comparator;
 import org.cidarlab.fpSelection.dom.Detector;
