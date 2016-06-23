@@ -5,6 +5,7 @@
  */
 package org.cidarlab.fpSelection.selectors;
 
+import org.cidarlab.fpSelection.dom.SelectionInfo;
 import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.plot.AbstractPlot;

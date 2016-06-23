@@ -5,6 +5,8 @@
  */
 package org.cidarlab.fpSelection.selectors;
 
+import org.cidarlab.fpSelection.dom.ProteinComparator;
+import org.cidarlab.fpSelection.dom.SelectionInfo;
 import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.plot.AbstractPlot;
@@ -77,9 +79,9 @@ public class ProteinSelector {
             qCompare.setDefaults();
 
             tempList = new ArrayList<>();
-            int threshold = 70;
+            int threshold = 80;
 
-            while (threshold > 40 && tempList.size() < 5) {
+            while (threshold > 40 && tempList.size() < (.1 * masterList.size() + 5)) {
                 threshold--;
 
                 for (Map.Entry<String, Fluorophore> entry : masterList.entrySet()) {
