@@ -9,17 +9,18 @@ import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.plot.AbstractPlot;
 import com.panayotis.gnuplot.plot.DataSetPlot;
-import com.panayotis.gnuplot.plot.Graph;
-import com.panayotis.gnuplot.style.FillStyle;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
 import com.panayotis.gnuplot.swing.JPlot;
+import java.awt.Dimension;
+import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.JFrame;
+import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
@@ -33,6 +34,20 @@ public class ProteinSelector {
     //Given a Laser & Filters, Suggest List of Proteins that works optimally for each filter
     //Suggest proteins based on a laser & filters
     //Works best for n >= 2;
+    
+    public static ArrayList<SelectionInfo> chooseFPs(HashMap<String, Fluorophore> masterList, Cytometer cyto, int n)
+    {
+        ArrayList<SelectionInfo> total = new ArrayList<>();
+        for (Laser lase : cyto.lasers) {
+            total.addAll(laserFiltersToFPs(masterList, lase));
+
+        }
+        
+        //Prune the arrayList of the worst FPs until the size of the ArrayList is equal to 'n'
+        return hillClimber(total, n);
+    }
+    
+    
     public static ArrayList<SelectionInfo> laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser) {
 
         //Pull Detector objects out.
@@ -66,10 +81,6 @@ public class ProteinSelector {
 
                 for (Map.Entry<String, Fluorophore> entry : masterList.entrySet()) {
                     Fluorophore value = entry.getValue();
-                    if (theLaser.name.contains("Yellow-Green") && aDetector.filterMidpoint == 780) {
-
-                        System.out.println(value.name + " : " + value.express(theLaser, aDetector));
-                    }
 
                     if (value.express(theLaser, aDetector) < threshold) {
                         continue;
@@ -93,7 +104,7 @@ public class ProteinSelector {
             choiceInfo.noise = new TreeMap<>();
 
             bestFPs.add(choiceInfo);
-        }
+        }   
 
         //After all of that, check noise intensity in other filters. If too large, move to next protein in filter's list.
         //
@@ -116,24 +127,37 @@ public class ProteinSelector {
         ArrayList<Laser> lazies = new ArrayList<>();
         JavaPlot newPlot = new JavaPlot();
         boolean first = true;
+
+        Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+        int width = screenSize.width;
+        int height = screenSize.height;
+
+        newPlot.getAxis("x").setLabel("Wavelength (nm)");
+        newPlot.getAxis("x").setBoundaries(300, 900);
+        newPlot.getAxis("y").setLabel("Intensity (%)");
+        newPlot.getAxis("y").setBoundaries(0, 125);
+
+        newPlot.set("terminal", "png transparent truecolor nocrop enhanced size " + Integer.toString(width) + "," + Integer.toString(height) + "font 'arial,7'");
+        newPlot.set("style fill", "transparent solid 0.3");
+        newPlot.set("style data", "lines");
+        newPlot.set("style data filledcurves", "x1");
+        newPlot.set("key", "font ',8'");
+
         for (SelectionInfo entry : info) {
             if (!lazies.contains(entry.selectedLaser)) {
                 lazies.add(entry.selectedLaser);
 
-                if (first) first = false;
-                else newPlot.newGraph();
-                
-                newPlot.setTitle(entry.selectedLaser.name);
-                newPlot.getAxis("x").setLabel("Wavelength (nm)");
-                newPlot.getAxis("x").setBoundaries(300, 900);
-                newPlot.getAxis("y").setLabel("Intensity (%)");
-                newPlot.getAxis("y").setBoundaries(0, 125);
+                if (first) {
+                    first = false;
+                } else {
+                    newPlot.newGraph();
+                }
+                PointDataSet noiseDataSet = (entry.makeDataSet());
+                AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
+                noisePlot.setTitle("Noise in " + entry.selectedLaser.name);
+                noisePlot.set("fs", "transparent solid 0.2 noborder");
 
-                newPlot.set("terminal","png transparent truecolor nocrop enhanced size 1200,600 font 'arial,7'");
-                newPlot.set("style fill", "transparent solid 0.3");
-                newPlot.set("style data", "lines");
-                newPlot.set("style data filledcurves", "x1");
-                newPlot.set("key","font ',8'");
+                newPlot.addPlot(noisePlot);
 
                 Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
                 System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
@@ -144,13 +168,6 @@ public class ProteinSelector {
                 emPlot.setTitle(fp.name);
 
                 newPlot.addPlot(emPlot);
-
-                PointDataSet noiseDataSet = (entry.makeDataSet());
-                AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
-                noisePlot.setTitle("Noise from other Laser FPs");
-                noisePlot.set("fs", "transparent solid 0.2 noborder");
-
-                newPlot.addPlot(noisePlot);
 
                 //Graph filter bounds
                 PlotStyle ps = new PlotStyle(Style.LINES);
@@ -197,7 +214,7 @@ public class ProteinSelector {
         frame.setVisible(true);
     }
 
-    public static ArrayList<SelectionInfo> mishMashCombinatorics(ArrayList<SelectionInfo> suggestions, int n) {
+    public static ArrayList<SelectionInfo> hillClimber(ArrayList<SelectionInfo> suggestions, int n) {
         //Build list of things to check.
 
         double sumSNR = 0;
@@ -226,16 +243,22 @@ public class ProteinSelector {
                     if (fp1 == fp2 && info.selectedDetector != otherInfo.selectedDetector) {
 
                         //if true, keep info. False, keep otherInfo
-                        if (ProteinComparator.dupeCompare(info, otherInfo, ProteinComparator.compareTypes.Brightness, true)) {
+                        if (ProteinComparator.dupeCompare(info, otherInfo, ProteinComparator.compareTypes.Brightness, false)) {
                             if (otherInfo.rankedFluorophores.size() - 1 == otherInfo.selectedIndex) {
-                                removes.add(otherInfo);
+                                if (!removes.contains(otherInfo)) {
+
+                                    removes.add(otherInfo);
+                                }
                                 continue;
                             } else {
 
                                 otherInfo.selectedIndex++;
                             }
                         } else if (info.rankedFluorophores.size() - 1 == info.selectedIndex) {
-                            removes.add(info);
+                            if (!removes.contains(info)) {
+
+                                removes.add(info);
+                            }
                             continue;
                         } else {
 
@@ -259,7 +282,7 @@ public class ProteinSelector {
             }
         }
 
-        sumSNR = calcSumSNR(allInfo);
+        sumSNR = calcSumSigNoise(allInfo);
 
         //Start with all of the proteins, clip one by one and record how the SNR changes.
         //After each loop of clipping, whichever had the most positive change stays clipped.
@@ -275,8 +298,8 @@ public class ProteinSelector {
                 //Remove the protein in question from the arraylist
                 allInfo.remove(info);
 
-                //Calculate the total SNR from that removal
-                SNR = calcSumSNR(allInfo);
+                //Calculate the total Signal - Noise from that removal
+                SNR = calcSumSigNoise(allInfo);
 
                 //Add the protein back into the arraylist
                 allInfo.add(info);
@@ -292,17 +315,17 @@ public class ProteinSelector {
             }
             iterateInfo.remove(highestScore);
             allInfo.remove(highestScore);
-            sumSNR += highestScore.score;
 
         }
         generateNoise(allInfo);
-        calcSumSNR(allInfo);
+        sumSNR = calcSumSigNoise(allInfo);
 
         return allInfo;
     }
 
-    public static double calcSumSNR(ArrayList<SelectionInfo> allInfo) {
-        double sumSNR = 0;
+    public static double calcSumSigNoise(ArrayList<SelectionInfo> allInfo) {
+//        double sumSNR = 0;
+        double sumDiff = 0;
 
         for (SelectionInfo info : allInfo) {
 
@@ -323,10 +346,20 @@ public class ProteinSelector {
 
             }
             info.SNR = signal / noise;
-            sumSNR += info.SNR;
+            info.SNDiff = signal - noise;
+//            sumSNR += info.SNR;
+            sumDiff += info.SNDiff;
         }
 
-        return sumSNR;
+        //SOOOOOOOOO:
+        
+        //SNR provides higher average but not everything will be readable.
+        //Signal - Noise provides lower average, but all signals are readable.
+        //Ex: SNR yields 9 proteins, 1 has <1 SNR
+        //    Signal - Noise yeilds 9, minimum has SNR = 3.
+        
+        
+        return sumDiff;
     }
 
     public static void generateNoise(ArrayList<SelectionInfo> selected) {
@@ -346,7 +379,6 @@ public class ProteinSelector {
                 if (noiseFp.EXspectrum.containsKey((double) info.selectedLaser.wavelength)) {
                     //Get a decimal of how excited the noiseFPs are
                     double multiplier = noiseFp.EXspectrum.get((double) info.selectedLaser.wavelength) / 100;
-                    System.out.println(multiplier);
 
                     //Add the entire noise graph
                     for (Map.Entry<Double, Double> entry : noiseFp.EMspectrum.entrySet()) {
