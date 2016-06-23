@@ -148,7 +148,7 @@ public class SomewhatExhaustiveSelectionTest {
             si.selectedLaser = ranked[bestFilters[i]][bestFluorophores[i]].laser;
             selected.add(si);
         }
-        ProteinSelector.calcSumSNR(selected);
+        ProteinSelector.calcSumSigNoise(selected);
         ProteinSelector.generateNoise(selected);
         
         ProteinSelector.plotSelection(selected);

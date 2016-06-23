@@ -18,7 +18,7 @@ import org.cidarlab.fpSelection.dom.Laser;
  *
  * @author david
  */
-public class SelectionInfo {
+public class SelectionInfo implements Comparable<SelectionInfo>{
 
     public Laser selectedLaser;
     public Detector selectedDetector;
@@ -48,5 +48,10 @@ public class SelectionInfo {
     public Fluorophore getFP(int index)
     {
         return rankedFluorophores.get(index);
+    }
+    
+    @Override
+    public int compareTo(SelectionInfo si) { 
+        return (int) (si.selectedLaser.wavelength - this.selectedLaser.wavelength);
     }
 }

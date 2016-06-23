@@ -13,17 +13,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import java.util.regex.Pattern;
-import com.panayotis.gnuplot.JavaPlot;
-import com.panayotis.gnuplot.swing.JPlot;
-import javax.swing.JFrame;
-import com.panayotis.gnuplot.plot.DataSetPlot;
-import com.panayotis.gnuplot.plot.AbstractPlot;
-import com.panayotis.gnuplot.style.PlotStyle;
-import com.panayotis.gnuplot.style.Smooth;
-import com.panayotis.gnuplot.style.Style;
-import java.util.Iterator;
 import java.util.TreeMap;
-import org.cidarlab.fpSelection.dom.Laser;
 
 /**
  *
@@ -86,51 +76,6 @@ public class fpSelectionAdaptor {
             }
             line = reader.readLine();
         }
-        /*
-        JavaPlot javaPlot = new JavaPlot();
-        javaPlot.setTitle("FP Spectrum", "Helvetica", 14);
-        javaPlot.getAxis("x").setLabel("Wavelength (nm)");
-        javaPlot.getAxis("x").setBoundaries(0, 1000);
-        javaPlot.getAxis("y").setLabel("Intensity (%)");
-        javaPlot.getAxis("y").setBoundaries(0, 100);
-        javaPlot.set("key font", "',7'");
-
-        PlotStyle myPlotStyle = new PlotStyle();
-        myPlotStyle.setStyle(Style.LINES);
-        myPlotStyle.setLineWidth(1);
-        
-
-        Laser newLaser = new Laser();
-        newLaser.wavelength = 500;
-        
-        //myPlotStyle.setStyle(Smooth.ACSPLINES);
-        //javaPlot.set("smooth", "csplines");
-        Iterator it = spectralMaps.entrySet().iterator();
-        while (it.hasNext()) {
-            HashMap.Entry pair = (HashMap.Entry) it.next();
-            Fluorophore f = (Fluorophore) pair.getValue();
-            AbstractPlot emDataSetPlot = new DataSetPlot(f.makeEMDataSet(newLaser));
-            AbstractPlot exDataSetPlot = new DataSetPlot(f.makeEXDataSet());
-            emDataSetPlot.setTitle(pair.getKey() + " (EM)");
-            exDataSetPlot.setTitle(pair.getKey() + " (EX)");
-            emDataSetPlot.setPlotStyle(myPlotStyle);
-            exDataSetPlot.setPlotStyle(myPlotStyle);
-            emDataSetPlot.setSmooth(Smooth.UNIQUE);
-            exDataSetPlot.setSmooth(Smooth.UNIQUE);
-            javaPlot.addPlot(emDataSetPlot);
-            javaPlot.addPlot(exDataSetPlot);
-        }
-
-        JPlot jPlot = new JPlot(javaPlot);
-        jPlot.plot();
-        jPlot.repaint();
-        JFrame frame = new JFrame("FP Spectrum");
-        frame.getContentPane().add(jPlot);
-        frame.pack();
-
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setVisible(true);
-        */
         return spectralMaps;
     }
 }

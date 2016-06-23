@@ -9,13 +9,16 @@ import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import com.panayotis.gnuplot.plot.AbstractPlot;
 import com.panayotis.gnuplot.plot.DataSetPlot;
+import com.panayotis.gnuplot.plot.Graph;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
 import com.panayotis.gnuplot.swing.JPlot;
 import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
@@ -124,86 +127,102 @@ public class ProteinSelector {
     }
 
     public static void plotSelection(ArrayList<SelectionInfo> info) {
-        ArrayList<Laser> lazies = new ArrayList<>();
+        //sort selection info so that filters with same lasers are plotted on same graph
+        Collections.sort(info);
+        
+        //hash set that checks if lasers have been plotted already
+        HashSet<Laser> usedLasers = new HashSet<>();
+        
+        //create the plot and initialize style/axes
         JavaPlot newPlot = new JavaPlot();
-        boolean first = true;
-
+        Graph g = new Graph();
+        
+        //get dimensions of computer screen
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = screenSize.width;
         int height = screenSize.height;
-
-        newPlot.getAxis("x").setLabel("Wavelength (nm)");
-        newPlot.getAxis("x").setBoundaries(300, 900);
-        newPlot.getAxis("y").setLabel("Intensity (%)");
-        newPlot.getAxis("y").setBoundaries(0, 125);
-
-        newPlot.set("terminal", "png transparent truecolor nocrop enhanced size " + Integer.toString(width) + "," + Integer.toString(height) + "font 'arial,7'");
+        
+        newPlot.set("terminal", "png transparent truecolor nocrop enhanced size " + Integer.toString(width) + "," + Integer.toString(height - 150) + "font 'arial,7'");
         newPlot.set("style fill", "transparent solid 0.3");
         newPlot.set("style data", "lines");
         newPlot.set("style data filledcurves", "x1");
         newPlot.set("key", "font ',8'");
 
+         //if first plot to be added
+        boolean first = true;
+        
+        //iterate through laser/filter/protein combos
         for (SelectionInfo entry : info) {
-            if (!lazies.contains(entry.selectedLaser)) {
-                lazies.add(entry.selectedLaser);
-
-                if (first) {
-                    first = false;
-                } else {
-                    newPlot.newGraph();
-                }
+            if (!usedLasers.contains(entry.selectedLaser)) {
+                usedLasers.add(entry.selectedLaser);
+                
+                //add noise plot
                 PointDataSet noiseDataSet = (entry.makeDataSet());
                 AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
                 noisePlot.setTitle("Noise in " + entry.selectedLaser.name);
                 noisePlot.set("fs", "transparent solid 0.2 noborder");
 
-                newPlot.addPlot(noisePlot);
-
+                //add emission plot
                 Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
                 System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
-
-                //Graph continuous line & attach name in legend
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
-
-                newPlot.addPlot(emPlot);
-
-                //Graph filter bounds
+                
+                //add filter bounds plot
                 PlotStyle ps = new PlotStyle(Style.LINES);
                 PointDataSet bounds = entry.selectedDetector.drawBounds();
                 AbstractPlot boundsPlot = new DataSetPlot(bounds);
                 boundsPlot.setPlotStyle(ps);
                 boundsPlot.setTitle("");
-
-                newPlot.addPlot(boundsPlot);
                 
-                //newPlot.addGraph(graph);
-
+                //first round add to javaplot (otherwise extra plot is added)
+                if(first)
+                {
+                    newPlot.addPlot(noisePlot);
+                    newPlot.addPlot(emPlot);
+                    newPlot.addPlot(boundsPlot);
+                    newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + entry.selectedLaser.name);
+                    newPlot.getAxis("x").setBoundaries(300, 900);
+                    newPlot.getAxis("y").setLabel("Intensity (%)");
+                    newPlot.getAxis("y").setBoundaries(0, 125);
+                    first = false;
+                }
+                //otherwise add to graph object that is added to javaplot
+                else
+                {
+                    g = new Graph();
+                    g.addPlot(noisePlot);
+                    g.addPlot(emPlot);
+                    g.addPlot(boundsPlot);
+                    g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + entry.selectedLaser.name);
+                    g.getAxis("x").setBoundaries(300, 900);
+                    g.getAxis("y").setLabel("Intensity (%)");
+                    g.getAxis("y").setBoundaries(0, 125);
+                    newPlot.addGraph(g);
+                }
+                
             } else {
 
+                //add emission plot
                 Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
                 System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
-
-                //Graph continuous line & attach name in legend
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
+                g.addPlot(emPlot);
 
-                newPlot.addPlot(emPlot);
-
-                //Graph filter bounds
+                //add filter bounds plot
                 PlotStyle ps = new PlotStyle(Style.LINES);
                 PointDataSet bounds = entry.selectedDetector.drawBounds();
                 AbstractPlot boundsPlot = new DataSetPlot(bounds);
                 boundsPlot.setPlotStyle(ps);
                 boundsPlot.setTitle("");
-
-                newPlot.addPlot(boundsPlot);
+                g.addPlot(boundsPlot);
 
             }
         }
-        String test = newPlot.getCommands();
+        
         JPlot graph = new JPlot(newPlot);
         graph.plot();
         graph.repaint();
@@ -213,7 +232,7 @@ public class ProteinSelector {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
     }
-
+    
     public static ArrayList<SelectionInfo> hillClimber(ArrayList<SelectionInfo> suggestions, int n) {
         //Build list of things to check.
 
@@ -397,5 +416,4 @@ public class ProteinSelector {
             }
         }
     }
-
 }

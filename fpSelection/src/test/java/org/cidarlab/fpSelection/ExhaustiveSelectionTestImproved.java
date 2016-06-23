@@ -53,7 +53,7 @@ public class ExhaustiveSelectionTestImproved {
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         //int n = Integer.parseInt(numString);
-        bigN = 3;
+        bigN = 2;
 
         //count fluorophores
         numFluorophores = spectralMaps.size();
@@ -113,7 +113,7 @@ public class ExhaustiveSelectionTestImproved {
             si.selectedLaser = lasers[bestFilters[i]];
             selected.add(si);
         }
-        ProteinSelector.calcSumSNR(selected);
+        ProteinSelector.calcSumSigNoise(selected);
         ProteinSelector.generateNoise(selected);
         
         ProteinSelector.plotSelection(selected);

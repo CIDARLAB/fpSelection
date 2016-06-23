@@ -140,7 +140,7 @@ public class ExhaustiveSelectionTest {
             si.selectedLaser = lasers[bestFilters[i]];
             selected.add(si);
         }
-        ProteinSelector.calcSumSNR(selected);
+        ProteinSelector.calcSumSigNoise(selected);
         ProteinSelector.generateNoise(selected);
         
         ProteinSelector.plotSelection(selected);
