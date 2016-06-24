@@ -137,5 +137,21 @@ public String name;
         }
         return peakPoint;
     }
+    
+    public double EMPeak()
+    {
+        double highest = 0;
+        double highWave = 0;
+        for(Map.Entry<Double, Double> entry : EMspectrum.entrySet())
+        {
+            if(entry.getValue() > highest)
+            {
+                highest = entry.getValue();
+                highWave = entry.getKey();
+            }
+        }
+        
+        return highWave;
+    }
 
 }

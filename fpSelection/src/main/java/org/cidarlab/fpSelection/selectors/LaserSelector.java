@@ -27,7 +27,11 @@ import org.cidarlab.fpSelection.dom.SelectionInfo;
  * @author david
  */
 public class LaserSelector {
-
+    
+    
+    /////////////
+    //Test Main//
+    /////////////
     public static void main(String[] args) throws IOException {
         File input = new File("src/main/resources/Fluorophores.org/");
         HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
@@ -40,7 +44,7 @@ public class LaserSelector {
 
         ArrayList<Detector> detect = new ArrayList();
 
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 5; i++) {
             Laser get = testCyto.lasers.get(next.nextInt(testCyto.lasers.size()));
             detect.add(get.detectors.get(next.nextInt(get.detectors.size())));
         }
@@ -52,8 +56,23 @@ public class LaserSelector {
         ProteinSelector.plotSelection(pls);
 
     }
+    
+    
+    ///////////////////////////////
+    ///         PROCESS         ///
+    ///////////////////////////////
+    /*
+        1. Group the proteins by adding them to n lists for equally spaced n lasers.
+        2. Separate each laser's list into wide generic emission ranges, skip empty emission ranges.
+        3. Fit each given detector to the most responsive ranges.
+                i.e.: Between two 400-500 nm spaces on different lasers, FPs in one respond more than the other. You fit the detector onto that laser's range.
+        4. Cull the herd. Any ranges that still don't have a proper detector are deleted.
+        5. For each laser, scan over the space given (defined by generalSpace) to find the laser wavelength that produces the most response from all proteins that were placed in that range.
+        6. Sort the protein lists based on expression and leakage in it's laser detector combo.
+    
+    */
 
-    public static ArrayList<SelectionInfo> FilterFPtoLasers(HashMap<String, Fluorophore> selectedProteins, List<Detector> selectedDetectors, int nLasers) {
+    public static ArrayList<SelectionInfo> FilterFPtoLasers(HashMap<String, Fluorophore> fpList, List<Detector> selectedDetectors, int nLasers) {
 
         double spectralMin = 200;
         double spectralMax = 1000;
@@ -68,7 +87,7 @@ public class LaserSelector {
         ///////////////////////////////////////
         ArrayList<Laser> theLasers = new ArrayList();
 
-        for (Fluorophore each : selectedProteins.values()) {
+        for (Fluorophore each : fpList.values()) {
             boolean insert = false;
 
             peak = each.EXPeak();
@@ -137,7 +156,6 @@ public class LaserSelector {
         /////////////////////////////////////////////////
         //Fit the filters to the most responsive ranges//
         /////////////////////////////////////////////////
-
         
 
         for (Detector detector : selectedDetectors) {
@@ -158,6 +176,13 @@ public class LaserSelector {
             highestScore.selectedDetector = detector;
         }
 
+        
+        /////////////////
+        //Cull the herd//
+        /////////////////
+        
+        //aka where n comes to die
+        
         ArrayList<SelectionInfo> delete = new ArrayList();
 
         for (SelectionInfo check : EMspecific) {
@@ -204,6 +229,7 @@ public class LaserSelector {
             }
 
             each.wavelength = bestWave;
+            each.name = Integer.toString(bestWave) + " nm Laser";
         }
 
         /////////////////////////////////////////////////////////////////////
