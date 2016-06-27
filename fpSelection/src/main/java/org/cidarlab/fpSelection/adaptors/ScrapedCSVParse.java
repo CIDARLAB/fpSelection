@@ -32,14 +32,14 @@ public class ScrapedCSVParse {
         File folder = new File("/home/david/Desktop/CIDAR/fpSelection/fpSelection/src/main/resources/ScrapedCSVs/");
     
         System.out.println("Generating fluorophore objects from folder of csv's...");
-        HashMap<String, Fluorophore> masterList = generateFPs(folder);
+        HashMap<String, Fluorophore> masterList = parse(folder);
         System.out.println("Process complete.");
     
     
     }
 
 
-    public static HashMap<String, Fluorophore> generateFPs(File directory) throws FileNotFoundException, IOException {
+    public static HashMap<String, Fluorophore> parse(File directory) throws FileNotFoundException, IOException {
         HashMap<String, Fluorophore> masterList = new HashMap<>();
 
         File[] listOfFiles = directory.listFiles();

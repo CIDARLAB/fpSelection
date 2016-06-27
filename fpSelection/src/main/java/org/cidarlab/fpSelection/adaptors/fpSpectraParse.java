@@ -19,18 +19,18 @@ import java.util.TreeMap;
  *
  * @author Alex
  */
-public class fpSelectionAdaptor {
+public class fpSpectraParse {
 
     public static void main(String args[]) throws FileNotFoundException, Exception {
         File input = new File("src/main/resources/fp_spectra.csv");
-        HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
+        HashMap<String, Fluorophore> spectralMaps = parse(input);
     }
 
     /*
      * This method is for uploading fluorescence spectrum data to be associated with Fluorphore objects
      */
     public static final Pattern p = Pattern.compile(" \\((EX|EM|AB)\\)"); //regex pattern to remove (EX),(EM), and (AB)
-    public static HashMap<String, Fluorophore> uploadFluorescenceSpectrums(File input) throws FileNotFoundException, IOException {
+    public static HashMap<String, Fluorophore> parse(File input) throws FileNotFoundException, IOException {
 
         //Import file, begin reading
         BufferedReader reader = new BufferedReader(new FileReader(input.getAbsolutePath()));

@@ -3,31 +3,26 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection;
+package org.cidarlab.fpSelection.Algorithms;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import javax.swing.JOptionPane;
-import static org.cidarlab.fpSelection.adaptors.ScrapedCSVParse.generateFPs;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import static org.cidarlab.fpSelection.adaptors.fpSelectionAdaptor.uploadFluorescenceSpectrums;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
-import org.cidarlab.fpSelection.selectors.ProteinSelector;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
+import org.cidarlab.fpSelection.selectors.ProteinSelector;
 
 /**
  *
  * @author Alex
  */
-public class ExhaustiveSelectionTestImproved {
-
+public class ExhaustiveSelectionImproved {
+    
     public static LinkedList<int[]> filterCombinations;
     public static LinkedList<int[]> fluorophorePermutations;
     public static int numFluorophores;
@@ -38,22 +33,7 @@ public class ExhaustiveSelectionTestImproved {
     public static int bigN;
     public static double[][] filterSignal;
 
-    public static void main(String[] args) throws IOException {
-        
-        //Get fluorophore set
-        //File input = new File("src/main/resources/fp_spectra.csv");
-        //HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
-        File input = new File("src/main/resources/Fluorophores.org/");
-        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
-
-        //Get cytometer settings
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer cytometer = fpFortessaParse.parseFortessa(cyto);
-
-        //User input number of FPs
-        //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
-        //int n = Integer.parseInt(numString);
-        bigN = 2;
+    public static ArrayList<SelectionInfo> run(int bigN, HashMap<String, Fluorophore> spectralMaps, Cytometer cytometer) throws IOException {
 
         //count fluorophores
         numFluorophores = spectralMaps.size();
@@ -113,10 +93,11 @@ public class ExhaustiveSelectionTestImproved {
             si.selectedLaser = lasers[bestFilters[i]];
             selected.add(si);
         }
+        
         ProteinSelector.calcSumSigNoise(selected);
         ProteinSelector.generateNoise(selected);
         
-        ProteinSelector.plotSelection(selected);
+        return selected;
     }
     
     static void getCombinations(int data[], int start, int n, int index, int k) {

@@ -12,9 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.TreeMap;
-import static org.cidarlab.fpSelection.adaptors.ScrapedCSVParse.generateFPs;
+import org.cidarlab.fpSelection.adaptors.ScrapedCSVParse;
 import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import static org.cidarlab.fpSelection.adaptors.fpSelectionAdaptor.uploadFluorescenceSpectrums;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
@@ -34,13 +33,13 @@ public class LaserSelector {
     /////////////
     public static void main(String[] args) throws IOException {
         File input = new File("src/main/resources/Fluorophores.org/");
-        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
+        HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
 
         HashMap<String, Fluorophore> choose = new HashMap<>();
         Random next = new Random();
 
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parseFortessa(cyto);
+        Cytometer testCyto = fpFortessaParse.parse(cyto);
 
         ArrayList<Detector> detect = new ArrayList();
 

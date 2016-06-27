@@ -26,7 +26,7 @@ public class fpFortessaParse {
         File input = new File("src/main/resources/ex_fortessa.csv");
 
         Cytometer shinyCytometer;
-        shinyCytometer = parseFortessa(input);
+        shinyCytometer = parse(input);
 
         System.out.println("Sheath Pressure: " + shinyCytometer.sheathPressure); 
         System.out.println("Nozzle Size: " + shinyCytometer.nozzleSize);
@@ -54,7 +54,7 @@ public class fpFortessaParse {
 
     }
 
-    public static Cytometer parseFortessa(File fortessaCSV) throws FileNotFoundException, IOException {
+    public static Cytometer parse(File fortessaCSV) throws FileNotFoundException, IOException {
 
         System.out.println("Initializing reader, cytometer object, and variables...");
         // Reader takes in our CSV file

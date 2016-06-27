@@ -5,12 +5,8 @@
  */
 package org.cidarlab.fpSelection.dom;
 
-import org.cidarlab.fpSelection.dom.SelectionInfo;
 import java.util.ArrayList;
 import java.util.Comparator;
-import org.cidarlab.fpSelection.dom.Detector;
-import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.Laser;
 
 /**
  *

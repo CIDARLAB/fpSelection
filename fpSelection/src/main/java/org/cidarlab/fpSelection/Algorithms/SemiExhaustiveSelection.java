@@ -3,50 +3,32 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection;
+package org.cidarlab.fpSelection.Algorithms;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import javax.swing.JOptionPane;
-import static org.cidarlab.fpSelection.adaptors.ScrapedCSVParse.generateFPs;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import static org.cidarlab.fpSelection.adaptors.fpSelectionAdaptor.uploadFluorescenceSpectrums;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
-import org.cidarlab.fpSelection.selectors.ProteinSelector;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
+import org.cidarlab.fpSelection.dom.WrappedFluorophore;
+import org.cidarlab.fpSelection.selectors.ProteinSelector;
 
 /**
  *
  * @author Alex
  */
-public class ExhaustiveSelectionTest {
-
+public class SemiExhaustiveSelection {
+   
     public static LinkedList<int[]> filterCombinations;
     public static LinkedList<int[]> fluorophorePermutations;
 
-    public static void main(String[] args) throws IOException {
-        
-        //Get fluorophore set
-        File input = new File("src/main/resources/fp_spectra.csv");
-        HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
-        //File input = new File("src/main/resources/Fluorophores.org/");
-        //HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
-
-        //Get cytometer settings
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer cytometer = fpFortessaParse.parseFortessa(cyto);
-
-        //User input number of FPs
-        //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
-        //int n = Integer.parseInt(numString);
-        int n = 2;
+    public static ArrayList<SelectionInfo> run(int n, HashMap<String, Fluorophore> spectralMaps, Cytometer cytometer, double topPercent) throws IOException {
 
         //count fluorophores
         int numFluorophores = spectralMaps.size();
@@ -59,36 +41,36 @@ public class ExhaustiveSelectionTest {
         
         //preprocess data structures
         
-        //fluorophore index --> fluorophore object
-        Fluorophore[] fluorophores = new Fluorophore[numFluorophores];      
-        int fpi = 0;
-        for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
-            Fluorophore fluorophore = entry.getValue();
-            fluorophores[fpi] = fluorophore;
-            fpi++;
-        }
-        
-        //filter index --> fluorophore index --> riemann sun
-        double[][] filterSignal = new double[numFilters][numFluorophores];       
-        //filter index --> laser
-        Laser[] lasers = new Laser[numFilters];
-        //filter index --> detector
-        Detector[] detectors = new Detector[numFilters];
+        //filter index --> fluorophore index --> wrapped fluorophore
+        WrappedFluorophore[][] ranked = new WrappedFluorophore[numFilters][numFluorophores];
+        //filter index --> fluorophore index --> riemann sum
+        double[][] riemannSum = new double[numFilters][numFluorophores];
         int filterIndex = 0;
         for (Laser laser : cytometer.lasers) {
             for (Detector detector : laser.detectors) {
-                lasers[filterIndex] = laser;
-                detectors[filterIndex] = detector;
                 int fluorophoreIndex = 0;
                 for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
                     Fluorophore fluorophore = entry.getValue();
-                    filterSignal[filterIndex][fluorophoreIndex] = fluorophore.express(laser, detector);
+                    ranked[filterIndex][fluorophoreIndex] = new WrappedFluorophore();
+                    ranked[filterIndex][fluorophoreIndex].index = fluorophoreIndex;
+                    ranked[filterIndex][fluorophoreIndex].fluorophore = fluorophore;
+                    ranked[filterIndex][fluorophoreIndex].detector = detector;
+                    ranked[filterIndex][fluorophoreIndex].laser = laser;
+                    double express = fluorophore.express(laser, detector);
+                    riemannSum[filterIndex][fluorophoreIndex] = express;
+                    ranked[filterIndex][fluorophoreIndex].riemannSum = express;
                     fluorophoreIndex++;
                 }
                 filterIndex++;
             }
         }
         
+        //sort each list of fluorophores for each filter by highest riemann sum
+        for(int i = 0; i < numFilters; i++)
+        {
+            Arrays.sort(ranked[i]);   
+        }
+
         //get all combinations of filters (order not important)
         filterCombinations = new LinkedList<>();
         int tempData[] = new int[n];
@@ -97,28 +79,32 @@ public class ExhaustiveSelectionTest {
         //get all permutations of fluorophores to match to filters (order is important)
         fluorophorePermutations = new LinkedList<>();
         tempData = new int[n];
-        getPermutations(tempData, numFluorophores, n);
+        getPermutations(tempData, (int)(numFluorophores * topPercent), n);
         
-        //iterate through all possible combinations of filters/fluorophores
+        //iterate through "topPercent" of all possible combinations of filters/fluorophores
         double bestSignal = 0;
         int[] bestFilters = new int[n];
         int[] bestFluorophores = new int[n];
+        int totalComputations = filterCombinations.size() * fluorophorePermutations.size();
+        int onePercent = (int)(totalComputations * .01);
+        int computationIndex = 0;
+        int percent = 0;
         for (int[] filterCombo : filterCombinations)
         {
             for (int[] fluorophorePerm : fluorophorePermutations)
             {
+                if(++computationIndex % onePercent == 0) System.out.println(++percent + " percent");
                 double signal = 0;
                 for (int i = 0; i < n; i++)
                 {
                     for (int j = 0; j < n; j++)
                     {
                         //desired signal
-                        if (i == j) signal += filterSignal[filterCombo[i]][fluorophorePerm[j]];
+                        if (i == j) signal += riemannSum[filterCombo[i]][ranked[filterCombo[i]][fluorophorePerm[j]].index];
                         //undesired noise
-                        else signal -= filterSignal[filterCombo[i]][fluorophorePerm[j]];
+                        else signal -= riemannSum[filterCombo[i]][ranked[filterCombo[j]][fluorophorePerm[j]].index];
                     }
                 }
-                System.out.println(signal);
                 if (signal > bestSignal)
                 {
                     bestSignal = signal;
@@ -126,7 +112,7 @@ public class ExhaustiveSelectionTest {
                     bestFluorophores = fluorophorePerm;
                 }
             }
-        }     
+        }
 
         //prepare data for graphs
         ArrayList<SelectionInfo> selected = new ArrayList<>();
@@ -134,16 +120,17 @@ public class ExhaustiveSelectionTest {
         {
             SelectionInfo si = new SelectionInfo();
             si.rankedFluorophores = new ArrayList<>();
-            si.rankedFluorophores.add(fluorophores[bestFluorophores[i]]);
+            si.rankedFluorophores.add(ranked[bestFilters[i]][bestFluorophores[i]].fluorophore);
             si.selectedIndex = 0;
-            si.selectedDetector = detectors[bestFilters[i]];
-            si.selectedLaser = lasers[bestFilters[i]];
+            si.selectedDetector = ranked[bestFilters[i]][bestFluorophores[i]].detector;
+            si.selectedLaser = ranked[bestFilters[i]][bestFluorophores[i]].laser;
             selected.add(si);
         }
+        
         ProteinSelector.calcSumSigNoise(selected);
         ProteinSelector.generateNoise(selected);
         
-        ProteinSelector.plotSelection(selected);
+        return selected;
     }
     
     static void getCombinations(int data[], int start, int n, int index, int k) {
@@ -161,13 +148,9 @@ public class ExhaustiveSelectionTest {
             fluorophorePermutations.add(data.clone());
             return;
         }      
-        outerloop:
         for (int i = 0; i < n; ++i) {
-            for (int j = data.length-1; j >= k; j--) {
-                if (data[j] == i) continue outerloop;
-            }
             data[k - 1] = i;
             getPermutations(data, n, k - 1);
         }
-    }
+    } 
 }

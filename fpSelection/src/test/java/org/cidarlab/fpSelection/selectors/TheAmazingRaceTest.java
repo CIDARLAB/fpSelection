@@ -11,10 +11,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
-import static org.cidarlab.fpSelection.adaptors.ScrapedCSVParse.generateFPs;
+import org.cidarlab.fpSelection.Algorithms.HillClimbingSelection;
+import org.cidarlab.fpSelection.adaptors.ScrapedCSVParse;
 import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
+import static org.cidarlab.fpSelection.adaptors.ScrapedCSVParse.parse;
 
 /**
  *
@@ -29,10 +31,10 @@ public class TheAmazingRaceTest {
 
         //Large folder
         File input = new File("src/main/resources/Fluorophores.org/");
-        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
+        HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
 
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parseFortessa(cyto);
+        Cytometer testCyto = fpFortessaParse.parse(cyto);
 
         for (int n = 5; n < 9; n++) {
             System.out.println();
@@ -54,7 +56,7 @@ public class TheAmazingRaceTest {
             annealTime = System.currentTimeMillis() - time;
 
             time = System.currentTimeMillis();
-            hillSelect = ProteinSelector.chooseFPs(spectralMaps, testCyto, n);
+            hillSelect = HillClimbingSelection.run(n, spectralMaps, testCyto);
             hillTime = System.currentTimeMillis() - time;
 
             annealScore = ProteinSelector.calcSumSigNoise(annealSelect);

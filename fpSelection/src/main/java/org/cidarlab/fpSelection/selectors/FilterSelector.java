@@ -13,13 +13,13 @@ import java.util.List;
 import java.util.TreeMap;
 import javax.swing.JOptionPane;
 import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import static org.cidarlab.fpSelection.adaptors.fpSelectionAdaptor.uploadFluorescenceSpectrums;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import static org.cidarlab.fpSelection.selectors.LaserSelector.FilterFPtoLasers;
+import static org.cidarlab.fpSelection.adaptors.fpSpectraParse.parse;
 
 /**
  *
@@ -35,12 +35,12 @@ public class FilterSelector {
 
     public static void main(String[] args) throws IOException {
         File input = new File("src/main/resources/fp_spectra.csv");
-        HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
+        HashMap<String, Fluorophore> spectralMaps = parse(input);
 
 //        File input = new File("src/main/resources/Fluorophores.org/");
 //        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parseFortessa(cyto);
+        Cytometer testCyto = fpFortessaParse.parse(cyto);
 
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Give an integer n for the number of you would like: ");

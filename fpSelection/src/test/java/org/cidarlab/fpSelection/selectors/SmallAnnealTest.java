@@ -11,16 +11,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
-import static org.cidarlab.fpSelection.adaptors.ScrapedCSVParse.generateFPs;
+import org.cidarlab.fpSelection.adaptors.ScrapedCSVParse;
 import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import static org.cidarlab.fpSelection.adaptors.fpSelectionAdaptor.uploadFluorescenceSpectrums;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.Laser;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -30,12 +24,12 @@ public class SmallAnnealTest {
 
     public static void main(String[] args) throws IOException {
 //        File input = new File("src/main/resources/fp_spectra.csv");
-//        HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
+//        HashMap<String, Fluorophore> spectralMaps = parse(input);
 
         File input = new File("src/main/resources/Fluorophores.org/");
-        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
+        HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parseFortessa(cyto);
+        Cytometer testCyto = fpFortessaParse.parse(cyto);
 
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Give an integer n for the number of you would like: ");
