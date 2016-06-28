@@ -17,12 +17,9 @@
 
 $(document).ready(function () {
     $("#form").submit(function (event) {
-
         event.preventDefault();
-
         var url = $(this).attr('action');
         var formData = new FormData($('form')[0]);
-
         $.ajax({
             type: "POST",
             url: url,
@@ -35,6 +32,23 @@ $(document).ready(function () {
                 document.getElementById("img").src = result.img;
                 $("#p").append(result.info);
             }
+        });
+    });
+    $("#exhaustiveForm, #somewhatExhaustiveForm, #hillClimbingForm, #simulatedAnnealingForm").submit(function (event) {
+        event.preventDefault();
+        var form = $(this);
+        var url = $(this).attr('action');
+        var n = $("#n").val();
+        var topPercent = $("#topPercent").val();
+        $("#title").text("loading...");
+        $.post(url,{"n": n, "topPercent":topPercent},function(response)
+        {
+            result = JSON.parse(response);
+            document.getElementById("img").src = result.img;
+            $("#img").css('display', 'block');
+            var title = form.find("input").val();
+            $("#title").text(title);
+            $("#SNR").text(result.SNR);
         });
     });
 });

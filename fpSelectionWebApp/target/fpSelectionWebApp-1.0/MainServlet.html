@@ -6,18 +6,52 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
         <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
-        
+        <style type="text/css">
+            .runAlgo {
+                display: inline-block;
+            }
+            img {
+                display: none;
+            }
+            .infoDiv {
+                display: block;
+                padding: 4px;
+            }
+        </style>
         <!--Links to JS files in scripts -->
         <script type="text/javascript" src="scripts/test.js"></script>
         <title>CIDAR - FP Selection</title>
     </head>
     <body>
         <h1>PLOT!</h1>
-        <img id="img" src="" alt="plot" height="400"/>
+        <!--
         <form id="form" enctype="multipart/form-data" action="MainServlet" method="post" name="form">
             <input id="file" name="file" type="file" />
-            <input id="formsubmit" type="submit" value="Upload" />
+            <input id="somewhatExhaustive" type="submit" value="Upload" />
         </form>
-        <p id="p" style="white-space: pre"></p>
+        -->
+        <div class="infoDiv">
+            <label for="n">N: </label>
+            <input id="n" type ="number" value="2" />
+        </div>
+        <div class="infoDiv">
+            <label for="topPercent">Semi-Exhaustive %: </label>
+            <input id="topPercent" type ="number" value="10" step="any" />
+        </div>
+        <form id="exhaustiveForm" class="runAlgo" enctype="multipart/form-data" action="ExhaustiveServlet" method="post" name="form">
+            <input id="exhaustive" type="submit" value="Exhaustive" />
+        </form>
+        <form id="somewhatExhaustiveForm" class="runAlgo" enctype="multipart/form-data" action="SomewhatExhaustiveServlet" method="post" name="form">
+            <input id="somewhatExhaustive" type="submit" value="Semi-Exhaustive" />
+        </form>
+        <form id="hillClimbingForm" class="runAlgo" enctype="multipart/form-data" action="HillClimbingServlet" method="post" name="form">
+            <input id="hillClimbing" type="submit" value="Hill Climbing" />
+        </form>
+        <form id="simulatedAnnealingForm" class="runAlgo" enctype="multipart/form-data" action="SimulatedAnnealingServlet" method="post" name="form">
+            <input id="simulatedAnnealing" type="submit" value="Simulated Annealing" disabled/>
+        </form>
+        <p id="title"></p>
+        <img id="img" src="" alt="plot" height="500"/>
+        <p id="SNR" style="white-space: pre"></p>
     </body>
 </html>

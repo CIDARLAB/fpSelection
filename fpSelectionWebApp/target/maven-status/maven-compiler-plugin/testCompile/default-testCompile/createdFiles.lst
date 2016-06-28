@@ -1,0 +1,7 @@
+org/cidarlab/fpSelection/ExhaustiveSelectionTest.class
+org/cidarlab/fpSelection/selectors/SelectionTest.class
+org/cidarlab/fpSelection/selectors/SimulatedAnnealTest.class
+org/cidarlab/fpSelection/ExhaustiveSelectionTestImproved.class
+org/cidarlab/fpSelection/selectors/SmallAnnealTest.class
+org/cidarlab/fpSelection/selectors/TheAmazingRaceTest.class
+org/cidarlab/fpSelection/SomewhatExhaustiveSelectionTest.class

@@ -1,12 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee" xmlns:web="http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
-    
     <servlet>
         <servlet-name>MainServlet</servlet-name>
         <servlet-class>org.cidarlab.fpSelection.servlets.MainServlet</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ExhaustiveServlet</servlet-name>
+        <servlet-class>org.cidarlab.fpSelection.servlets.ExhaustiveServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SomewhatExhaustiveServlet</servlet-name>
+        <servlet-class>org.cidarlab.fpSelection.servlets.SemiExhaustiveServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>HillClimbingServlet</servlet-name>
+        <servlet-class>org.cidarlab.fpSelection.servlets.HillClimbingServlet</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>SimulatedAnnealingServlet</servlet-name>
+        <servlet-class>org.cidarlab.fpSelection.servlets.SimulatedAnnealingServlet</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ExhaustiveServlet</servlet-name>
+        <url-pattern>/ExhaustiveServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SomewhatExhaustiveServlet</servlet-name>
+        <url-pattern>/SomewhatExhaustiveServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HillClimbingServlet</servlet-name>
+        <url-pattern>/HillClimbingServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SimulatedAnnealingServlet</servlet-name>
+        <url-pattern>/SimulatedAnnealingServlet</url-pattern>
     </servlet-mapping>
 </web-app>
