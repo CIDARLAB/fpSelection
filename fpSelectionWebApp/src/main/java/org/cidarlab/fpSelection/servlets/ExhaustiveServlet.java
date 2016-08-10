@@ -6,27 +6,22 @@
 package org.cidarlab.fpSelection.servlets;
 
 import java.io.File;
-import java.io.FileOutputStream;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.io.PrintWriter;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.Part;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
 import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
@@ -59,50 +54,52 @@ public class ExhaustiveServlet extends HttpServlet {
         /////////////////////////////////////////
         // Parse CSVs and turn them into Files //
         /////////////////////////////////////////
-
-        File fpInput = null;
-        File cytoInput = null;
-
-        request.getParts();
+//        File fpInput = new File("src/main/resources/fpList.csv");
+//        File cytoInput = new File("src/main/resources/cyto.csv");
+        Collection<Part> parts = request.getParts();
         
-        try {
-            if (request.getPart("FPMasterList").getSize() != 0 && request.getPart("cytometer").getSize() != 0) {
+        
 
-                InputStream fpStream = request.getPart("FPMasterList").getInputStream();
-                InputStream cytoStream = request.getPart("cytometer").getInputStream();
-
-                fpInput = new File("src/main/resources/fpList.txt");
-                cytoInput = new File("src/main/resources/cyto.txt");
-
-                OutputStream fpOut = new FileOutputStream(fpInput);
-                OutputStream cytoOut = new FileOutputStream(cytoInput);
-
-                byte[] bytes = new byte[1024];
-                
-                try {
-                    while (fpStream.read(bytes) != -1) {
-                        fpOut.write(bytes);
-                    }
-                    fpOut.close();
-                    while (cytoStream.read(bytes) != -1) {
-                        cytoOut.write(bytes);
-                    }
-                    cytoOut.close();
-
-                } catch (Exception e) {
-                    System.out.println("Exception encountered when parsing CSV's: Defaulting...");
-                    fpInput = new File("src/main/resources/fp_spectra.csv");
-                    cytoInput = new File("src/main/resources/ex_fortessa.csv");
-                }
-            } else {
-                System.out.println("Shit was empty, sucks bro");
-                fpInput = new File("src/main/resources/fp_spectra.csv");
-                cytoInput = new File("src/main/resources/ex_fortessa.csv");
-            }
-        } catch (Throwable e) {
-            Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, "YOU DONE FUCKED UP: ", e);
-        }
-
+        InputStream fpInput = request.getPart("FPMasterList").getInputStream();
+        InputStream cytoInput = request.getPart("cytometer").getInputStream();
+//        
+//        try {
+//            if (request.getPart("FPMasterList").getSize() != 0 && request.getPart("cytometer").getSize() != 0) {
+//
+//                InputStream fpStream = request.getPart("FPMasterList").getInputStream();
+//                InputStream cytoStream = request.getPart("cytometer").getInputStream();
+//
+//                fpInput = new File("src/main/resources/fpList.txt");
+//                cytoInput = new File("src/main/resources/cyto.txt");
+//
+//                OutputStream fpOut = new FileOutputStream(fpInput);
+//                OutputStream cytoOut = new FileOutputStream(cytoInput);
+//
+//                byte[] bytes = new byte[1024];
+//                
+//                try {
+//                    while (fpStream.read(bytes) != -1) {
+//                        fpOut.write(bytes);
+//                    }
+//                    fpOut.close();"src/main/resources/cyto.csv"
+//                    while (cytoStream.read(bytes) != -1) {
+//                        cytoOut.write(bytes);
+//                    }
+//                    cytoOut.close();
+//
+//                } catch (Exception e) {
+//                    System.out.println("Exception encountered when parsing CSV's: Defaulting...");
+//                    fpInput = new File("src/main/resources/fp_spectra.csv");
+//                    cytoInput = new File("src/main/resources/ex_fortessa.csv");
+//                }
+//            } else {
+//                System.out.println("Shit was empty, sucks bro");
+//                fpInput = new File("src/main/resources/fp_spectra.csv");
+//                cytoInput = new File("src/main/resources/ex_fortessa.csv");
+//            }
+//        } catch (Throwable e) {
+//            Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, "YOU DONE FUCKED UP: ", e);
+//        }
         /////////////////////
         // Parse the files //
         /////////////////////

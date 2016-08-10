@@ -1,0 +1,6 @@
+#surefire
+#Wed Aug 10 12:51:15 EDT 2016
+maven.ext.class.path=/home/david/netbeans-8.1/java/maven-nblib/netbeans-eventspy.jar
+user.dir=/home/david/Desktop/CIDAR/fpSelection/fpSelectionWebApp
+localRepository=/home/david/.m2/repository
+basedir=/home/david/Desktop/CIDAR/fpSelection/fpSelectionWebApp
