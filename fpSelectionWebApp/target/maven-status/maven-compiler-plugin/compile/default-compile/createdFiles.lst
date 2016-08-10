@@ -1,2 +1,7 @@
+org/cidarlab/fpSelection/servlets/HillClimbingServlet.class
+org/cidarlab/fpSelection/servlets/SemiExhaustiveServlet.class
+org/cidarlab/fpSelection/servlets/SimulatedAnnealingServlet.class
 org/cidarlab/fpSelection/servlets/StartFpSelectionWebApp.class
+org/cidarlab/fpSelection/servlets/ExhaustiveServlet.class
 org/cidarlab/fpSelection/servlets/MainServlet.class
+org/cidarlab/fpSelection/GUI/PlotAdaptor.class

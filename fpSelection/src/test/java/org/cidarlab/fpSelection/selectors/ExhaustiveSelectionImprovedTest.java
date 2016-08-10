@@ -17,7 +17,7 @@ import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
-import static org.cidarlab.fpSelection.adaptors.ScrapedCSVParse.parse;
+import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
 
 /**
  *
@@ -31,7 +31,7 @@ public class ExhaustiveSelectionImprovedTest {
         //File input = new File("src/main/resources/fp_spectra.csv");
         //HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
         File input = new File("src/main/resources/Fluorophores.org/");
-        HashMap<String, Fluorophore> spectralMaps = parse(input);
+        HashMap<String, Fluorophore> spectralMaps = fpSpectraParse.parse(input);
 
         //Get cytometer settings
         File cyto = new File("src/main/resources/ex_fortessa.csv");

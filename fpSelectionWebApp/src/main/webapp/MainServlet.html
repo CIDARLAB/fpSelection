@@ -2,6 +2,10 @@
 <html>
     <head>
 
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
         <!--Boostrap, Ajax and JQuery libraries-->
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
         <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
@@ -21,37 +25,82 @@
         <!--Links to JS files in scripts -->
         <script type="text/javascript" src="scripts/test.js"></script>
         <title>CIDAR - FP Selection</title>
+
+        <link href="style/custom.css" rel="stylesheet">
+        <link href="style/jumbotron-narrow.css" rel="stylesheet">
+
     </head>
     <body>
-        <h1>PLOT!</h1>
-        <!--
-        <form id="form" enctype="multipart/form-data" action="MainServlet" method="post" name="form">
-            <input id="file" name="file" type="file" />
-            <input id="somewhatExhaustive" type="submit" value="Upload" />
-        </form>
-        -->
-        <div class="infoDiv">
-            <label for="n">N: </label>
-            <input id="n" type ="number" value="2" />
+
+        <div class="container">
+            <div class="row">
+                <div class="col-xs-12">
+                    <div class="jumbotron">
+                        <img class = "org_icon" src="image/Logo-Cidar-Color.png" alt = "Logo">
+
+                        <p class="lead">        
+                            A Tool for Optimizing Flow Cytometry Settings and Fluorescent Protein Selections.
+                        </p>
+                    </div>
+                </div>
+            </div>
         </div>
-        <div class="infoDiv">
-            <label for="topPercent">Semi-Exhaustive %: </label>
-            <input id="topPercent" type ="number" value="10" step="any" />
+
+        <div class="container">
+            <div class="row">
+
+                <div class="col-xs-12">
+                    <form id="goodForm" enctype="multipart/form-data" method="post" name="goodForm">
+
+                        <label for = "cytometer"> Cytometer Settings: </label>
+                        <input id = "cytometer" type = "file" accept = ".csv" name = "cytometer"/>
+
+                        <br>
+
+                        <label for = "FPMasterList"> Fluorophore Spectra Master List: </label>
+                        <input id = "FPMasterList" type = "file" accept=".csv" name = "FPMasterList"/>
+
+                        <br>
+
+                        <label for="n">N: </label>
+                        <input id="n" type ="number" value="2" name ="n"/>
+
+                        <br>
+
+                        <label for="topPercent">Semi-Exhaustive %: </label>
+                        <input id="topPercent" type ="number" value="10" step="any" name = "topPercent" />
+
+                    </form>
+
+                    <br>
+
+
+                    Begin Selection Algorithm:<br>
+
+                    <form id="exhaustiveForm" class="runAlgo" enctype="multipart/form-data" action="ExhaustiveServlet" method="post" name="form">
+                        <input id="exhaustive" type="submit" value="Exhaustive" />
+                    </form>
+                    <form id="somewhatExhaustiveForm" class="runAlgo" enctype="multipart/form-data" action="SomewhatExhaustiveServlet" method="post" name="form">
+                        <input id="somewhatExhaustive" type="submit" value="Beam Width Search" />
+                    </form>
+                    <form id="hillClimbingForm" class="runAlgo" enctype="multipart/form-data" action="HillClimbingServlet" method="post" name="form">
+                        <input id="hillClimbing" type="submit" value="Hill Climbing" />
+                    </form>
+                    <!--                    <form id="simulatedAnnealingForm" class="runAlgo" enctype="multipart/form-data" action="SimulatedAnnealingServlet" method="post" name="form">
+                                            <input id="simulatedAnnealing" type="submit" value="Simulated Annealing" disabled/>
+                                        </form>-->
+
+                    <div id ="results">
+                        <p id="title"></p>
+                        <img id="img" src="" alt="plot" height="500"/>
+                        <p id="SNR" style="white-space: pre"></p>
+                    </div>
+
+
+                </div>
+
+            </div>
+
         </div>
-        <form id="exhaustiveForm" class="runAlgo" enctype="multipart/form-data" action="ExhaustiveServlet" method="post" name="form">
-            <input id="exhaustive" type="submit" value="Exhaustive" />
-        </form>
-        <form id="somewhatExhaustiveForm" class="runAlgo" enctype="multipart/form-data" action="SomewhatExhaustiveServlet" method="post" name="form">
-            <input id="somewhatExhaustive" type="submit" value="Semi-Exhaustive" />
-        </form>
-        <form id="hillClimbingForm" class="runAlgo" enctype="multipart/form-data" action="HillClimbingServlet" method="post" name="form">
-            <input id="hillClimbing" type="submit" value="Hill Climbing" />
-        </form>
-        <form id="simulatedAnnealingForm" class="runAlgo" enctype="multipart/form-data" action="SimulatedAnnealingServlet" method="post" name="form">
-            <input id="simulatedAnnealing" type="submit" value="Simulated Annealing" disabled/>
-        </form>
-        <p id="title"></p>
-        <img id="img" src="" alt="plot" height="500"/>
-        <p id="SNR" style="white-space: pre"></p>
     </body>
 </html>

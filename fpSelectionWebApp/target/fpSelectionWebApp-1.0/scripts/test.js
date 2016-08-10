@@ -1,19 +1,19 @@
 /*function testJetty() {
-    $.ajax({
-        url: "MainServlet",
-        type: "POST",
-        data: {
-            "rank": document.getElementById("rank").value
-        },
-        success: function (response) {
-            result = JSON.parse(response);
-            alert("New rank is  (Rank + 1)::" + result.rank);
-        },
-        error: function () {
-            alert("ERROR!!");
-        }
-    });
-}*/
+ $.ajax({
+ url: "MainServlet",
+ type: "POST",
+ data: {
+ "rank": document.getElementById("rank").value
+ },
+ success: function (response) {
+ result = JSON.parse(response);
+ alert("New rank is  (Rank + 1)::" + result.rank);
+ },
+ error: function () {
+ alert("ERROR!!");
+ }
+ });
+ }*/
 
 $(document).ready(function () {
     $("#form").submit(function (event) {
@@ -36,19 +36,31 @@ $(document).ready(function () {
     });
     $("#exhaustiveForm, #somewhatExhaustiveForm, #hillClimbingForm, #simulatedAnnealingForm").submit(function (event) {
         event.preventDefault();
-        var form = $(this);
+        var form = document.getElementById("goodForm");
         var url = $(this).attr('action');
-        var n = $("#n").val();
-        var topPercent = $("#topPercent").val();
+        var formData = new FormData(form);
+        
         $("#title").text("loading...");
-        $.post(url,{"n": n, "topPercent":topPercent},function(response)
-        {
-            result = JSON.parse(response);
-            document.getElementById("img").src = result.img;
-            $("#img").css('display', 'block');
-            var title = form.find("input").val();
-            $("#title").text(title);
-            $("#SNR").text(result.SNR);
+        $("#SNR").text("");
+        $("#img").src = "dummy.png";
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: formData,
+            processData: false,
+            contentType: false,
+            success: function (response)
+            {
+                result = JSON.parse(response);
+                document.getElementById("img").src = result.img;
+                $("#img").css('display', 'block');
+                $("#title").text("");
+                $("#SNR").text(result.SNR);
+            }
+
         });
+
+
     });
 });

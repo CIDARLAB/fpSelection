@@ -36,7 +36,7 @@ public class ScrapedCSVParse {
         System.out.println("Process complete.");
     
     
-    }
+    } 
 
 
     public static HashMap<String, Fluorophore> parse(File directory) throws FileNotFoundException, IOException {

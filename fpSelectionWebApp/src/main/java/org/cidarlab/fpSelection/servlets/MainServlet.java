@@ -57,7 +57,8 @@ public class MainServlet extends HttpServlet {
             Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
         Enumeration<String> stuff = request.getParameterNames();
-        Map<String, String[]> button = request.getParameterMap();
+        Map<String, String[]> button = request.getParameterMap();        
+        
         //InputStream input = field.getInputStream();
         File input = new File("src/main/resources/Fluorophores/org/");
         HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
