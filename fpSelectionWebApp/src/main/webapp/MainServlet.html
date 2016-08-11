@@ -14,9 +14,6 @@
             .runAlgo {
                 display: inline-block;
             }
-            img {
-                display: none;
-            }
             .infoDiv {
                 display: block;
                 padding: 4px;
@@ -75,7 +72,12 @@
                     <br>
 
 
-                    Begin Selection Algorithm:<br>
+                    Begin Selection Algorithm:
+                    <br>
+                    
+                    Exhaustive with N = 5, 5 possible lasers, 17 possible filters, and 14 possible fluorophores takes about 1 minute to process.
+                    Doing the same with N = 6 takes upwards of 10 minutes.
+                    <br>
 
                     <form id="exhaustiveForm" class="runAlgo" enctype="multipart/form-data" action="ExhaustiveServlet" method="post" name="form">
                         <input id="exhaustive" type="submit" value="Exhaustive" />
@@ -86,13 +88,13 @@
                     <form id="hillClimbingForm" class="runAlgo" enctype="multipart/form-data" action="HillClimbingServlet" method="post" name="form">
                         <input id="hillClimbing" type="submit" value="Hill Climbing" />
                     </form>
-                    <!--                    <form id="simulatedAnnealingForm" class="runAlgo" enctype="multipart/form-data" action="SimulatedAnnealingServlet" method="post" name="form">
-                                            <input id="simulatedAnnealing" type="submit" value="Simulated Annealing" disabled/>
-                                        </form>-->
+<!--                    <form id="simulatedAnnealingForm" class="runAlgo" enctype="multipart/form-data" action="SimulatedAnnealingServlet" method="post" name="form">
+                        <input id="simulatedAnnealing" type="submit" value="Simulated Annealing" disabled/>
+                    </form>-->
 
                     <div id ="results">
-                        <p id="title"></p>
-                        <img id="img" src="" alt="plot" height="500"/>
+                        <p id="title"> </p>
+                        <img id="img" src="image/blank.png" alt="Plot of Laser, Filter, and FP selections"/>
                         <p id="SNR" style="white-space: pre"></p>
                     </div>
 

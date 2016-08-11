@@ -5,10 +5,13 @@
  */
 package org.cidarlab.fpSelection.servlets;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
@@ -59,71 +62,42 @@ public class SemiExhaustiveServlet extends HttpServlet {
         /////////////////////////////////////////
         // Parse CSVs and turn them into Files //
         /////////////////////////////////////////
-        FileItemFactory factory = new DiskFileItemFactory();
-        ServletFileUpload upload = new ServletFileUpload(factory);
-        FileItem fpSpectra = null;
-        FileItem cytometer = null;
-
-        File fpInput = null;
-        File cytoInput = null;
-
-        request.getParts();
-
+        boolean fileErr = false;
+        String errMsg = null;
+        InputStream fpInput;
+        InputStream cytoInput;
         try {
-            if (!upload.parseRequest(request).isEmpty()) {
-
-                try {
-                    fpSpectra = upload.parseRequest(request).get(1);
-                    cytometer = upload.parseRequest(request).get(0);
-                } catch (FileUploadException ex) {
-                    Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, null, ex);
-                }
-
-                InputStream fpStream = fpSpectra.getInputStream();
-                InputStream cytoStream = cytometer.getInputStream();
-
-                fpInput = new File("fpList.csv");
-                cytoInput = new File("cyto.csv");
-
-                OutputStream fpOut = new FileOutputStream(fpInput);
-                OutputStream cytoOut = new FileOutputStream(cytoInput);
-
-                int read = 0;
-                byte[] bytes = new byte[1024];
-
-                try {
-                    while ((read = fpStream.read(bytes)) != -1) {
-                        fpOut.write(bytes, 0, read);
-                    }
-                    while ((read = cytoStream.read(bytes)) != -1) {
-                        cytoOut.write(bytes, 0, read);
-                    }
-
-                } catch (Exception e) {
-                    System.out.println("Exception encountered when parsing CSV's: Defaulting...");
-                    fpInput = new File("src/main/resources/fp_spectra.csv");
-                    cytoInput = new File("src/main/resources/ex_fortessa.csv");
-                }
-            } else {
-                fpInput = new File("src/main/resources/fp_spectra.csv");
-                cytoInput = new File("src/main/resources/ex_fortessa.csv");
-            }
-        } catch (Throwable e) {
-            Logger.getLogger(MainServlet.class.getName()).log(Level.SEVERE, "YOU DONE FUCKED UP: ", e);
+            fpInput = request.getPart("FPMasterList").getInputStream();
+            cytoInput = request.getPart("cytometer").getInputStream();
+        } catch (Exception e) {
+            errMsg = "Error downloading CSV's, using sample cytometer and fluorophores \n ";
+            fileErr = true;
+            fpInput = new FileInputStream("src/main/resources/fp_spectra.csv");
+            cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
         }
+        
+        int n = Integer.parseInt(new BufferedReader(new InputStreamReader(request.getPart("n").getInputStream())).readLine());
+        double topPercent = Double.parseDouble(new BufferedReader(new InputStreamReader(request.getPart("topPercent").getInputStream())).readLine());
+        topPercent *= .01;
 
         /////////////////////
         // Parse the files //
         /////////////////////
-        HashMap<String, Fluorophore> spectralMaps = fpSpectraParse.parse(fpInput);
-        Cytometer cytoSettings = fpFortessaParse.parse(cytoInput);
-
-        ////////////////////////////////////////////
-        // Parse the rest of the request variables//
-        ////////////////////////////////////////////
-        int n = Integer.parseInt(request.getParameter("n"));
-
-        double topPercent = Double.parseDouble(request.getParameter("topPercent")) * .01;
+        HashMap<String, Fluorophore> spectralMaps = null;
+        Cytometer cytoSettings = null;
+        try {
+            spectralMaps = fpSpectraParse.parse(fpInput);
+            cytoSettings = fpFortessaParse.parse(cytoInput);
+        } catch (Exception x) {
+            errMsg = "CSV's formatted incorrectly or unreadable, using sample cytometer and fluorophores \n ";
+            fileErr = true;
+            fpInput = new FileInputStream("src/main/resources/fp_spectra.csv");
+            cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
+            spectralMaps = fpSpectraParse.parse(fpInput);
+            cytoSettings = fpFortessaParse.parse(cytoInput);
+        }
+        fpInput.close();
+        cytoInput.close();
 
         ///////////////////////
         // Search and Return //
@@ -136,7 +110,11 @@ public class SemiExhaustiveServlet extends HttpServlet {
         JSONObject result = new JSONObject();
 
         result.put("img", info.get(0));
-        result.put("SNR", info.get(1));
+        if (fileErr) {
+            result.put("SNR", errMsg + info.get(1));
+        } else {
+            result.put("SNR", info.get(1));
+        }
         writer.println(result);
         writer.flush();
         writer.close();

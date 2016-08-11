@@ -143,7 +143,7 @@ public class fpFortessaParse {
                     fields = line.split(splitter);
                     category = fields[0];
                 } else {
-                    //Push to the next laser 
+                    //Push to the next laser System.out
                     line = reader.readLine();
 
                     //so that EOF doesn't crush my soul

@@ -52,6 +52,9 @@ h4{
     margin-left:auto;
     display: block;
 }
+#title{
+    display: block;
+}
 
 #img{
    margin-left: auto;
@@ -92,9 +95,9 @@ h4{
     vertical-align: top;
     padding: 0;
     font-size: 40px;
-
-
-
+}
+#img{
+    display: block;
 }
 
 .left{

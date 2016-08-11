@@ -66,7 +66,7 @@ public class HillClimbingSelection {
             tempList = new ArrayList<>();
             int threshold = 80;
 
-            while (threshold > 40 && tempList.size() < (.1 * masterList.size() + 5)) {
+            while (threshold > 40 && tempList.size() < (.1 * masterList.size() + 3)) {
                 threshold--;
 
                 for (Map.Entry<String, Fluorophore> entry : masterList.entrySet()) {

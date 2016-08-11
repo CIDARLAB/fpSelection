@@ -39,11 +39,10 @@ $(document).ready(function () {
         var form = document.getElementById("goodForm");
         var url = $(this).attr('action');
         var formData = new FormData(form);
-        
-        $("#title").text("loading...");
-        $("#SNR").text("");
-        $("#img").src = "dummy.png";
-
+        $("#img").fadeOut(function () {
+            $("#title").text("loading...");
+            $("#SNR").text("");
+        });
         $.ajax({
             url: url,
             type: "POST",
@@ -53,14 +52,13 @@ $(document).ready(function () {
             success: function (response)
             {
                 result = JSON.parse(response);
-                document.getElementById("img").src = result.img;
-                $("#img").css('display', 'block');
                 $("#title").text("");
-                $("#SNR").text(result.SNR);
+                document.getElementById("img").src = result.img;
+                $("#img").fadeIn(function () {
+                    $("#SNR").text(result.SNR);
+                });
             }
 
         });
-
-
     });
 });
