@@ -1,6 +1,5 @@
 body{
     width: 100%;
-    text-align: center;
 }
 
 h4{
@@ -22,7 +21,6 @@ h4{
 .nav{
     color: white;
 }
-
 
 .navbar-header a{
     color:white;
@@ -98,6 +96,8 @@ h4{
 }
 #img{
     display: block;
+    margin: auto;
+    max-width: 100%;
 }
 
 .left{
@@ -109,3 +109,6 @@ td{
     padding-right: 40px;
 }
 
+.algo-display, .samples, footer{
+    text-align: center;
+}

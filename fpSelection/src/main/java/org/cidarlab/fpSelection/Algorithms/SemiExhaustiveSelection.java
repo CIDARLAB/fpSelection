@@ -86,7 +86,7 @@ public class SemiExhaustiveSelection {
         int[] bestFilters = new int[n];
         int[] bestFluorophores = new int[n];
         int totalComputations = filterCombinations.size() * fluorophorePermutations.size();
-        int onePercent = (int)(totalComputations * .01);
+        int onePercent = (int)(totalComputations * .01) + 1;
         int computationIndex = 0;
         int percent = 0;
         for (int[] filterCombo : filterCombinations)

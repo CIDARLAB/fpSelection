@@ -89,7 +89,7 @@ public class ExhaustiveServlet extends HttpServlet {
             spectralMaps = fpSpectraParse.parse(fpInput);
             cytoSettings = fpFortessaParse.parse(cytoInput);
         } catch (Exception x) {
-            errMsg = "CSV's formatted incorrectly or unreadable, using sample cytometer and fluorophores \n ";
+            errMsg = "CSV's formatted incorrectly or unreadable, using sample cytometer and fluorophores: \n ";
             fileErr = true;
             fpInput = new FileInputStream("src/main/resources/fp_spectra.csv");
             cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");

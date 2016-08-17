@@ -43,6 +43,10 @@ $(document).ready(function () {
             $("#title").text("loading...");
             $("#SNR").text("");
         });
+
+        var start = performance.now();
+
+
         $.ajax({
             url: url,
             type: "POST",
@@ -51,11 +55,17 @@ $(document).ready(function () {
             contentType: false,
             success: function (response)
             {
+                var end = performance.now();
+
                 result = JSON.parse(response);
-                $("#title").text("");
                 document.getElementById("img").src = result.img;
+                $('html, body').animate({
+                    scrollTop: $("#title").offset().top
+                }, 1000);
+
                 $("#img").fadeIn(function () {
                     $("#SNR").text(result.SNR);
+                    $("#title").text("Time taken was: " + (end - start) / 1000 + " s");
                 });
             }
 

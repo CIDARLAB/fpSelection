@@ -20,17 +20,25 @@ import org.cidarlab.fpSelection.dom.Laser;
  */
 public class SelectionInfo implements Comparable<SelectionInfo>{
 
+    //Results
     public Laser selectedLaser;
     public Detector selectedDetector;
     public ArrayList<Fluorophore> rankedFluorophores;
 
+    //For use in algorithms
     public int selectedIndex;
     public double score;
     public double SNR;
     public double SNDiff;
-    
     public TreeMap<Double, Double> noise;
     
+    @Override
+    public int compareTo(SelectionInfo si) { 
+        return (int) (si.selectedLaser.wavelength - this.selectedLaser.wavelength);
+    }
+    
+    
+    //Utility functions
     public PointDataSet makeDataSet()
     {
         PointDataSet dataSet = new PointDataSet();
@@ -48,10 +56,5 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     public Fluorophore getFP(int index)
     {
         return rankedFluorophores.get(index);
-    }
-    
-    @Override
-    public int compareTo(SelectionInfo si) { 
-        return (int) (si.selectedLaser.wavelength - this.selectedLaser.wavelength);
     }
 }
