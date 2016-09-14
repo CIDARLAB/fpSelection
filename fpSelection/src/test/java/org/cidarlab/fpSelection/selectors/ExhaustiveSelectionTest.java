@@ -38,7 +38,7 @@ public class ExhaustiveSelectionTest {
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         //int n = Integer.parseInt(numString);
-        int n = 2;
+        int n = 4;
         
         ArrayList<SelectionInfo> selected = ExhaustiveSelection.run(n,spectralMaps,cytometer);
         

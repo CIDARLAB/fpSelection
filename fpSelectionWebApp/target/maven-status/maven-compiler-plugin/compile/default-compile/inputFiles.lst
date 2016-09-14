@@ -1,7 +1,7 @@
-/home/david/Desktop/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/GUI/PlotAdaptor.java
-/home/david/Desktop/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/HillClimbingServlet.java
-/home/david/Desktop/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/SemiExhaustiveServlet.java
-/home/david/Desktop/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/MainServlet.java
-/home/david/Desktop/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/ExhaustiveServlet.java
-/home/david/Desktop/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/StartFpSelectionWebApp.java
-/home/david/Desktop/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/SimulatedAnnealingServlet.java
+/Users/Alex/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/SimulatedAnnealingServlet.java
+/Users/Alex/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/ExhaustiveServlet.java
+/Users/Alex/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/HillClimbingServlet.java
+/Users/Alex/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/MainServlet.java
+/Users/Alex/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/StartFpSelectionWebApp.java
+/Users/Alex/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/GUI/PlotAdaptor.java
+/Users/Alex/CIDAR/fpSelection/fpSelectionWebApp/src/main/java/org/cidarlab/fpSelection/servlets/SemiExhaustiveServlet.java
