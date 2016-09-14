@@ -6,40 +6,29 @@
 package org.cidarlab.fpSelection.servlets;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.nio.ByteBuffer;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.Part;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
 import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
-import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelection;
+import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelectionMultiThreaded;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
 import org.json.JSONObject;
 
@@ -103,7 +92,16 @@ public class ExhaustiveServlet extends HttpServlet {
         ////////////////////////////////////////////
         // Parse the rest of the request variables//
         ////////////////////////////////////////////
-        ArrayList<SelectionInfo> selected = ExhaustiveSelection.run(n, spectralMaps, cytoSettings);
+        ExhaustiveSelectionMultiThreaded algo = new ExhaustiveSelectionMultiThreaded();
+        
+        ArrayList<SelectionInfo> selected = new ArrayList<>();
+        try {
+            selected = algo.run(n, spectralMaps, cytoSettings, 8);
+        } catch (InterruptedException ex) {
+            Logger.getLogger(ExhaustiveServlet.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (ExecutionException ex) {
+            Logger.getLogger(ExhaustiveServlet.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         ProteinSelector.calcSumSigNoise(selected);
         ProteinSelector.generateNoise(selected);

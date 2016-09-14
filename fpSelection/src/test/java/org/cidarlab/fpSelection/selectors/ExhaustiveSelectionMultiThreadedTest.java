@@ -38,7 +38,7 @@ public class ExhaustiveSelectionMultiThreadedTest {
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         //int n = Integer.parseInt(numString);
-        int n = 4;
+        int n = 5;
         
         final long startTime = System.currentTimeMillis();
 
@@ -46,7 +46,7 @@ public class ExhaustiveSelectionMultiThreadedTest {
         ArrayList<SelectionInfo> selected = esmt.run(n,spectralMaps,cytometer,8);
         
         final long endTime = System.currentTimeMillis();
-        System.out.println("Total time: " + (endTime - startTime)/1000 );
+        System.out.println("Total time: " + (endTime - startTime) + " ms");
         
         ProteinSelector.plotSelection(selected);
     }

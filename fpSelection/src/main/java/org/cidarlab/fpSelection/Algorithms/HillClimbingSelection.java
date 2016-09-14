@@ -96,19 +96,6 @@ public class HillClimbingSelection {
             bestFPs.add(choiceInfo);
         }
 
-        //After all of that, check noise intensity in other filters. If too large, move to next protein in filter's list.
-        //
-        //
-        //
-        //      FOR NOW, let's not. We'll figure it out after the simplest case.
-        //
-        //
-        //OUTPUTS FOR DEBUG
-        //
-        //
-        //
-//        I gotta fix this thing before we can use it >.>
-//        plotSelection(theLaser, returnMap);
         return bestFPs;
 
     }

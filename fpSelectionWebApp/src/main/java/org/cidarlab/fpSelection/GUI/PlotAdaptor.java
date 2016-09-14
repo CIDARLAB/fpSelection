@@ -120,6 +120,8 @@ public class PlotAdaptor {
                 //add emission plot
                 Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
                 SNR += fp.name + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
+                totalSNR += entry.SNR;
+                snrCount++;
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
