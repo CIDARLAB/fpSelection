@@ -15,6 +15,9 @@ import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelection;
 import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelectionImproved;
 import org.cidarlab.fpSelection.Algorithms.HillClimbingSelection;
 import org.cidarlab.fpSelection.Algorithms.SemiExhaustiveSelection;
+import org.cidarlab.fpSelection.adaptors.ScrapedCSVParse;
+import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
+import static org.cidarlab.fpSelection.adaptors.fpSpectraParse.parse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
@@ -29,23 +32,23 @@ public class API {
     
     //Not really necessary, but it's nice to have a centralized location for calling our functions.
     
-    public static HashMap<String, Fluorophore> parseMasterList(File fpList)
+    public static HashMap<String, Fluorophore> parseMasterList(File fpList) throws IOException
     {
         //to do
-        HashMap<String, Fluorophore> returnList = new HashMap<>();
+        HashMap<String, Fluorophore> returnList = parse(fpList);
         return returnList;
     }
     
-    public static HashMap<String, Fluorophore> parseFPDir(File directory)
+    public static HashMap<String, Fluorophore> parseFPDir(File directory) throws IOException
     {
         //to do
-        HashMap<String, Fluorophore> returnList = new HashMap<>();
+        HashMap<String, Fluorophore> returnList = ScrapedCSVParse.parse(directory);
         return returnList;        
     }
     
-    public static Cytometer parseCytometer(File csvFortessa)
+    public static Cytometer parseCytometer(File csvFortessa) throws IOException
     {
-        Cytometer returnCyto = new Cytometer();
+        Cytometer returnCyto = fpFortessaParse.parse(csvFortessa);
         return returnCyto;
     }
     

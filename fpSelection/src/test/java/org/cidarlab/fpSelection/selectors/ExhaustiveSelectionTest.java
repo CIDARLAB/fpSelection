@@ -38,8 +38,10 @@ public class ExhaustiveSelectionTest {
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         //int n = Integer.parseInt(numString);
+
         int n = 5;
         final long startTime = System.currentTimeMillis();
+
         ArrayList<SelectionInfo> selected = ExhaustiveSelection.run(n,spectralMaps,cytometer);
         System.out.println("time: " + (System.currentTimeMillis() - startTime) + " ms");
         
