@@ -15,7 +15,23 @@
  });
  }*/
 
+var laseField, filterField;
+
+$(document).on('click', '.laser-btn', function(){
+    $(".lasers").append("<br>" + laseField);
+});
+
+$(document).on('click','.filter-btn',function(){
+    $(this).parent().parent().append(filterField);
+    $(this).remove();
+});
+
 $(document).ready(function () {
+    //Grab html for laser form
+    laseField = $(".lasers").html();
+    //Grab html for filter form
+    filterField = $(".filters").html();
+    
     $("#form").submit(function (event) {
         event.preventDefault();
         var url = $(this).attr('action');
@@ -34,6 +50,26 @@ $(document).ready(function () {
             }
         });
     });
+    $("#cytometerForm").submit(function(event){
+       event.preventDefault();
+       
+       var form = document.getElementById("cytometerForm");
+       var url = "validator";
+       var formData = new FormData(form);
+       
+       $.ajax({
+          url: url,
+          type: "POST",
+          data: formData,
+          processData: false,
+          contentType: false,
+          success:function(response)
+          {
+              $(".responseDiv").text(response);
+          }
+       });
+    });
+    
     $("#exhaustiveForm, #somewhatExhaustiveForm, #hillClimbingForm, #simulatedAnnealingForm").submit(function (event) {
         event.preventDefault();
         var form = document.getElementById("goodForm");
