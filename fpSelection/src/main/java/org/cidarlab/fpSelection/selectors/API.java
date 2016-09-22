@@ -68,5 +68,12 @@ public class API {
     {
         return SimulatedAnneal.simulateAnnealing(fps, cyto, n);
     }
+    //For validating existing setups, provide a Hashmap of fluorophores chosen and your full cytometer data.
+    public static ArrayList<SelectionInfo> validator(HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
+    {
+        //By running it like this, it'll just suggest the strongest expressing filter-fp matchups, 
+        //and the hill climbing portion will be skipped since we aren't clipping any fp's
+        return HillClimbingSelection.run(fps.size(), fps, cyto);
+    }
     
 }

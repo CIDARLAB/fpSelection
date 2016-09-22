@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>TODO supply a title</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+        <link href="style/bootstrap.css" rel="stylesheet">
+        <link href="style/custom.css" rel="stylesheet">
+        <link href="style/jumbotron-narrow.css" rel="stylesheet">
+    </head>
+    <body>
+        <div>
+
+            <form>
+                <div class="form-inline">
+
+                    <div class="form-group">
+                        <label for="laserName">Laser:</label>
+                        <input type="text" class="form-control" id="laserName" placeholder="Blue-Green">
+                        <label for="filters">Filter Midpoint (nm):</label>
+                        <input type="text" class="form-control" id="filters" placeholder="650">
+                        <label for="filterWidth">Width:</label>
+                        <input type="text" class="form-control" id="filterWidth" placeholder="30">
+                        
+                        <button type="button" class="btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></button>
+                        
+
+                    </div>
+                </div>
+
+                <button type="submit" class ="btn btn-primary">Create</button>
+            </form>
+
+        </div>
+    </body>
+</html>
