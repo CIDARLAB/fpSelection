@@ -54,7 +54,7 @@ $(document).ready(function () {
        event.preventDefault();
        
        var form = document.getElementById("cytometerForm");
-       var url = "validator";
+       var url = "customCytometer";
        var formData = new FormData(form);
        
        $.ajax({
