@@ -1,32 +1,121 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-
+        <title>FP Selection</title>
         <meta charset="utf-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-
-        <!--Boostrap, Ajax and JQuery libraries-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.4/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" href="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+        <script src="http://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
+        <link rel="stylesheet" type="text/css" href="tooltipster/dist/css/tooltipster.bundle.min.css" />
+        <link rel="stylesheet" type="text/css" href="tooltipster/dist/css/plugins/tooltipster/sideTip/themes/tooltipster-sideTip-shadow.min.css" />
+        <script type="text/javascript" src="tooltipster/dist/js/tooltipster.bundle.min.js"></script>
+        <script type="text/javascript" src="bootstrap-filestyle-1.2.1/src/bootstrap-filestyle.min.js"></script>
+        <script type="text/javascript" src="scripts/test.js"></script>
+        <script>
+            $(document).ready(function () {
+                $('.tooltipNav').tooltipster({theme: 'tooltipster-shadow'});
+                $('.rightDiv, .semiExhaustive').tooltipster({
+                    theme: 'tooltipster-shadow',
+                    side: 'right'
+                });
+                $('.BSbtninfo').filestyle({
+                    buttonName: 'btn-info',
+                    buttonText: 'Browse',
+                    size: 'sm'
+                });
+                $("#algo").change(function () {
+                    $("#topPercent").toggle($(this).val() == "SomewhatExhaustiveServlet");
+                });
+            });
+        </script>
         <style type="text/css">
-            .runAlgo {
-                display: inline-block;
+            hr {
+                border-top: 1px solid #ddd;
             }
-            .infoDiv {
+            .form-control[disabled] {
+                background-color: #FFF !important;
+            }
+            .leftDiv {
+                float: left;
+                width: 20%;
+                text-align: right;
+                padding-right: 20px;
+                height: 30px;
+                margin-bottom: 15px;
+                vertical-align: middle;
+            }
+            .leftDiv label {
                 display: block;
-                padding: 4px;
+                line-height: 1em;
+                margin:0px;
+            }
+            .rightDiv {
+                position: absolute;
+                top: 0;
+                right: 50%;
+                left: 20%;
+                height: 30px;
+                margin-bottom: 15px;
+            }
+            .semiExhaustive {
+                position: absolute;
+                top: 0;
+                right: 40%;
+                left: 51%;
+                height: 30px;
+                margin-bottom: 15px;
+            }
+            .wrapperDiv {
+                width: 100%;
+                position: relative;
+            }
+            .padded {
+                padding-top: 6px;
+            }
+            legend {
+                width:auto;
+                padding:0 5px;
+                border-bottom:none;
+                margin-left: 15px;
+            }
+            fieldset {
+                border: 1px solid #ddd;
+                border-radius: 3px;
+                margin-top: 10px;
+                margin-bottom: 20px;
+            }
+            .navbar-inverse .navbar-brand {
+                color: white;
+                font-size: 1.7em;
+            }
+            .paddedLeft {
+                padding-left: 30px;
+            }
+            html,
+            body {
+                height: 100%;
+            }
+
+            #wrap {
+                min-height: 100%;
+                height: auto;
+                margin: 0 auto -70px;
+                padding: 0 0 70px;
+            }
+
+            #footer {
+                height: 70px;
+                background-color: #f2f2f2;
+            }
+            .cont {
+                width: auto;
+            }
+            .cont .credit {
+                text-align: center;
+                padding-top: 25px;
             }
         </style>
-        <!--Links to JS files in scripts -->
-        <script type="text/javascript" src="scripts/test.js"></script>
-        <title>CIDAR - FP Selection</title>
-
-        <link href="style/bootstrap.css" rel="stylesheet">
-        <link href="style/custom.css" rel="stylesheet">
-        <link href="style/jumbotron-narrow.css" rel="stylesheet">
-
     </head>
     <body>
 
@@ -43,109 +132,91 @@
                 </div>
                 <div id="navbar" class="navbar-collapse collapse">
                     <ul class="nav navbar-nav ">
-<!--                        <li><a id="home" href="#" role="button">Home</a></li>
-                        <li><a id="sample" href="#" role="button">Sample Settings</a></li>
-                        <li><a id="about" href="#" role="button">About</a></li>
-                        <li><a id="contact" href="#" role="button">Contact</a></li>-->
+                        <li><a id="home" href="#" role="button">Documentation</a></li>
+                        <li><a id="sample" href="#" role="button">Extras!</a></li>
                     </ul>
                 </div><!--/.navbar-collapse -->
             </div>
         </nav>
-
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12">
-                    <div class="jumbotron">
-                        <img class = "org_icon" src="image/Logo-Cidar-Color.png" alt = "Logo">
-
-                        <p class="lead">        
-                            A Tool for Optimizing Flow Cytometry Settings and Fluorescent Protein Selections.
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="container">
-            <div class="row">
-                <div class="col-xs-12 samples">
-                    <a href="samplecsvs/ex_fortessa.csv"> Sample Cytometer CSV </a>
-                    <br>
-                    <a href="samplecsvs/fp_spectra.csv"> Sample Fluorophore CSV </a>
-                </div>
-            </div>
-            <hr>
-            <div class="row">
-
-                <div class="col-xs-2"></div>
-
-                <form id="goodForm" enctype="multipart/form-data" method="post" name="goodForm">
-                    <div class="col-xs-4">
-
-                        <label for = "cytometer"> Cytometer Settings: </label>
-                        <input id = "cytometer" type = "file" accept = ".csv" name = "cytometer"/>
-
-                        <label for = "FPMasterList"> Fluorophore Spectra Master List: </label>
-                        <input id = "FPMasterList" type = "file" accept=".csv" name = "FPMasterList"/>
-
-                    </div>
-                    <div class="col-xs-4">
-
-                        <label for="n">N: </label>
-                        <input id="n" type ="number" value="2" name ="n"/>
-
-                        <br>
-
-                        <label for="topPercent">Semi-Exhaustive %: </label>
-                        <input id="topPercent" type ="number" value="10" step="any" name = "topPercent" />
-
-                    </div>
-                </form>
-                <div class="col-xs-2"></div>
-            </div>
-
-            <hr>
-
-            <div class="row">
-                
-                <div class="col-xs-12">
-
-                    <div class = "algo-display">
-
-                        Begin Selection Algorithm:
-                        <br>
-
-                        Exhaustive with N = 5, 5 possible lasers, 17 possible filters, and 14 possible fluorophores takes about 30 seconds to process, N = 6 takes about 15 minutes, N = 7 could take upwards of 4 hours.
-
-                        <form id="exhaustiveForm" class="runAlgo" enctype="multipart/form-data" action="ExhaustiveServlet" method="post" name="form">
-                            <input id="exhaustive" type="submit" value="Exhaustive" />
-                        </form>
-                        <form id="somewhatExhaustiveForm" class="runAlgo" enctype="multipart/form-data" action="SomewhatExhaustiveServlet" method="post" name="form">
-                            <input id="somewhatExhaustive" type="submit" value="Beam Width Search" />
-                        </form>
-                        <form id="hillClimbingForm" class="runAlgo" enctype="multipart/form-data" action="HillClimbingServlet" method="post" name="form">
-                            <input id="hillClimbing" type="submit" value="Hill Climbing" />
-                        </form>
-                        <!--                    <form id="simulatedAnnealingForm" class="runAlgo" enctype="multipart/form-data" action="SimulatedAnnealingServlet" method="post" name="form">
-                                                <input id="simulatedAnnealing" type="submit" value="Simulated Annealing" disabled/>
-                                            </form>-->
-
-                        <div id ="results">
-                            <hr>
-                            <p id="title"> </p>
-                            <img id="img" src="image/blank.png" alt="Plot of Laser, Filter, and FP selections"/>
-                            
-                            <hr>
-                            <p id="SNR" style="white-space: pre"></p>
+        <div id="wrap" class="container">
+            <!--<h3>FP Selection</h3>-->
+            <ul class="nav nav-tabs" style="margin-top: 100px;">
+                <li class="tooltipNav active" title="Do FP Selection Stuff!"><a href="#">FP Selection</a></li>
+                <li class="tooltipNav" title="Do FP Selection Stuff!"><a href="#">Laser Selection</a></li>
+                <li class="tooltipNav" title="Do FP Selection Stuff!"><a href="#">Cytometer Selection</a></li>
+                <li class="tooltipNav" title="Do FP Selection Stuff!"><a href="#">"My" FP</a></li>
+            </ul>
+            <br>
+            <fieldset>
+                <legend>Settings</legend>
+                <form id="MainForm" enctype="multipart/form-data" method="post" name="goodForm">
+                    <div class="wrapperDiv">
+                        <div class="leftDiv">
+                            <label>Cytometer Settings:</label>
+                            <a href="samplecsvs/ex_fortessa.csv">sample</a>
                         </div>
-
+                        <div class="form-group rightDiv" title="WOW! Cytometer!">
+                            <input id = "cytometer" type = "file" accept = ".csv" name = "cytometer" class="BSbtninfo"href="#">    
+                        </div>
+                        <div style="clear:both"></div>
                     </div>
-                </div>
+                    <div class="wrapperDiv">
+                        <div class="leftDiv">
+                            <label>Fluorophore Spectra List:</label>
+                            <a href="samplecsvs/fp_spectra.csv">sample</a>
+                        </div>
+                        <div class="form-group rightDiv" title="WOW! Fluorophores!">
+                            <input id = "FPMasterList" type = "file" accept=".csv" name = "FPMasterList" class="BSbtninfo"href="#">                       
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                    <div class="wrapperDiv">
+                        <div class="leftDiv">
+                            <label class="padded">N: </label>
+                        </div>
+                        <div class="form-group rightDiv" title="WOW! N!">
+                            <input class="form-control input-sm" id="n" type ="number" value="2" name ="n"href="#"/>                 
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                    <div class="wrapperDiv">
+                        <div class="leftDiv">
+                            <label class="padded">Algorithm: </label>
+                        </div>
+                        <div class="form-group rightDiv" title="WOW! Algorithms!">
+                            <select id="algo" class="form-control input-sm">
+                                <option value="ExhaustiveServlet">Exhaustive (Slow)</option>                       
+                                <option value="SomewhatExhaustiveServlet">Beam Width Search (Medium)</option>
+                                <option value="HillClimbingServlet">Hill Climbing (Fast)</option>
+                            </select>
+                        </div>
+                        <div class="form-group semiExhaustive" title="WOW! Percent!">
+                            <input class="form-control input-sm" id="topPercent" type ="number" value="10" step="any" name = "topPercent" style="display:none;"/>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+                    <div class="wrapperDiv">
+                        <div class="leftDiv"></div>
+                        <div class="form-group rightDiv">
+                            <button class = "btn btn-primary" type = "submit">GO!</button>
+                        </div>
+                        <div style="clear:both"></div>
+                    </div>
+
+                </form>
+            </fieldset>
+            <fieldset>
+                <legend>Results</legend>
+                <p id="placeholder" class="paddedLeft" style="padding-bottom:0px; margin-bottom:0px">Press "GO!" to see results</p>
+                <p id="title" class="paddedLeft" style="color: black; font-weight: bold; padding-bottom: 15px;"></p>
+                <p id="SNR" class="paddedLeft" style="white-space: pre-line; color: black;"></p>
+                <img id="img" src="image/blank.png" alt="Plot of Laser, Filter, and FP selections" style="width: 100%; display:none; padding: 15px;"/>
+            </fieldset>
+        </div>
+        <div id="footer">
+            <div class="cont">
+                <p class="text-muted credit">Logos and stuff go here I guess.</p>
             </div>
         </div>
-        
-        <hr>
-        
-        <footer>Logos and stuff go here I guess.</footer>
     </body>
 </html>

@@ -70,18 +70,15 @@ $(document).ready(function () {
        });
     });
     
-    $("#exhaustiveForm, #somewhatExhaustiveForm, #hillClimbingForm, #simulatedAnnealingForm").submit(function (event) {
+     $("#MainForm").submit(function (event) {
         event.preventDefault();
-        var form = document.getElementById("goodForm");
-        var url = $(this).attr('action');
-        var formData = new FormData(form);
-        $("#img").fadeOut(function () {
-            $("#title").text("loading...");
-            $("#SNR").text("");
-        });
-
+        var url = $("#algo").val()
+        var formData = new FormData(this);
+        $("#title").text("Loading...");
+        $("#SNR").text("");
+        $("#placeholder").hide();
+        $("#img").hide(); 
         var start = performance.now();
-
 
         $.ajax({
             url: url,
@@ -95,14 +92,9 @@ $(document).ready(function () {
 
                 result = JSON.parse(response);
                 document.getElementById("img").src = result.img;
-                $('html, body').animate({
-                    scrollTop: $("#title").offset().top
-                }, 1000);
-
-                $("#img").fadeIn(function () {
-                    $("#SNR").text(result.SNR);
-                    $("#title").text("Time taken was: " + (end - start) / 1000 + " s");
-                });
+                $("#SNR").text(result.SNR);
+                $("#title").text("Time taken was: " + (end - start) / 1000 + " s");
+                $("#img").show();  
             }
 
         });
