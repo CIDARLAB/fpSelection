@@ -5,8 +5,11 @@
  */
 package org.cidarlab.fpSelection.servlets;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +19,8 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.servlet.ServletConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -45,6 +50,30 @@ public class MainServlet extends HttpServlet {
 
     public static LinkedList<int[]> filterCombinations;
     public static LinkedList<int[]> fluorophorePermutations;
+    private ServletContext context;
+
+    public void init(ServletConfig config) throws ServletException
+    {
+        this.context = config.getServletContext();
+    }
+    
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        BufferedReader in = new BufferedReader(new InputStreamReader(new FileInputStream(context.getRealPath("/")+"/_LayoutHeader.html")));
+        String str;
+        PrintWriter out = response.getWriter();
+        while ((str = in.readLine()) != null) {
+            out.println(str);
+        }
+        in = new BufferedReader(new InputStreamReader(new FileInputStream(context.getRealPath("/")+"/MainServlet.html")));
+        while ((str = in.readLine()) != null) {
+            out.println(str);
+        }
+        in = new BufferedReader(new InputStreamReader(new FileInputStream(context.getRealPath("/")+"/_LayoutFooter.html")));
+        while ((str = in.readLine()) != null) {
+            out.println(str);
+        }
+    }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {

@@ -1,63 +1,36 @@
-<!DOCTYPE html>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<html>
-    <head>
-        <title>TODO supply a title</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="style/custom.css" rel="stylesheet">
+<link href="style/jumbotron-narrow.css" rel="stylesheet">
+<!--FORM START-->
+<form id="cytometerForm" class="container">
+    <div class="container cytoData">
 
-
-
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
-        <script src="https://ajax.googleapis.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-        <script type="text/javascript" src="scripts/test.js"></script>
-
-        <link href="style/bootstrap.css" rel="stylesheet">
-        <link href="style/custom.css" rel="stylesheet">
-        <link href="style/jumbotron-narrow.css" rel="stylesheet">
-    </head>
-    <body>
-        <div>
-
-            <!--FORM START-->
-            <form id="cytometerForm" class="container">
-                <div class="container cytoData">
-
-                    <div class="lasers container">
-                        <div class="laserInline container">
-                            <div class="form-inline row">
-                                <div class="col-xs-4">
-                                    <label for="laserName">Laser:</label>
-                                    <input type="text" class="form-control" id="laserName" placeholder="Blue-Green">
-                                </div>
-                                <div class="filters col-xs-8">
-                                    <div class="filterInline">
-                                        <label for="filters">Filter Midpoint (nm):</label>
-                                        <input type="text" class="form-control" id="filters" placeholder="650">
-                                        <label for="filterWidth">Width:</label>
-                                        <input type="text" class="form-control" id="filterWidth" placeholder="30">
-                                        <button type="button" class="filter-btn btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Filter</button>
-                                    </div>
-                                </div>
-                            </div>
+        <div class="lasers container">
+            <div class="laserInline container">
+                <div class="form-inline row">
+                    <div class="col-xs-4">
+                        <label for="laserName">Laser:</label>
+                        <input type="text" class="form-control" id="laserName" placeholder="Blue-Green">
+                    </div>
+                    <div class="filters col-xs-8">
+                        <div class="filterInline">
+                            <label for="filters">Filter Midpoint (nm):</label>
+                            <input type="text" class="form-control" id="filters" placeholder="650">
+                            <label for="filterWidth">Width:</label>
+                            <input type="text" class="form-control" id="filterWidth" placeholder="30">
+                            <button type="button" class="filter-btn btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Filter</button>
                         </div>
                     </div>
                 </div>
-
-                <button type="button" class="laser-btn btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Laser</button>
-                <button type="submit" id="cytometerForm" class ="btn btn-primary">Create</button>
-            </form>
-            <!--FORM END-->
-            
-            <div class="responseDiv">
-                
             </div>
-
-
         </div>
-    </body>
-</html>
+    </div>
+
+    <button type="button" class="laser-btn btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Laser</button>
+    <button type="submit" id="cytometerForm" class ="btn btn-primary">Create</button>
+</form>
+<!--FORM END-->
+
+<div class="responseDiv">
+
+</div>
+
