@@ -88,4 +88,7 @@
         <servlet-name>Extras</servlet-name>
         <url-pattern>/Extras</url-pattern>
     </servlet-mapping>
+    <welcome-file-list>
+        <welcome-file>MainServlet.html</welcome-file>
+    </welcome-file-list>
 </web-app>

@@ -41,6 +41,7 @@ $(document).ready(function () {
     $("#algo").change(function () {
         $("#topPercent").toggle($(this).val() == "SomewhatExhaustiveServlet");
     });
+
     //Grab html for laser form
     laseField = $(".lasers").html();
     //Grab html for filter form
@@ -64,38 +65,39 @@ $(document).ready(function () {
             }
         });
     });
-    $("#cytometerForm").submit(function(event){
-        
+    $("#cytometerForm").submit(function (event) {
+
         var arrayJSON = [];
         var laserTemp;
         var hierarchicalObj;
-        $(".laserInlineForm").each(function(index, element){
+
+        $(".laserInlineForm").each(function (index, element) {
             laserTemp = $(element).serializeArray();
 //            arrayJSON = arrayJSON.concat(laserTemp);
             arrayJSON.push(laserTemp);
         });
-        
+
         console.log(arrayJSON);
-       event.preventDefault();
-       
-       //We should translate the form to a JSON object...    
-       
-       
-       var form = document.getElementById("cytometerForm");
-       var url = "CustomCytoServlet";
-       var formData = new FormData(form);
-       
-       $.ajax({
-          url: url,
-          type: "POST",
-          data: JSON.stringify(arrayJSON),
-          success:function(response)
-          {
-              $(".responseDiv").text(response.toString());
-          }
-       });
+        event.preventDefault();
+
+        //We should translate the form to a JSON object...    
+
+
+        var form = document.getElementById("cytometerForm");
+        var url = "CustomCytoServlet";
+        var formData = new FormData(form);
+
+        $.ajax({
+            url: url,
+            type: "POST",
+            data: JSON.stringify(arrayJSON),
+            success: function (response)
+            {
+                $(".responseDiv").text(response.toString());
+            }
+        });
     });
-    
+
     $("#exhaustiveForm, #somewhatExhaustiveForm, #hillClimbingForm, #simulatedAnnealingForm").submit(function (event) {
         event.preventDefault();
 
