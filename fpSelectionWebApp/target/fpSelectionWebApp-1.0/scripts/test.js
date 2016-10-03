@@ -51,21 +51,33 @@ $(document).ready(function () {
         });
     });
     $("#cytometerForm").submit(function(event){
+        
+        var arrayJSON = [];
+        var laserTemp;
+        var hierarchicalObj;
+        $(".laserInlineForm").each(function(index, element){
+            laserTemp = $(element).serializeArray();
+//            arrayJSON = arrayJSON.concat(laserTemp);
+            arrayJSON.push(laserTemp);
+        });
+        
+        console.log(arrayJSON);
        event.preventDefault();
        
+       //We should translate the form to a JSON object...    
+       
+       
        var form = document.getElementById("cytometerForm");
-       var url = "customCytometer";
+       var url = "CustomCytoServlet";
        var formData = new FormData(form);
        
        $.ajax({
           url: url,
           type: "POST",
-          data: formData,
-          processData: false,
-          contentType: false,
+          data: JSON.stringify(arrayJSON),
           success:function(response)
           {
-              $(".responseDiv").text(response);
+              $(".responseDiv").text(response.toString());
           }
        });
     });

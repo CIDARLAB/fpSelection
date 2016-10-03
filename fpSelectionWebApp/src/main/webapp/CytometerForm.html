@@ -24,37 +24,40 @@ and open the template in the editor.
         <div>
 
             <!--FORM START-->
-            <form id="cytometerForm" class="container">
-                <div class="container cytoData">
 
-                    <div class="lasers container">
-                        <div class="laserInline container">
-                            <div class="form-inline row">
-                                <div class="col-xs-4">
-                                    <label for="laserName">Laser:</label>
-                                    <input type="text" class="form-control" id="laserName" placeholder="Blue-Green">
-                                </div>
-                                <div class="filters col-xs-8">
-                                    <div class="filterInline">
-                                        <label for="filters">Filter Midpoint (nm):</label>
-                                        <input type="text" class="form-control" id="filters" placeholder="650">
-                                        <label for="filterWidth">Width:</label>
-                                        <input type="text" class="form-control" id="filterWidth" placeholder="30">
-                                        <button type="button" class="filter-btn btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Filter</button>
-                                    </div>
+            <div class="container cytoData">
+
+                <div class="lasers container">
+                    <form class="laserInlineForm container">
+                        <div class="form-inline row">
+                            <div class="col-xs-6">
+                                <label for="laserName">Laser:</label>
+                                <input type="text" class="form-control" id="laserName" name="laser" placeholder="Blue-Green">
+                                <label for="laserWavelength">Wavelength:</label>
+                                <input type="text" class="form-control" id="laserWavelength" name="laserWavelength" size="10" placeholder="400">
+                            </div>
+                            <div class="filters col-xs-6">
+                                <div class="filterInline">
+                                    <label for="filters">Filter Midpoint (nm):</label>
+                                    <input name="filter"type="text" class="form-control" id="filters" size="10" placeholder="650">
+                                    <label for="filterWidth">Width:</label>
+                                    <input name="filterWidth" type="text" class="form-control" id="filterWidth" size="10" placeholder="30">
+                                    <button type="button" class="filter-btn btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Filter</button>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                    </form>
                 </div>
+            </div>
 
+            <form id="cytometerForm" class="container" method="post" enctype="multipart/form-data">
                 <button type="button" class="laser-btn btn btn-default"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span> Laser</button>
                 <button type="submit" id="cytometerForm" class ="btn btn-primary">Create</button>
             </form>
             <!--FORM END-->
-            
+
             <div class="responseDiv">
-                
+
             </div>
 
 
