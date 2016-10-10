@@ -21,6 +21,10 @@
         <servlet-class>org.cidarlab.fpSelection.servlets.SimulatedAnnealingServlet</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>CustomCytoServlet</servlet-name>
+        <servlet-class>org.cidarlab.fpSelection.servlets.CustomCytoServlet</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>LaserSelection</servlet-name>
         <servlet-class>org.cidarlab.fpSelection.servlets.LaserSelection</servlet-class>
     </servlet>
@@ -61,6 +65,10 @@
         <url-pattern>/SimulatedAnnealingServlet</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>CustomCytoServlet</servlet-name>
+        <url-pattern>/CustomCytoServlet</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>LaserSelection</servlet-name>
         <url-pattern>/LaserSelection</url-pattern>
     </servlet-mapping>
@@ -81,6 +89,6 @@
         <url-pattern>/Extras</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
-        <welcome-file>MainServlet</welcome-file>
+        <welcome-file>MainServlet.html</welcome-file>
     </welcome-file-list>
 </web-app>
