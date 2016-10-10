@@ -63,14 +63,14 @@ public class SemiExhaustiveServlet extends HttpServlet {
         // Parse CSVs and turn them into Files //
         /////////////////////////////////////////
         boolean fileErr = false;
-        String errMsg = null;
+        String errMsg = "";
         InputStream fpInput;
         InputStream cytoInput;
         try {
             fpInput = request.getPart("FPMasterList").getInputStream();
             cytoInput = request.getPart("cytometer").getInputStream();
         } catch (Exception e) {
-            errMsg = "Error downloading CSV's, using sample cytometer and fluorophores \n ";
+            errMsg += "Error downloading CSV's, using sample cytometer and fluorophores \n ";
             fileErr = true;
             fpInput = new FileInputStream("src/main/resources/fp_spectra.csv");
             cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
@@ -87,13 +87,18 @@ public class SemiExhaustiveServlet extends HttpServlet {
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);
-            cytoSettings = fpFortessaParse.parse(cytoInput);
         } catch (Exception x) {
-            errMsg = "CSV's formatted incorrectly or unreadable, using sample cytometer and fluorophores \n ";
+            errMsg += "Fluorophore CSV formatted incorrectly or unreadable, using sample fluorophores \n ";
             fileErr = true;
             fpInput = new FileInputStream("src/main/resources/fp_spectra.csv");
-            cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
             spectralMaps = fpSpectraParse.parse(fpInput);
+        }
+        try {
+            cytoSettings = fpFortessaParse.parse(cytoInput);
+        } catch (Exception x) {
+            errMsg += "Cytometer CSV formatted incorrectly or unreadable, using sample cytometer \n ";
+            fileErr = true;
+            cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
             cytoSettings = fpFortessaParse.parse(cytoInput);
         }
         fpInput.close();

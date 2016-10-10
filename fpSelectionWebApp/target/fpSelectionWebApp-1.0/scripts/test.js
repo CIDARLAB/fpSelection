@@ -33,10 +33,17 @@ $(document).ready(function () {
         side: 'right',
         maxWidth: 400
     });
-    $('.BSbtninfo').filestyle({
+    $('#cytometer').filestyle({
         buttonName: 'btn-info',
         buttonText: 'Browse',
-        size: 'sm'
+        size: 'sm',
+        placeholder: 'ex_fortessa.csv'
+    });
+    $('#FPMasterList').filestyle({
+        buttonName: 'btn-info',
+        buttonText: 'Browse',
+        size: 'sm',
+        placeholder: 'fp_spectra.csv'
     });
     $("#algo").change(function () {
         $("#topPercent").toggle($(this).val() == "SomewhatExhaustiveServlet");
@@ -92,6 +99,8 @@ $(document).ready(function () {
         $("#SNR").text("");
         $("#placeholder").hide();
         $("#img").hide();
+        $("#download").hide();
+        $("#downloadList").hide();
         var start = performance.now();
 
         $.ajax({
@@ -109,8 +118,11 @@ $(document).ready(function () {
                 $("#SNR").text(result.SNR);
                 $("#title").text("Time taken was: " + (end - start) / 1000 + " s");
                 $("#img").show();
+                $("#download").attr("href", result.img);
+                $("#downloadList").attr('href','data:text/plain;charset=utf-8,' + encodeURIComponent($("#SNR").text()));
+                $("#download").show();
+                $("#downloadList").show();
             }
-
         });
     });
 });
