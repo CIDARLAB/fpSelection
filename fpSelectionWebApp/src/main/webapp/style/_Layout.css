@@ -79,8 +79,14 @@ body {
 }
 .cont {
     width: auto;
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+    justify-content: center;
+    padding-top: 10px;
 }
-.cont .credit {
-    text-align: center;
-    padding-top: 25px;
+.cont img {
+    height: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
 }
