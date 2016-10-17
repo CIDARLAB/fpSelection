@@ -52,6 +52,14 @@ public class FilterSelector {
         ProteinSelector.plotSelection(pls);
 
     }
+    
+    public static ArrayList<SelectionInfo> run(int n, HashMap<String, Fluorophore> masterList, Cytometer cyto) {
+        ArrayList<SelectionInfo> pls = LFPtoFilter(masterList, cyto.lasers, n);
+
+        ProteinSelector.calcSumSigNoise(pls);
+        ProteinSelector.generateNoise(pls);
+        return pls;
+    }
 
     public static ArrayList<SelectionInfo> LFPtoFilter(HashMap<String, Fluorophore> FPList, List<Laser> lasers, int nDetectors) {
         ArrayList<SelectionInfo> skeleton = new ArrayList();

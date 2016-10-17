@@ -39,6 +39,12 @@ $(document).ready(function () {
         size: 'sm',
         placeholder: 'ex_fortessa.csv'
     });
+    $('.myFPInput').filestyle({
+        buttonName: 'btn-info',
+        buttonText: 'Browse',
+        size: 'sm',
+        placeholder: 'myfp_spectra.csv'
+    });
     $('#FPMasterList').filestyle({
         buttonName: 'btn-info',
         buttonText: 'Browse',
