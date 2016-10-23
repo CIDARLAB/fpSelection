@@ -62,7 +62,7 @@ public class ExhaustiveServlet extends HttpServlet {
             fpInput = request.getPart("FPMasterList").getInputStream();
             cytoInput = request.getPart("cytometer").getInputStream();
         } catch (Exception e) {
-            errMsg += "Error downloading CSV's, using sample cytometer and fluorophores \n ";
+            errMsg += "Error downloading CSV's, using sample cytometer and fluorophores : Error " + e.toString() + " \n ";
             fileErr = true;
             fpInput = new FileInputStream("src/main/resources/fp_spectra.csv");
             cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
@@ -77,7 +77,8 @@ public class ExhaustiveServlet extends HttpServlet {
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);
         } catch (Exception x) {
-            errMsg += "Fluorophore CSV formatted incorrectly or unreadable, using sample fluorophores \n ";
+            errMsg += "Fluorophore CSV formatted incorrectly or unreadable, using sample fluorophores : Error " + x.toString() + " \n ";
+            x.printStackTrace();
             fileErr = true;
             fpInput = new FileInputStream("src/main/resources/fp_spectra.csv");
             spectralMaps = fpSpectraParse.parse(fpInput);
@@ -85,7 +86,8 @@ public class ExhaustiveServlet extends HttpServlet {
         try {
             cytoSettings = fpFortessaParse.parse(cytoInput);
         } catch (Exception x) {
-            errMsg += "Cytometer CSV formatted incorrectly or unreadable, using sample cytometer \n ";
+            errMsg += "Cytometer CSV formatted incorrectly or unreadable, using sample cytometer : Error " + x.toString() + " \n ";
+            x.printStackTrace();
             fileErr = true;
             cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
             cytoSettings = fpFortessaParse.parse(cytoInput);
