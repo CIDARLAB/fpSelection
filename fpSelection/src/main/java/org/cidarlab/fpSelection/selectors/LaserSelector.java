@@ -14,6 +14,7 @@ import java.util.Random;
 import java.util.TreeMap;
 import org.cidarlab.fpSelection.adaptors.ScrapedCSVParse;
 import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
+import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
@@ -32,8 +33,11 @@ public class LaserSelector {
     //Test Main//
     /////////////
     public static void main(String[] args) throws IOException {
-        File input = new File("src/main/resources/Fluorophores.org/");
-        HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
+//        File input = new File("src/main/resources/Fluorophores.org/");
+//        HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
+
+        File input = new File("src/main/resources/fp_spectra.csv");
+        HashMap<String, Fluorophore> spectralMaps = fpSpectraParse.parse(input);
 
         HashMap<String, Fluorophore> choose = new HashMap<>();
         Random next = new Random();
@@ -48,7 +52,7 @@ public class LaserSelector {
             detect.add(get.detectors.get(next.nextInt(get.detectors.size())));
         }
 
-        ArrayList<SelectionInfo> pls = FilterFPtoLasers(spectralMaps, detect, 3);
+        ArrayList<SelectionInfo> pls = FilterFPtoLasers(spectralMaps, detect, 10);
 
         ProteinSelector.calcSumSigNoise(pls);
         ProteinSelector.generateNoise(pls);

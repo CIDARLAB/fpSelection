@@ -76,23 +76,16 @@ $(document).ready(function () {
 
         var arrayJSON = [];
         var laserTemp;
-        var hierarchicalObj;
 
         $(".laserInlineForm").each(function (index, element) {
             laserTemp = $(element).serializeArray();
-//            arrayJSON = arrayJSON.concat(laserTemp);
             arrayJSON.push(laserTemp);
         });
 
         console.log(arrayJSON);
         event.preventDefault();
 
-        //We should translate the form to a JSON object...    
-
-
-        var form = document.getElementById("cytometerForm");
         var url = "CustomCytoServlet";
-        var formData = new FormData(form);
 
         $.ajax({
             url: url,
@@ -100,7 +93,15 @@ $(document).ready(function () {
             data: JSON.stringify(arrayJSON),
             success: function (response)
             {
-                $(".responseDiv").text(response.toString());
+                $(".responseDiv").text("cytometer.csv created");
+                var URL = window.URL.createObjectURL(new Blob([response], {type: "text/csv;charset=utf-8;"}));
+                var filename = "cytometer.csv";
+
+                var a = document.createElement("a");
+                a.href = URL;
+                a.download = filename;
+                document.body.appendChild(a);
+                a.click();
             }
         });
     });
@@ -153,7 +154,7 @@ $(document).ready(function () {
                 $("#title").text("Time taken was: " + (end - start) / 1000 + " s");
                 $("#img").show();
                 $("#download").attr("href", result.img);
-                $("#downloadList").attr('href','data:text/plain;charset=utf-8,' + encodeURIComponent($("#SNR").text()));
+                $("#downloadList").attr('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent($("#SNR").text()));
                 $("#download").show();
                 $("#downloadList").show();
             }

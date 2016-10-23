@@ -45,22 +45,20 @@ public class CustomCytoServlet extends HttpServlet {
         //JSONArray(Entire Form) of JSONArrays(Laser+Filters) of JSONObjects(fields like laser name, etc)
         JSONArray arrayJSON = new JSONArray(json);
         JSONArray LaserArray;
-        
+
         ArrayList<Laser> setup = new ArrayList<>();
 
         for (int i = 0; i < arrayJSON.length(); i++) {
-            LaserArray = arrayJSON.getJSONArray(i);            
+            LaserArray = arrayJSON.getJSONArray(i);
             LinkedList<Detector> DetectorArray = new LinkedList<>();
             Laser lase = new Laser();
             lase.position = i;
             Detector temp = null;
-            
-            for(int j = 0; j < LaserArray.length();j++)
-            {
+
+            for (int j = 0; j < LaserArray.length(); j++) {
                 JSONObject nameValue = LaserArray.getJSONObject(j);
                 String propName = nameValue.getString("name");
-                switch(propName)
-                {
+                switch (propName) {
                     case "laser":
                         lase.name = nameValue.getString("value");
                         break;
@@ -75,43 +73,53 @@ public class CustomCytoServlet extends HttpServlet {
                         temp.filterWidth = nameValue.getInt("value");
                         DetectorArray.add(temp);
                         temp.channel = DetectorArray.size();
-                        temp.identifier = (String.valueOf((char)48+j));
+                        temp.identifier = (String.valueOf((char) 48 + j));
                         break;
                     default:
                         System.out.println("Encountered an error while parsing JSONArray");
-                        break;                            
+                        break;
                 }
             }
             lase.detectors = DetectorArray;
             setup.add(lase);
-            
+
         }
-        response.setContentType("text/csv");
+        response.setContentType("text/csv;charset=utf-8;");
+        response.setHeader("Content-Disposition", "application; filename=\"file.csv\"");
         PrintWriter writer = response.getWriter();
         BufferedReader in = new BufferedReader(new FileReader("src/main/resources/template.csv"));
         String line;
-        while((line = in.readLine()) != null)
-        {
+        while ((line = in.readLine()) != null) {
             writer.println(line);
         }
-        
-        
-        for(Laser each : setup)
-        {
+
+        for (Laser each : setup) {
             Iterator<Detector> iter = each.detectors.iterator();
             Detector it = iter.next();
-            String out = each.name + ",Custom," + each.wavelength + ",100,Custom," + it.identifier + "," + it.channel +",N/A LP," + it.filterMidpoint + "/" + it.filterWidth + " BP,,,," + setup.indexOf(each);
+            String out;
+            
             //out is the format of the 1st line
-            writer.println(out);
-            
-            for(int i = 1; i < each.detectors.size(); i++)
-            {
-                it = iter.next();
-                writer.println(",,,,," + it.identifier + "," + it.channel +",N/A LP," + it.filterMidpoint + "/" + it.filterWidth + " BP,,,,");
+            if (each.detectors.size() == 1) {
+                out = each.name + ",Custom," + each.wavelength + ",100,Custom," + it.identifier + "," + it.channel + ",," + it.filterMidpoint + "/" + it.filterWidth + " BP,,,," + setup.indexOf(each);
+            } else {
+                out = each.name + ",Custom," + each.wavelength + ",100,Custom," + it.identifier + "," + it.channel + ",100 LP," + it.filterMidpoint + "/" + it.filterWidth + " BP,,,," + setup.indexOf(each);
             }
-            
+            writer.println(out);
+
+            for (int i = 1; i < each.detectors.size(); i++) {
+                it = iter.next();
+                if (i == each.detectors.size() - 1) {
+                    //last detector should have no mirror entry to signify that it's the last one.
+                    writer.println(",,,,," + it.identifier + "," + it.channel + ",," + it.filterMidpoint + "/" + it.filterWidth + " BP,,,,");
+                } else {
+                    writer.println(",,,,," + it.identifier + "," + it.channel + ",100 LP," + it.filterMidpoint + "/" + it.filterWidth + " BP,,,,");
+                }
+            }
+            //to avoid null pointer after the last entry while parsing the file.
+            writer.println(",,,,," + it.identifier + ",,,,,,,");
+
         }
-        
+
         writer.flush();
         writer.close();
     }
