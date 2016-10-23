@@ -7,8 +7,8 @@
 <br>
 <fieldset>
     <legend>Settings</legend>
-    <form id="CytoForm" enctype="multipart/form-data" method="post" name="goodForm">
-         <div class="wrapperDiv">
+    <form id="MainForm" enctype="multipart/form-data" method="post" name="goodForm">
+        <div class="wrapperDiv">
             <div class="leftDiv">
                 <label>Cytometer Settings:</label>
                 <a href="samplecsvs/ex_fortessa.csv">sample</a>
@@ -29,12 +29,22 @@
             <div style="clear:both"></div>
         </div>
         <div class="wrapperDiv">
+            <div class="leftDiv">
+                <label class="padded">N: </label>
+            </div>
+            <div class="form-group rightDiv" title="Choose the number of fluorophores you wish to select from the above list">
+                <input class="form-control input-sm" id="n" type ="number" value="2" name ="n"href="#"/>                 
+            </div>
+            <div style="clear:both"></div>
+        </div>
+        <div class="wrapperDiv">
             <div class="leftDiv"></div>
             <div class="form-group rightDiv">
                 <button class = "btn btn-primary" type = "submit">GO!</button>
             </div>
             <div style="clear:both"></div>
         </div>
+        <input type="hidden" id="algo" value="CytometerSelection"/>
     </form>
 </fieldset>
 <fieldset>

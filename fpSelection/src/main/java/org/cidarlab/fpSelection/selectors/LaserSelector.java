@@ -60,6 +60,20 @@ public class LaserSelector {
 
     }
     
+    public static ArrayList<SelectionInfo> run(HashMap<String, Fluorophore> masterList, Cytometer cyto) {
+        ArrayList<Detector> detect = new ArrayList();
+        Random next = new Random();
+        for (int i = 0; i < 5; i++) {
+            Laser get = cyto.lasers.get(next.nextInt(cyto.lasers.size()));
+            detect.add(get.detectors.get(next.nextInt(get.detectors.size())));
+        }
+        ArrayList<SelectionInfo> pls = FilterFPtoLasers(masterList, detect, 3);
+
+        ProteinSelector.calcSumSigNoise(pls);
+        ProteinSelector.generateNoise(pls);
+        return pls;
+    }
+    
     
     ///////////////////////////////
     ///         PROCESS         ///
