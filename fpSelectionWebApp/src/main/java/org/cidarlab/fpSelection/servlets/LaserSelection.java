@@ -19,6 +19,7 @@ import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -36,6 +37,7 @@ import org.json.JSONObject;
  *
  * @author Alex
  */
+@MultipartConfig
 public class LaserSelection extends HttpServlet {
 
     private ServletContext context;
@@ -84,7 +86,7 @@ public class LaserSelection extends HttpServlet {
             cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
         }
 
-        //int n = Integer.parseInt(new BufferedReader(new InputStreamReader(request.getPart("n").getInputStream())).readLine());
+        int n = Integer.parseInt(new BufferedReader(new InputStreamReader(request.getPart("n").getInputStream())).readLine());
 
 
 
@@ -117,7 +119,7 @@ public class LaserSelection extends HttpServlet {
         // Parse the rest of the request variables//
         ////////////////////////////////////////////
 
-        ArrayList<SelectionInfo> solution = LaserSelector.run(spectralMaps, cytoSettings);
+        ArrayList<SelectionInfo> solution = LaserSelector.run(spectralMaps, cytoSettings, n);
 
         LinkedList<String> info = PlotAdaptor.webPlot(solution);
 

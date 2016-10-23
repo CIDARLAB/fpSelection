@@ -24,6 +24,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelectionMultiThreaded;
+import org.cidarlab.fpSelection.Algorithms.MyFPSelection;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
 import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
 import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
@@ -115,28 +116,37 @@ public class MyFP extends HttpServlet {
         int n = spectralMaps.size();
         ExhaustiveSelectionMultiThreaded algo = new ExhaustiveSelectionMultiThreaded();
         
-        ArrayList<SelectionInfo> selected = new ArrayList<>();
+        ArrayList<SelectionInfo> optimal = new ArrayList<>();
+        ArrayList<SelectionInfo> everything = new ArrayList<>();
         try {
-            selected = algo.run(n, spectralMaps, cytoSettings, 8);
+            optimal = algo.run(n, spectralMaps, cytoSettings, 8);
         } catch (InterruptedException ex) {
             Logger.getLogger(ExhaustiveServlet.class.getName()).log(Level.SEVERE, null, ex);
         } catch (ExecutionException ex) {
             Logger.getLogger(ExhaustiveServlet.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        ProteinSelector.calcSumSigNoise(selected);
-        ProteinSelector.generateNoise(selected);
+        ProteinSelector.calcSumSigNoise(optimal);
+        ProteinSelector.generateNoise(optimal);
+        
+        everything = MyFPSelection.run(n, spectralMaps, cytoSettings);
 
-        LinkedList<String> info = PlotAdaptor.webPlot(selected);
+        LinkedList<String> info = PlotAdaptor.webPlot(everything);
 
         PrintWriter writer = response.getWriter();
         JSONObject result = new JSONObject();
+        
+        String optimalInfo = "Optimal Selection:\r\n";
+        for (SelectionInfo si : optimal)
+        {
+            optimalInfo += si.rankedFluorophores.get(si.selectedIndex).name + " Detector: " + si.selectedDetector.identifier + " Laser: " + si.selectedLaser.name + " SNR : " + String.format("%.3f", si.SNR) + "\r\n";;
+        }
 
         result.put("img", info.get(0));
         if (fileErr) {
-            result.put("SNR", errMsg + info.get(1));
+            result.put("SNR", errMsg + optimalInfo);
         } else {
-            result.put("SNR", info.get(1));
+            result.put("SNR", optimalInfo);
         }
         writer.println(result);
         writer.flush();

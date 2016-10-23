@@ -75,7 +75,7 @@ body {
 
 #footer {
     height: 70px;
-    background-color: #f2f2f2;
+    border-top: 1px solid #ddd;
 }
 .cont {
     width: auto;
@@ -83,7 +83,8 @@ body {
     align-items: center;
     vertical-align: middle;
     justify-content: center;
-    padding-top: 10px;
+    padding-top: 13px;
+    padding-bottom: 13px;
 }
 .cont img {
     height: 50px;
