@@ -54,7 +54,6 @@ public class ExhaustiveServlet extends HttpServlet {
         /////////////////////////////////////////
         // Parse CSVs and turn them into Files //
         /////////////////////////////////////////
-        boolean fileErr = false;
         String errMsg = "";
         InputStream fpInput;
         InputStream cytoInput;
@@ -62,10 +61,14 @@ public class ExhaustiveServlet extends HttpServlet {
             fpInput = request.getPart("FPMasterList").getInputStream();
             cytoInput = request.getPart("cytometer").getInputStream();
         } catch (Exception e) {
-            errMsg += "Error downloading CSV's, using sample cytometer and fluorophores : Error " + e.toString() + " \n ";
-            fileErr = true;
-            fpInput = new FileInputStream("src/main/resources/fp_spectra.csv");
-            cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
+            errMsg += "Error downloading CSV's: Error " + e.toString() + " \n ";
+            PrintWriter writer = response.getWriter();
+            JSONObject result = new JSONObject();
+            result.put("SNR", errMsg);
+            writer.println(result);
+            writer.flush();
+            writer.close();
+            return;
         }
         int n = Integer.parseInt(new BufferedReader(new InputStreamReader(request.getPart("n").getInputStream())).readLine());
         
@@ -76,21 +79,17 @@ public class ExhaustiveServlet extends HttpServlet {
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);
-        } catch (Exception x) {
-            errMsg += "Fluorophore CSV formatted incorrectly or unreadable, using sample fluorophores : Error " + x.toString() + " \n ";
-            x.printStackTrace();
-            fileErr = true;
-            fpInput = new FileInputStream("src/main/resources/fp_spectra.csv");
-            spectralMaps = fpSpectraParse.parse(fpInput);
-        }
-        try {
             cytoSettings = fpFortessaParse.parse(cytoInput);
         } catch (Exception x) {
-            errMsg += "Cytometer CSV formatted incorrectly or unreadable, using sample cytometer : Error " + x.toString() + " \n ";
-            x.printStackTrace();
-            fileErr = true;
-            cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
-            cytoSettings = fpFortessaParse.parse(cytoInput);
+            errMsg += "CSVs formatted incorrectly or unreadable: Error " + x.toString() + " \n ";
+            x.printStackTrace();          
+            PrintWriter writer = response.getWriter();
+            JSONObject result = new JSONObject();
+            result.put("SNR", errMsg);
+            writer.println(result);
+            writer.flush();
+            writer.close();
+            return;
         }
 
         fpInput.close();
@@ -119,11 +118,7 @@ public class ExhaustiveServlet extends HttpServlet {
         JSONObject result = new JSONObject();
 
         result.put("img", info.get(0));
-        if (fileErr) {
-            result.put("SNR", errMsg + info.get(1));
-        } else {
-            result.put("SNR", info.get(1));
-        }
+        result.put("SNR", info.get(1));
         writer.println(result);
         writer.flush();
         writer.close();

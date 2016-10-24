@@ -155,10 +155,13 @@ $(document).ready(function () {
                 var end = performance.now();
 
                 result = JSON.parse(response);
-                document.getElementById("img").src = result.img;
+                if(result.img != null) {
+                    document.getElementById("img").src = result.img;
+                    $("#img").show();
+                }
+                
                 $("#SNR").text(result.SNR);
                 $("#title").text("Time taken was: " + (end - start) / 1000 + " s");
-                $("#img").show();
                 $("#download").attr("href", result.img);
                 $("#downloadList").attr('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent($("#SNR").text()));
                 $("#download").show();
