@@ -44,6 +44,10 @@
         <servlet-name>Extras</servlet-name>
         <servlet-class>org.cidarlab.fpSelection.servlets.Extras</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>Attributions</servlet-name>
+        <servlet-class>org.cidarlab.fpSelection.servlets.Attributions</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>MainServlet</servlet-name>
         <url-pattern>/MainServlet</url-pattern>
@@ -87,6 +91,10 @@
     <servlet-mapping>
         <servlet-name>Extras</servlet-name>
         <url-pattern>/Extras</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Attributions</servlet-name>
+        <url-pattern>/Attributions</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
         <welcome-file>MainServlet.html</welcome-file>
