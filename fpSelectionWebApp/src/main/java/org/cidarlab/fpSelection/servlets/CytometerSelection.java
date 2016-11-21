@@ -94,7 +94,7 @@ public class CytometerSelection extends HttpServlet {
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);
-            cytoSettings = fpFortessaParse.parse(cytoInput);
+            cytoSettings = fpFortessaParse.parse(cytoInput, true);
         } catch (Exception x) {
             errMsg += "CSVs formatted incorrectly or unreadable: Error " + x.toString() + " \n ";
             x.printStackTrace();          
