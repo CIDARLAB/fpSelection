@@ -42,7 +42,7 @@ public class LaserSelecTwoR {
         Random next = new Random();
 
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parse(cyto);
+        Cytometer testCyto = fpFortessaParse.parse(cyto, true);
 
         ArrayList<Detector> detect = new ArrayList();
 

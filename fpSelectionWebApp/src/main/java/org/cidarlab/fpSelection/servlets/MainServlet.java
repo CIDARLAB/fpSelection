@@ -92,7 +92,7 @@ public class MainServlet extends HttpServlet {
         File input = new File("src/main/resources/Fluorophores/org/");
         HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer cytometer = fpFortessaParse.parse(cyto);
+        Cytometer cytometer = fpFortessaParse.parse(cyto, false);
         int n = 6;
         double topPercent = .005;
         int numFluorophores = spectralMaps.size();

@@ -46,9 +46,9 @@ public class API {
         return returnList;        
     }
     
-    public static Cytometer parseCytometer(File csvFortessa) throws IOException
+    public static Cytometer parseCytometer(File csvFortessa, boolean filterSelection) throws IOException
     {
-        Cytometer returnCyto = fpFortessaParse.parse(csvFortessa);
+        Cytometer returnCyto = fpFortessaParse.parse(csvFortessa, filterSelection);
         return returnCyto;
     }
     

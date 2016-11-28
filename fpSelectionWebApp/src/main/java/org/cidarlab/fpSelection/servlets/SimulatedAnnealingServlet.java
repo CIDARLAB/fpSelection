@@ -90,12 +90,12 @@ public class SimulatedAnnealingServlet extends HttpServlet {
             spectralMaps = fpSpectraParse.parse(fpInput);
         }
         try {
-            cytoSettings = fpFortessaParse.parse(cytoInput);
+            cytoSettings = fpFortessaParse.parse(cytoInput, false);
         } catch (Exception x) {
             errMsg += "Cytometer CSV formatted incorrectly or unreadable, using sample cytometer \n ";
             fileErr = true;
             cytoInput = new FileInputStream("src/main/resources/ex_fortessa.csv");
-            cytoSettings = fpFortessaParse.parse(cytoInput);
+            cytoSettings = fpFortessaParse.parse(cytoInput, false);
         }
 
         fpInput.close();
