@@ -231,6 +231,8 @@ public class FilterSelector {
                 second.filterMidpoint += over / 8;
 
                 if (checkOverlap(first, second) == 0) {
+                    first.identifier = (first.filterMidpoint + "/" + first.filterWidth).toString();
+                    second.identifier = (second.filterMidpoint + "/" + second.filterWidth).toString();
                     sortList.set(i, first);
                     sortList.set(i + 1, second);
                     overlaps = false;

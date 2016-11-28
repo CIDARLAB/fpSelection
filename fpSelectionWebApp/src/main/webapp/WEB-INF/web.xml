@@ -29,8 +29,8 @@
         <servlet-class>org.cidarlab.fpSelection.servlets.LaserSelection</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>CytometerSelection</servlet-name>
-        <servlet-class>org.cidarlab.fpSelection.servlets.CytometerSelection</servlet-class>
+        <servlet-name>FilterSelection</servlet-name>
+        <servlet-class>org.cidarlab.fpSelection.servlets.FilterSelection</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>MyFP</servlet-name>
@@ -77,8 +77,8 @@
         <url-pattern>/LaserSelection</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>CytometerSelection</servlet-name>
-        <url-pattern>/CytometerSelection</url-pattern>
+        <servlet-name>FilterSelection</servlet-name>
+        <url-pattern>/FilterSelection</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>MyFP</servlet-name>
@@ -97,6 +97,6 @@
         <url-pattern>/Attributions</url-pattern>
     </servlet-mapping>
     <welcome-file-list>
-        <welcome-file>MainServlet.html</welcome-file>
+        <welcome-file>index.html</welcome-file>
     </welcome-file-list>
 </web-app>

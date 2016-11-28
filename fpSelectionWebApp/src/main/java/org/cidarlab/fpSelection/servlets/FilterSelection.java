@@ -36,7 +36,7 @@ import org.json.JSONObject;
  * @author Alex
  */
 @MultipartConfig
-public class CytometerSelection extends HttpServlet {
+public class FilterSelection extends HttpServlet {
 
     private ServletContext context;
 
