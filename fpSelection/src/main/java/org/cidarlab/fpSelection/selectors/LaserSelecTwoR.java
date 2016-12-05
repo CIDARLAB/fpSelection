@@ -30,6 +30,9 @@ import static org.cidarlab.fpSelection.selectors.LaserSelector.FilterFPtoLasers;
  */
 public class LaserSelecTwoR {
 
+    /////////////////////////////////
+    // Incomplete, wanted to redo as a side project
+    /////////////////////////////////
     
      public static void main(String[] args) throws IOException {
         File input = new File("src/main/resources/Fluorophores.org/");

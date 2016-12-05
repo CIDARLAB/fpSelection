@@ -53,7 +53,7 @@ public class FilterSelection extends HttpServlet {
         while ((str = in.readLine()) != null) {
             out.println(str);
         }
-        in = new BufferedReader(new InputStreamReader(new FileInputStream(context.getRealPath("/")+"/CytometerSelection.html")));
+        in = new BufferedReader(new InputStreamReader(new FileInputStream(context.getRealPath("/")+"/FilterSelection.html")));
         while ((str = in.readLine()) != null) {
             out.println(str);
         }

@@ -38,9 +38,8 @@ public class FilterSelector {
         2. Fit a 60 nm wide filter on each fluorophore peak in each laser.
         3. Loop to fix overlaps - 
             3a. shrink filter boundaries slightly, 
-            3b. push filter bounds apart from eachother
-        4. Wiggle adjacent boundaries left and right to check for possible SNR increase      
-        5. Run FP selection to suggest n filters and n FPs
+            3b. push filter bounds apart from each other    
+        4. Run FP selection to suggest n filters and n FPs
      */
     //took all filter widths from guides at bdbiosciences, left out ones that seemed niche like 28 nm wide, 44 nm wide, etc
     //https://www.bdbiosciences.com/documents/BD_Accuri_Optical_Filter_Guide.pdf
@@ -80,6 +79,7 @@ public class FilterSelector {
     public static ArrayList<SelectionInfo> LFPtoFilter(HashMap<String, Fluorophore> FPList, List<Laser> lasers, int nDetectors) {
         ArrayList<SelectionInfo> skeleton = new ArrayList();
         
+        // Temp solution while fortessa parse is broken
         lasers = new ArrayList<>();
         Laser violet = new Laser();
         violet.name = "Violet";
@@ -184,7 +184,7 @@ public class FilterSelector {
         
         
         //After making slew of filters, optimize and pick the best setup of n FPs and n filters.
-
+        
         Cytometer cyto = new Cytometer();
         cyto.lasers = new LinkedList<>();
         
@@ -194,6 +194,7 @@ public class FilterSelector {
         }
         
         all = HillClimbingSelection.run(nDetectors, FPList, cyto);
+
         return all;
     }
 
@@ -214,7 +215,7 @@ public class FilterSelector {
             while (overlaps) {
                 
                 /////////////////////////////
-                //  if overlap over 10 nm, let's shrink width of left
+                //  if overlap, let's shrink width of left
                 ////////////////////////////
                 if (!(widthDown(first) && widthDown(second))) {
                     second.filterMidpoint += checkOverlap(first, second);
@@ -227,12 +228,12 @@ public class FilterSelector {
                 //  else push down until they don't overlap
                 //////////////////////
                 int over = checkOverlap(first, second);
-                first.filterMidpoint -= over / 8;
-                second.filterMidpoint += over / 8;
+                first.filterMidpoint -= 3 * over / 10;
+                second.filterMidpoint += 3 * over / 10;
 
                 if (checkOverlap(first, second) == 0) {
-                    first.identifier = (first.filterMidpoint + "/" + first.filterWidth).toString();
-                    second.identifier = (second.filterMidpoint + "/" + second.filterWidth).toString();
+                    first.identifier = (first.filterMidpoint + "/" + first.filterWidth);
+                    second.identifier = (second.filterMidpoint + "/" + second.filterWidth);
                     sortList.set(i, first);
                     sortList.set(i + 1, second);
                     overlaps = false;
