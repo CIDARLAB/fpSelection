@@ -230,4 +230,9 @@ public class ProteinSelector {
             }
         }
     }
+    
+    public static void weightedSelection(Algorithm algorithm, double oligo_weight, double price_weight, double snr_weight){
+        
+    }
+    
 }

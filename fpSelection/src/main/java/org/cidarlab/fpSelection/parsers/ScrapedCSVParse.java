@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection.adaptors;
+package org.cidarlab.fpSelection.parsers;
 
 import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.plot.AbstractPlot;
@@ -27,17 +27,6 @@ import org.cidarlab.fpSelection.dom.Fluorophore;
  * @author david
  */
 public class ScrapedCSVParse {
-
-    public static void main(String[] args) throws IOException {
-        File folder = new File("/home/david/Desktop/CIDAR/fpSelection/fpSelection/src/main/resources/ScrapedCSVs/");
-    
-        System.out.println("Generating fluorophore objects from folder of csv's...");
-        HashMap<String, Fluorophore> masterList = parse(folder);
-        System.out.println("Process complete.");
-    
-    
-    } 
-
 
     public static HashMap<String, Fluorophore> parse(File directory) throws FileNotFoundException, IOException {
         HashMap<String, Fluorophore> masterList = new HashMap<>();

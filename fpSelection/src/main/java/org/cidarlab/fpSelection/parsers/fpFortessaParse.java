@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection.adaptors;
+package org.cidarlab.fpSelection.parsers;
 
 /**
  *
@@ -23,37 +23,37 @@ import org.cidarlab.fpSelection.dom.Laser;
 
 public class fpFortessaParse {
 
-    public static void main(String[] args) throws IOException {
-
-        File input = new File("src/main/resources/ex_fortessa.csv");
-
-        Cytometer shinyCytometer;
-        shinyCytometer = parse(input);
-
-        System.out.println("Sheath Pressure: " + shinyCytometer.sheathPressure); 
-        System.out.println("Nozzle Size: " + shinyCytometer.nozzleSize);
-        System.out.println("Window Extension: " + shinyCytometer.windowExt);
-
-        LinkedList<Laser> lasers = shinyCytometer.lasers;
-        LinkedList<Detector> detectors;
-        for (int i = 0; i < lasers.size(); i++) {
-            Laser thisLaser = lasers.get(i);
-            System.out.println("Laser " + thisLaser.position + ": " + thisLaser.name);
-
-            System.out.println(thisLaser.type);
-            System.out.println(thisLaser.wavelength);
-            System.out.println(thisLaser.power);
-            System.out.println(thisLaser.detectorArray);
-            detectors = thisLaser.detectors;
-
-            for (int j = 0; j < detectors.size(); j++) {
-                Detector thisDetector = detectors.get(j);
-
-                System.out.println(thisDetector.identifier + ": " + thisDetector.channel + " " + thisDetector.mirror + " " + thisDetector.filterMidpoint + " " + thisDetector.filterWidth);
-            }
-            System.out.println("");
-        }
-    }
+//    public static void main(String[] args) throws IOException {
+//
+//        File input = new File("src/main/resources/ex_fortessa.csv");
+//
+//        Cytometer shinyCytometer;
+//        shinyCytometer = parse(input);
+//
+//        System.out.println("Sheath Pressure: " + shinyCytometer.sheathPressure); 
+//        System.out.println("Nozzle Size: " + shinyCytometer.nozzleSize);
+//        System.out.println("Window Extension: " + shinyCytometer.windowExt);
+//
+//        LinkedList<Laser> lasers = shinyCytometer.lasers;
+//        LinkedList<Detector> detectors;
+//        for (int i = 0; i < lasers.size(); i++) {
+//            Laser thisLaser = lasers.get(i);
+//            System.out.println("Laser " + thisLaser.position + ": " + thisLaser.name);
+//
+//            System.out.println(thisLaser.type);
+//            System.out.println(thisLaser.wavelength);
+//            System.out.println(thisLaser.power);
+//            System.out.println(thisLaser.detectorArray);
+//            detectors = thisLaser.detectors;
+//
+//            for (int j = 0; j < detectors.size(); j++) {
+//                Detector thisDetector = detectors.get(j);
+//
+//                System.out.println(thisDetector.identifier + ": " + thisDetector.channel + " " + thisDetector.mirror + " " + thisDetector.filterMidpoint + " " + thisDetector.filterWidth);
+//            }
+//            System.out.println("");
+//        }
+//    }
     
     public static Cytometer parse(InputStream fortessaCSV) throws FileNotFoundException, IOException {
         System.out.println("Initializing reader, cytometer object, and variables...");

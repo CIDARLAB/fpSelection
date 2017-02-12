@@ -16,10 +16,17 @@ import java.util.TreeMap;
  */
 public class Fluorophore {
 
-public String name;
-
+    public String name;
+    
+    public double price;
+    public PriceUnit unit;
+    
     public boolean isProtein = false;
 
+    public int oligomerization =0;
+    
+    
+    
     //Emission or Excitation 
     public TreeMap<Double, Double> EMspectrum;
     public TreeMap<Double, Double> EXspectrum;
@@ -36,7 +43,7 @@ public String name;
     }
 
     public PointDataSet makeEMDataSet(Laser aLaser) {
-        if (!EXspectrum.containsKey((double) aLaser.wavelength)) { 
+        if (!EXspectrum.containsKey((double) aLaser.wavelength)) {
             PointDataSet dataSet = new PointDataSet();
 
             for (Map.Entry<Double, Double> entry : EMspectrum.entrySet()) {
@@ -59,34 +66,32 @@ public String name;
     //Produces an averaged left Riemann sum of emission values within a certain range of the spectrum.
     public double express(Laser theLaser, Detector theDetector) {
 
-        if (!EXspectrum.containsKey((double)theLaser.wavelength)) {
+        if (!EXspectrum.containsKey((double) theLaser.wavelength)) {
             return 0;
         }
-        double multiplier = EXspectrum.get((double)theLaser.wavelength) / 100;
+        double multiplier = EXspectrum.get((double) theLaser.wavelength) / 100;
         double sum = 0;
         double min = theDetector.filterMidpoint - theDetector.filterWidth / 2;
         double max = min + theDetector.filterWidth;
 
         //Get the least entry that has a key >= the parameter key or null if none exists.
         Map.Entry<Double, Double> previousEntry = EMspectrum.ceilingEntry(min);
-        if(previousEntry == null)
-        {
+        if (previousEntry == null) {
             //nothing to iterate through.
             return 0;
         }
         //Get the least entry that has a key > the parameter key or null if none exists.
         Map.Entry<Double, Double> startEntry = EMspectrum.higherEntry(previousEntry.getKey());
-        if(startEntry == null)
-        {
+        if (startEntry == null) {
             //nothing to iterate through
             return 0;
         }
-        
+
         for (Map.Entry<Double, Double> thisEntry : EMspectrum.tailMap(startEntry.getKey()).entrySet()) {
             double width = thisEntry.getKey() - previousEntry.getKey();
             double height = previousEntry.getValue() * multiplier;
             previousEntry = thisEntry;
-            
+
             sum += width * height;
 
             if (thisEntry.getKey() >= max) {
@@ -95,7 +100,6 @@ public String name;
         }
 
         //Average it to 0-100 by dividing by range
-
         return sum / (theDetector.filterWidth);
 
     }
@@ -122,36 +126,52 @@ public String name;
         //Push it up to [0-100] range for comparison w/ brightness.
         return sumOutside / total * 100;
     }
-    
-    public double EXPeak()
-    {
+
+    public double EXPeak() {
         double highestPeak = 0;
         double peakPoint = 0;
-        for(Map.Entry<Double, Double> point : EXspectrum.entrySet())
-        {
-            if(point.getValue() > highestPeak)
-            {
+        for (Map.Entry<Double, Double> point : EXspectrum.entrySet()) {
+            if (point.getValue() > highestPeak) {
                 highestPeak = point.getValue();
                 peakPoint = point.getKey();
             }
         }
         return peakPoint;
     }
-    
-    public double EMPeak()
-    {
+
+    public double EMPeak() {
         double highest = 0;
         double highWave = 0;
-        for(Map.Entry<Double, Double> entry : EMspectrum.entrySet())
-        {
-            if(entry.getValue() > highest)
-            {
+        for (Map.Entry<Double, Double> entry : EMspectrum.entrySet()) {
+            if (entry.getValue() > highest) {
                 highest = entry.getValue();
                 highWave = entry.getKey();
             }
         }
-        
+
         return highWave;
     }
 
+    public TreeMap<Double, Double> adjustEMBrightness(double brightness, TreeMap<Double, Double> em){
+        TreeMap<Double, Double> emAdjusted = new TreeMap<>();
+        for(Map.Entry<Double, Double> entry: em.entrySet()){
+            emAdjusted.put(entry.getKey(), (brightness*entry.getValue()));
+        }
+        return emAdjusted;
+    }
+    
+    public TreeMap<Double, Double> adjustEMLaserPower(double laserPower, TreeMap<Double, Double> em){
+        TreeMap<Double, Double> emAdjusted = new TreeMap<>();
+        for(Map.Entry<Double, Double> entry: em.entrySet()){
+            emAdjusted.put(entry.getKey(), (laserPower*entry.getValue()) );
+        }
+        return emAdjusted;
+    }
+    
+    public enum PriceUnit{
+        PER_GRAM,
+        PER_NANOMOLAR
+    }
+    
 }
+    

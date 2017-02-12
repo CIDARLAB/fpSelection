@@ -11,12 +11,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
 import org.cidarlab.fpSelection.Algorithms.HillClimbingSelection;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
-import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
+import org.cidarlab.fpSelection.parsers.fpSpectraParse;
 
 /**
  *

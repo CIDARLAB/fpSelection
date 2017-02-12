@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection.adaptors;
+package org.cidarlab.fpSelection.parsers;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -23,10 +23,10 @@ import java.util.TreeMap;
  */
 public class fpSpectraParse {
 
-    public static void main(String args[]) throws FileNotFoundException, Exception {
-        File input = new File("src/main/resources/fp_spectra.csv");
-        HashMap<String, Fluorophore> spectralMaps = parse(input);
-    }
+//    public static void main(String args[]) throws FileNotFoundException, Exception {
+//        File input = new File("src/main/resources/fp_spectra.csv");
+//        HashMap<String, Fluorophore> spectralMaps = parse(input);
+//    }
 
     /*
      * This method is for uploading fluorescence spectrum data to be associated with Fluorphore objects

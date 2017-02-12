@@ -10,12 +10,12 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelection;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
-import static org.cidarlab.fpSelection.adaptors.fpSpectraParse.parse;
+import static org.cidarlab.fpSelection.parsers.fpSpectraParse.parse;
 
 /**
  *

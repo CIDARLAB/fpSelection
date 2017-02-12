@@ -12,14 +12,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.TreeMap;
 import javax.swing.JOptionPane;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import static org.cidarlab.fpSelection.selectors.LaserSelector.FilterFPtoLasers;
-import static org.cidarlab.fpSelection.adaptors.fpSpectraParse.parse;
+import static org.cidarlab.fpSelection.parsers.fpSpectraParse.parse;
 
 /**
  *

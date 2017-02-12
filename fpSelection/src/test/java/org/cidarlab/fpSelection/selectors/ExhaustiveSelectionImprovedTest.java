@@ -11,13 +11,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
 import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelectionImproved;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
-import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
+import org.cidarlab.fpSelection.parsers.fpSpectraParse;
 
 /**
  *
