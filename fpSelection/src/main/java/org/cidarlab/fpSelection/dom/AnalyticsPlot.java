@@ -19,19 +19,19 @@ public class AnalyticsPlot {
     
     @Getter
     @Setter
-    public List<Point> points;
+    private List<Point> points;
     
     @Getter
     @Setter
-    public String xlabel;
+    private String xlabel;
     
     @Getter
     @Setter
-    public String ylabel;
+    private String ylabel;
     
     @Getter
     @Setter
-    public String plotlabel;
+    private String plotlabel;
     
     public AnalyticsPlot(){
         points = new ArrayList<Point>();

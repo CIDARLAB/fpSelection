@@ -5,15 +5,29 @@
  */
 package org.cidarlab.fpSelection;
 
+import com.panayotis.gnuplot.JavaPlot;
+import com.panayotis.gnuplot.dataset.Point;
+import com.panayotis.gnuplot.dataset.PointDataSet;
+import com.panayotis.gnuplot.plot.DataSetPlot;
+import com.panayotis.gnuplot.style.NamedPlotColor;
+import com.panayotis.gnuplot.style.PlotStyle;
+import com.panayotis.gnuplot.style.Style;
+import com.panayotis.gnuplot.terminal.ImageTerminal;
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import javax.imageio.ImageIO;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment.CompensationMatrix;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment.OneMedia;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment.Voltage;
+import org.cidarlab.fpSelection.dom.AnalyticsPlot;
 
 /**
  *
@@ -258,7 +272,111 @@ public class DataAnalytics {
     }
     //</editor-fold>
     
+    public static Map<String, AnalyticsPlot> getOneMediaPlots(Map<String, AnalyticsExperiment> expList){
+        Map<String, AnalyticsPlot> plots = new HashMap<String, AnalyticsPlot>();
+        
+        Set<String> keylist = expList.keySet();
+        for(String key:keylist){
+            AnalyticsExperiment exp = expList.get(key);
+            int laserWavelength = exp.getLaserWavelength();
+            for(OneMedia om:exp.getOneMediaValues()){
+                String plotkey = "LASER_" + laserWavelength + "_" + om.part;
+                if(!plots.containsKey(plotkey)){
+                    AnalyticsPlot aplot = new AnalyticsPlot();
+                    String xlabel = "Actual Laser Power";
+                    String ylabel = "Measurement";
+                    aplot.setPlotlabel(plotkey);
+                    aplot.setXlabel(xlabel);
+                    aplot.setXlabel(ylabel);
+                    plots.put(plotkey, aplot);
+                }
+                plots.get(plotkey).addPoint(new Point(exp.getActualLaserPower(),om.value));
+            }
+        }
+        return plots;
+    }
     
+    public static void plotGraph(AnalyticsPlot plot, String filepath){
+        String filename = plot.getPlotlabel();
+        filename += ".png";
+        plotToFile(getJavaPlot(plot),filepath + filename);
+    }
     
+    private static List<Point> sortPoints(List<Point> points){
+        System.out.println("-------");
+        Map<Double, Double> pointMap = new HashMap<Double, Double>();
+        List<Double> x = new ArrayList<Double>();
+        List<Point> sorted = new ArrayList<Point>();
+        for(Point p:points){
+            pointMap.put(p.get(0).doubleValue(), p.get(1).doubleValue());
+        }
+        x.addAll(pointMap.keySet());
+        System.out.println(x);
+        for(int i=0;i<x.size();i++){
+            for(int j=i;j<x.size();j++){
+                if(x.get(i) > x.get(j)){
+                    double temp = x.get(i);
+                    x.set(i, x.get(j));
+                    x.set(j, temp);
+                }
+            }
+        }
+        System.out.println(x);
+        for(double d:x){
+            System.out.println(d+","+pointMap.get(d));
+            sorted.add(new Point(d,pointMap.get(d)));
+        }
+        return sorted;
+    }
+    
+    private static JavaPlot getJavaPlot(AnalyticsPlot plotdata){
+        JavaPlot plot = new JavaPlot();
+        PlotStyle ps = new PlotStyle();
+        ps.setStyle(Style.LINES);
+        ps.setLineType(NamedPlotColor.BLACK);
+        
+        PointDataSet pds = new PointDataSet(sortPoints(plotdata.getPoints()));
+        DataSetPlot dsp = new DataSetPlot(pds);
+        dsp.setPlotStyle(ps);
+        plot.addPlot(dsp);
+        
+        String title = plotdata.getPlotlabel();
+        plot.set("style fill", "transparent solid 0.5");
+        
+        plot.getAxis("x").setLabel(plotdata.getXlabel());
+        plot.getAxis("y").setLabel(plotdata.getYlabel());
+        plot.setTitle(title);
+        plot.set("xzeroaxis", "");
+        plot.set("yzeroaxis", "");
+        plot.set("key", "off");
+        
+        return plot;
+    }
+    
+    public static void plotToFile(JavaPlot plot, String filepath){
+        
+        ImageTerminal png = new ImageTerminal();
+        File file = new File(filepath);
+        
+        try {
+            file.createNewFile();
+            png.processOutput(new FileInputStream(file));
+        } catch (FileNotFoundException ex) {
+            System.err.print("File " + filepath + " not found.\n");
+            System.err.print(ex);
+        } catch (IOException ex) {
+            System.err.print(ex);
+        }
+        
+        plot.setPersist(false);
+        plot.setTerminal(png);
+        plot.plot();
+        
+        try {
+            ImageIO.write(png.getImage(), "png", file);
+        } catch (IOException ex) {
+            System.err.print(ex);
+        }
+    }
     
 }

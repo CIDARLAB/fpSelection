@@ -5,8 +5,10 @@
  */
 package org.cidarlab.fpSelection;
 
+import com.panayotis.gnuplot.dataset.Point;
 import java.util.Map;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment;
+import org.cidarlab.fpSelection.dom.AnalyticsPlot;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,13 +44,31 @@ public class DataAnalyticsTest {
     /**
      * Test of walk method, of class DataAnalytics.
      */
-    @Test
+    //@Test
     public void testWalk() {
         System.out.println("walk");
         String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis" + Utilities.getSeparater();
         String resultsRoot = path;
         Map<String, Map<String,AnalyticsExperiment>> result = DataAnalytics.walk(path);
         
+    }
+    
+    @Test
+    public void testOneMediaPlots(){
+        String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis" + Utilities.getSeparater();
+        String resultsRoot = path;
+        Map<String, Map<String,AnalyticsExperiment>> result = DataAnalytics.walk(path);
+        
+        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
+        Map<String, AnalyticsPlot> oneMediaPlots = DataAnalytics.getOneMediaPlots(result.get("onemedia"));
+        System.out.println("Number of OM Plots " + oneMediaPlots.values().size());
+        for(AnalyticsPlot omplot : oneMediaPlots.values()){
+            //System.out.println("NEW PLOT ::  " + omplot.getPlotlabel());
+//            for(Point point: omplot.getPoints()){
+//                System.out.println(point);
+//            }
+            DataAnalytics.plotGraph(omplot, plotfilepath);
+        }
     }
     
 }
