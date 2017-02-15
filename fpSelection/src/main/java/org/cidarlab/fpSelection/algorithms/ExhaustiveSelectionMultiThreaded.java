@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection.Algorithms;
+package org.cidarlab.fpSelection.algorithms;
 
 import java.io.IOException;
 import java.util.ArrayList;

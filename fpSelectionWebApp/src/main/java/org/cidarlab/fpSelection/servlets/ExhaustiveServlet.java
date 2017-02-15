@@ -28,7 +28,7 @@ import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
-import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelectionMultiThreaded;
+import org.cidarlab.fpSelection.algorithms.ExhaustiveSelectionMultiThreaded;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
 import org.json.JSONObject;
 

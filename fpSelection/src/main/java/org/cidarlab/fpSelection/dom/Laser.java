@@ -19,12 +19,12 @@ public String type;
     
 public int wavelength;
     
-public int power;
+public double power;
     
 public String detectorArray;
     
 public int position;
-    
+
 public LinkedList<Detector> detectors;
     
     //Default initialization

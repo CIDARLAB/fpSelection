@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection.Algorithms;
+package org.cidarlab.fpSelection.algorithms;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class ExhaustiveSelection {
         //filter index --> fluorophore index --> riemann sun
         double[][] filterSignal = new double[numFilters][numFluorophores];       
         //filter index --> laser
-        Laser[] lasers = new Laser[numFilters];
+        Laser[] lasers = new Laser[numFilters]; //Check
         //filter index --> detector
         Detector[] detectors = new Detector[numFilters];
         int filterIndex = 0;
@@ -62,7 +62,7 @@ public class ExhaustiveSelection {
                 int fluorophoreIndex = 0;
                 for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
                     Fluorophore fluorophore = entry.getValue();
-                    filterSignal[filterIndex][fluorophoreIndex] = fluorophore.express(laser, detector);
+                    filterSignal[filterIndex][fluorophoreIndex] = fluorophore.express(laser, detector); //Incorporate brightness and laser
                     fluorophoreIndex++;
                 }
                 filterIndex++;

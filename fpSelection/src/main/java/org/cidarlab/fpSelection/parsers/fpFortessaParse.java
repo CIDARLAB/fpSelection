@@ -106,7 +106,7 @@ public class fpFortessaParse {
             newLaser.name = fields[0];
             newLaser.type = fields[1];
             newLaser.wavelength = Integer.parseInt(fields[2]);
-            newLaser.power = Integer.parseInt(fields[3]);
+            newLaser.power = Double.parseDouble(fields[3]);
             newLaser.detectorArray = fields[4];
             newLaser.position = Integer.parseInt(fields[12]);
 
@@ -216,7 +216,7 @@ public class fpFortessaParse {
             newLaser.name = fields[0];
             newLaser.type = fields[1];
             newLaser.wavelength = Integer.parseInt(fields[2]);
-            newLaser.power = Integer.parseInt(fields[3]);
+            newLaser.power = Double.parseDouble(fields[3]);
             newLaser.detectorArray = fields[4];
             newLaser.position = Integer.parseInt(fields[12]);
 

@@ -5,7 +5,6 @@
  */
 package org.cidarlab.fpSelection.selectors;
 
-import org.cidarlab.fpSelection.dom.ProteinComparator;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import com.panayotis.gnuplot.JavaPlot;
 import com.panayotis.gnuplot.dataset.PointDataSet;
@@ -21,12 +20,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.swing.JFrame;
 import org.cidarlab.fpSelection.dom.Cytometer;
-import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 
@@ -195,6 +192,26 @@ public class ProteinSelector {
         return sumDiff;
     }
 
+    public static int getTotalOligos(ArrayList<SelectionInfo> selected) {
+        int count =0; 
+        
+        //Map<String, Fluorophore> chosenOnes = new HashMap<String, Fluorophore>();
+        for(SelectionInfo si:selected){
+            count += si.rankedFluorophores.get(si.selectedIndex).oligomerization;
+        }
+        
+        return count;
+    }
+    
+    public static double getTotalCost(ArrayList<SelectionInfo> selected){
+        double price = 0;
+        for(SelectionInfo si:selected){
+            price += si.rankedFluorophores.get(si.selectedIndex).price;
+        }
+        
+        return price;
+    }
+    
     public static void generateNoise(ArrayList<SelectionInfo> selected) {
         //noise is otherInfo's fluorophore expressing in info's channel with info's laser
         for (SelectionInfo info : selected) {
@@ -231,7 +248,9 @@ public class ProteinSelector {
         }
     }
     
-    public static void weightedSelection(Algorithm algorithm, double oligo_weight, double price_weight, double snr_weight){
+    public static void weightedSelection(int n, HashMap<String, Fluorophore> spectralMaps, Cytometer cytometer, Algorithm algorithm, double oligo_weight, double price_weight, double snr_weight){
+        
+        
         
     }
     

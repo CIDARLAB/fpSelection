@@ -33,25 +33,25 @@ public class FilterSelector {
     //:D
     private static int[] filterWidths = {15, 20, 25, 30, 40, 45, 50};
 
-    public static void main(String[] args) throws IOException {
-        File input = new File("src/main/resources/fp_spectra.csv");
-        HashMap<String, Fluorophore> spectralMaps = parse(input);
-
-//        File input = new File("src/main/resources/Fluorophores.org/");
-//        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parse(cyto);
-
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Give an integer n for the number of you would like: ");
-//        int n = scanner.nextInt();
-        ArrayList<SelectionInfo> pls = LFPtoFilter(spectralMaps, testCyto.lasers, 7);
-
-        ProteinSelector.calcSumSigNoise(pls);
-        ProteinSelector.generateNoise(pls);
-        ProteinSelector.plotSelection(pls);
-
-    }
+//    public static void main(String[] args) throws IOException {
+//        File input = new File("src/main/resources/fp_spectra.csv");
+//        HashMap<String, Fluorophore> spectralMaps = parse(input);
+//
+////        File input = new File("src/main/resources/Fluorophores.org/");
+////        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
+//        File cyto = new File("src/main/resources/ex_fortessa.csv");
+//        Cytometer testCyto = fpFortessaParse.parse(cyto);
+//
+////        Scanner scanner = new Scanner(System.in);
+////        System.out.println("Give an integer n for the number of you would like: ");
+////        int n = scanner.nextInt();
+//        ArrayList<SelectionInfo> pls = LFPtoFilter(spectralMaps, testCyto.lasers, 7);
+//
+//        ProteinSelector.calcSumSigNoise(pls);
+//        ProteinSelector.generateNoise(pls);
+//        ProteinSelector.plotSelection(pls);
+//
+//    }
 
     public static ArrayList<SelectionInfo> LFPtoFilter(HashMap<String, Fluorophore> FPList, List<Laser> lasers, int nDetectors) {
         ArrayList<SelectionInfo> skeleton = new ArrayList();

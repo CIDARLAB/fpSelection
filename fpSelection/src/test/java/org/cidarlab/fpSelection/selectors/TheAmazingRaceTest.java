@@ -11,7 +11,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
-import org.cidarlab.fpSelection.Algorithms.HillClimbingSelection;
+import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
 import org.cidarlab.fpSelection.parsers.ScrapedCSVParse;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;

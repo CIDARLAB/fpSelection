@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
-import org.cidarlab.fpSelection.Algorithms.SemiExhaustiveSelection;
+import org.cidarlab.fpSelection.algorithms.SemiExhaustiveSelection;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;

@@ -29,7 +29,7 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.cidarlab.fpSelection.Algorithms.HillClimbingSelection;
+import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.parsers.fpSpectraParse;

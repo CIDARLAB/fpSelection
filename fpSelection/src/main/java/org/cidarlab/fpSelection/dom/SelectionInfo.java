@@ -30,6 +30,8 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     public double score;
     public double SNR;
     public double SNDiff;
+    public double price;
+    public int oligo;
     public TreeMap<Double, Double> noise;
     
     @Override

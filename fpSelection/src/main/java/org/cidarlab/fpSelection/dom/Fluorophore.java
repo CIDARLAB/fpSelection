@@ -18,14 +18,14 @@ public class Fluorophore {
 
     public String name;
     
-    public double price;
+    public double price = 0;
     public PriceUnit unit;
     
     public boolean isProtein = false;
 
-    public int oligomerization =0;
+    public int oligomerization = 0;
     
-    
+    public double brightness;
     
     //Emission or Excitation 
     public TreeMap<Double, Double> EMspectrum;
@@ -69,7 +69,7 @@ public class Fluorophore {
         if (!EXspectrum.containsKey((double) theLaser.wavelength)) {
             return 0;
         }
-        double multiplier = EXspectrum.get((double) theLaser.wavelength) / 100;
+        double multiplier = EXspectrum.get((double) theLaser.wavelength) / 100; //This is where laser power and brightness go
         double sum = 0;
         double min = theDetector.filterMidpoint - theDetector.filterWidth / 2;
         double max = min + theDetector.filterWidth;
@@ -165,6 +165,19 @@ public class Fluorophore {
         for(Map.Entry<Double, Double> entry: em.entrySet()){
             emAdjusted.put(entry.getKey(), (laserPower*entry.getValue()) );
         }
+        return emAdjusted;
+    }
+    
+    public Fluorophore createEmAdjustedCopy(TreeMap<Double, Double> em){
+        Fluorophore emAdjusted = new Fluorophore();
+        emAdjusted.name = this.name;
+        emAdjusted.isProtein = this.isProtein;
+        emAdjusted.EMspectrum.putAll(em);
+        emAdjusted.EXspectrum.putAll(this.EXspectrum);
+        emAdjusted.oligomerization = this.oligomerization;
+        emAdjusted.price = this.price;
+        emAdjusted.unit = this.unit;
+        
         return emAdjusted;
     }
     

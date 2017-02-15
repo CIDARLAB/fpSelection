@@ -31,30 +31,30 @@ public class LaserSelector {
     /////////////
     //Test Main//
     /////////////
-    public static void main(String[] args) throws IOException {
-        File input = new File("src/main/resources/Fluorophores.org/");
-        HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
-
-        HashMap<String, Fluorophore> choose = new HashMap<>();
-        Random next = new Random();
-
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parse(cyto);
-
-        ArrayList<Detector> detect = new ArrayList();
-
-        for (int i = 0; i < 5; i++) {
-            Laser get = testCyto.lasers.get(next.nextInt(testCyto.lasers.size()));
-            detect.add(get.detectors.get(next.nextInt(get.detectors.size())));
-        }
-
-        ArrayList<SelectionInfo> pls = FilterFPtoLasers(spectralMaps, detect, 3);
-
-        ProteinSelector.calcSumSigNoise(pls);
-        ProteinSelector.generateNoise(pls);
-        ProteinSelector.plotSelection(pls);
-
-    }
+//    public static void main(String[] args) throws IOException {
+//        File input = new File("src/main/resources/Fluorophores.org/");
+//        HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
+//
+//        HashMap<String, Fluorophore> choose = new HashMap<>();
+//        Random next = new Random();
+//
+//        File cyto = new File("src/main/resources/ex_fortessa.csv");
+//        Cytometer testCyto = fpFortessaParse.parse(cyto);
+//
+//        ArrayList<Detector> detect = new ArrayList();
+//
+//        for (int i = 0; i < 5; i++) {
+//            Laser get = testCyto.lasers.get(next.nextInt(testCyto.lasers.size()));
+//            detect.add(get.detectors.get(next.nextInt(get.detectors.size())));
+//        }
+//
+//        ArrayList<SelectionInfo> pls = FilterFPtoLasers(spectralMaps, detect, 3);
+//
+//        ProteinSelector.calcSumSigNoise(pls);
+//        ProteinSelector.generateNoise(pls);
+//        ProteinSelector.plotSelection(pls);
+//
+//    }
     
     
     ///////////////////////////////
