@@ -23,6 +23,8 @@ public int mirror;
 public int filterMidpoint;
     
 public int filterWidth;
+
+public String name;
     
     public Detector()
     {

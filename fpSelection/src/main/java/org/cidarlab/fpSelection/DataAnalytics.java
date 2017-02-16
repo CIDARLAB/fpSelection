@@ -28,7 +28,10 @@ import org.cidarlab.fpSelection.dom.AnalyticsExperiment.CompensationMatrix;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment.OneMedia;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment.Voltage;
 import org.cidarlab.fpSelection.dom.AnalyticsPlot;
+import org.cidarlab.fpSelection.dom.Cytometer;
+import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
+import org.cidarlab.fpSelection.dom.Laser;
 
 /**
  *
@@ -194,19 +197,25 @@ public class DataAnalytics {
         }
     }
 
-    public static Map<String, AnalyticsPlot> normalizeOneMediaValues(Map<String, AnalyticsPlot> aplot, Map<String, Fluorophore> metadata, Map<String, Fluorophore> spectradata){
+    public static Map<String, AnalyticsPlot> normalizeOneMediaValues(Map<String, AnalyticsPlot> aplot, Map<String, Fluorophore> metadata, Map<String, Fluorophore> spectradata, Map<Integer,Laser> cytometerData){
         Map<String, AnalyticsPlot> adjusted = new HashMap<String, AnalyticsPlot>();
         
         for(String fp: aplot.keySet()){
             String fpName = aplot.get(fp).getFpname();
             AnalyticsPlot adjustedPlot = new AnalyticsPlot();
+            double brightness = (metadata.get(getFPMetaDataMap().get(fpName)).brightness);
+            double excitation = spectradata.get(getFPSpectraMap().get(fpName)).EXspectrum.get((double) aplot.get(fp).getLaserWavelength());
+            
+            
+            Laser l = cytometerData.get(getFPToLaserWavelengthMap().get(fpName));
+            Detector d = getDetector(getFPtoCytoFilter().get(fpName),l);
+            double emission = getEmissionValue(spectradata.get(getFPSpectraMap().get(fpName)),d,excitation);
             for(Point p:aplot.get(fp).getPoints()){
                 double x = p.get(0).doubleValue();
                 //System.out.println(getFPMetaDataMap().get(fpName));
                 //System.out.println(metadata.get(getFPMetaDataMap().get(fpName)).name);
-                double brightness = (metadata.get(getFPMetaDataMap().get(fpName)).brightness);
-                double excitation = spectradata.get(getFPSpectraMap().get(fpName)).EXspectrum.get((double)aplot.get(fp).getLaserWavelength());
-                double y = p.get(1).doubleValue() / (brightness * excitation);
+                
+                double y = p.get(1).doubleValue() / (brightness * excitation * emission);
                 adjustedPlot.addPoint(new Point(x,y));
             }
             adjustedPlot.setLaserWavelength(aplot.get(fp).getLaserWavelength());
@@ -219,6 +228,42 @@ public class DataAnalytics {
         return adjusted;
     }
     
+    private static double getEmissionValue(Fluorophore fp, Detector d, double excitation){
+        double emission = 0;
+        int low = (int)Math.ceil(d.filterMidpoint - (d.filterWidth/2));
+        double high = (int)Math.floor(d.filterMidpoint + (d.filterWidth/2));
+        
+        for(int i=low;i<=high;i++){
+            emission += fp.EMspectrum.get((double)i);
+        }
+        emission *= excitation;
+        return emission;
+    }
+    
+    private static Detector getDetector(String detector, Laser l){
+        
+        for(Detector d:l.detectors){
+            if(d.name.equals(detector)){
+                return d;
+            }
+        }
+        
+        return null;
+    }
+    
+    private static Map<String,String> getFPtoCytoFilter(){
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("RFP_B8_M9_glucose", "PE-Texas Red");
+        map.put("GFP_B8_M9_glucose", "GFP");
+        map.put("BFP_B8_M9_glucose", "Pacific Blue");
+        map.put("TS_B2_M9_glucose", "Pacific Orange");
+        map.put("GFP_B2_M9_glucose", "GFP");
+        map.put("BFP_B2_M9_glucose", "Pacific Blue");
+        map.put("RPF_B2_M9_glucose", "PE-Texas Red");
+        map.put("mCitrine_B2_M9_glucose", "YFP");
+        
+        return map;
+    }
     
     private static String[] filepathPieces(String filepath, String rootFilepath) {
         String relativeFilepath = filepath.substring(filepath.lastIndexOf(rootFilepath) + rootFilepath.length());
@@ -302,6 +347,15 @@ public class DataAnalytics {
         return Double.valueOf(pow);
     }
     
+    public static Map<Integer,Laser> getWavelengthToLaserMap(Cytometer c){
+        Map<Integer,Laser> map = new HashMap<Integer, Laser>();
+        
+        for(Laser l:c.lasers){
+            map.put(l.wavelength, l);
+        }
+        return map;
+    }
+    
     private static List<OneMedia> parseOnemedia(String filepath){
         List<String[]> lines = Utilities.getCSVFileContentAsList(filepath);
         List<OneMedia> onemedialist = new ArrayList<OneMedia>();
@@ -313,7 +367,7 @@ public class DataAnalytics {
         for(int i=1;i<lines.size();i++){
             String[] line = lines.get(i);
             String part = line[0].trim();
-            String filter = getFilterMap().get(part);
+            String filter = getFPToFilterDataMap().get(part);
             double value = Double.valueOf(line[filterorder.get(filter)]);
             onemedialist.add(new OneMedia(part,filter,value));
         }
@@ -337,8 +391,8 @@ public class DataAnalytics {
         Map<Integer,String> map = new HashMap<Integer,String>();
         
         map.put(640,"APC-A");
-        map.put(488,"PE-A");
-        map.put(561,"PerCP-A");
+        map.put(561,"PE-A");
+        map.put(488,"PerCP-A");
         
         return map;
     }
@@ -357,7 +411,7 @@ public class DataAnalytics {
     
     }
     
-    private static Map<Integer, List<String>> getFilterFPMap(){
+    private static Map<Integer, List<String>> getLaserWavelengthToFPMap(){
         Map<Integer, List<String>> map = new HashMap<Integer, List<String>>();
         map.put(405, new ArrayList<String>());
         map.put(488, new ArrayList<String>());
@@ -372,7 +426,7 @@ public class DataAnalytics {
         return map;
     }
     
-    private static Map<String,Integer> getFPFilterMap(){
+    private static Map<String,Integer> getFPToLaserWavelengthMap(){
         Map<String,Integer> map = new HashMap<String,Integer>();
         map.put("RFP_B8_M9_glucose", 561);
         map.put("GFP_B8_M9_glucose", 488);
@@ -385,7 +439,7 @@ public class DataAnalytics {
         return map;
     }
     
-    private static Map<String,String> getFilterMap(){
+    private static Map<String,String> getFPToFilterDataMap(){
         Map<String,String> map = new HashMap<String,String>();
         map.put("RFP_B8_M9_glucose", "MEAN_PE.Texas_Red.A");
         map.put("GFP_B8_M9_glucose", "MEAN_GFP.A");
@@ -407,7 +461,8 @@ public class DataAnalytics {
             if(!getDyeWavelengthMap().containsKey(expList.get(folder).getLaserWavelength())){
                 continue;
             }
-            String keyval = getDyeWavelengthMap().get(expList.get(folder).getLaserWavelength());
+            String dyefilter = getDyeWavelengthMap().get(expList.get(folder).getLaserWavelength());
+            String keyval = "beads-" + dyefilter;
             String noisekey = keyval + "-noise";
             String snrkey = keyval + "-snr";
             if(!plots.containsKey(snrkey)){
@@ -419,13 +474,13 @@ public class DataAnalytics {
             if(!plots.containsKey(noisekey)){
                 plots.put(noisekey, new AnalyticsPlot());
                 plots.get(noisekey).setXlabel("Power");
-                plots.get(noisekey).setYlabel("SNR");
+                plots.get(noisekey).setYlabel("Noise");
                 plots.get(noisekey).setPlotlabel(noisekey);
             }
             double noise = 0;
             for(CompensationMatrix m:expList.get(folder).getMatrix()){
-                if(m.measuredFilter.equals(keyval)){
-                    if(!m.bleedOverFilter.equals(keyval)){
+                if(m.measuredFilter.equals(dyefilter)){
+                    if(!m.bleedOverFilter.equals(dyefilter)){
                         noise += m.value;
                     }
                 }
@@ -442,11 +497,11 @@ public class DataAnalytics {
         Map<String, AnalyticsPlot> plots = new HashMap<String, AnalyticsPlot>();
         
         for(String folder : expList.keySet()){
-            if(!getFilterFPMap().containsKey(expList.get(folder).getLaserWavelength())){
+            if(!getLaserWavelengthToFPMap().containsKey(expList.get(folder).getLaserWavelength())){
                 continue;
             }
-            for(String filter : getFilterFPMap().get(expList.get(folder).getLaserWavelength())){
-                String keyval = filter + expList.get(folder).getLaserWavelength();
+            for(String filter : getLaserWavelengthToFPMap().get(expList.get(folder).getLaserWavelength())){
+                String keyval = "ecoli-" + filter + expList.get(folder).getLaserWavelength();
                 String noisekey = keyval + "-noise";
                 String snrkey = keyval + "-snr";
                 if(!plots.containsKey(snrkey)){
@@ -457,7 +512,7 @@ public class DataAnalytics {
                 }
                 if(!plots.containsKey(noisekey)){
                     plots.put(noisekey, new AnalyticsPlot());
-                    plots.get(noisekey).setPlotlabel(snrkey);
+                    plots.get(noisekey).setPlotlabel(noisekey);
                     plots.get(noisekey).setXlabel("LaserPow");
                     plots.get(noisekey).setYlabel("Noise");
                 }
@@ -485,7 +540,7 @@ public class DataAnalytics {
         String prefix = "Voltages_1";
         for(int i=1;i<4;i++){
             
-            String title = "SetValues-" + expList.get(prefix + i + "1").getVoltageValues().get(0).voltage + "V-" + expList.get(prefix + i + "1").getVoltageValues().get(1).voltage + "V";
+            String title = "Voltage-" + expList.get(prefix + i + "1").getVoltageValues().get(0).voltage + "V-" + expList.get(prefix + i + "1").getVoltageValues().get(1).voltage + "V";
             
             String snrtitle =  title + "-SNR";
             String noisetitle = title + "-Noise";
@@ -511,15 +566,15 @@ public class DataAnalytics {
                 if (!plots.containsKey(noisetitle)) {
                     plots.put(noisetitle, new AnalyticsPlot());
                     plots.get(noisetitle).setPlotlabel(noisetitle);
-                    plots.get(noisetitle).setXlabel("Noise");
-                    plots.get(noisetitle).setYlabel("Voltage");
+                    plots.get(noisetitle).setXlabel("Voltage");
+                    plots.get(noisetitle).setYlabel("Noise");
                 }
                 if (!plots.containsKey(snrtitle)) {
                     plots.put(snrtitle, new AnalyticsPlot());
                     plots.get(snrtitle);
                     plots.get(snrtitle).setPlotlabel(snrtitle);
-                    plots.get(snrtitle).setXlabel("SNR");
-                    plots.get(snrtitle).setYlabel("Voltage");
+                    plots.get(snrtitle).setXlabel("Voltage");
+                    plots.get(snrtitle).setYlabel("SNR");
                 }
                 System.out.println("NOISE :: (" + voltageVal + "," + noise + ")");
                 System.out.println("SNR   :: (" + voltageVal + "," + snr + ")");
@@ -545,7 +600,7 @@ public class DataAnalytics {
             for(OneMedia om:exp.getOneMediaValues()){
                 //System.out.println(getFilterFPMap().get(om.part));
                 //System.out.println(laserWavelength);
-                if(! (getFPFilterMap().get(om.part) == laserWavelength)){
+                if(! (getFPToLaserWavelengthMap().get(om.part) == laserWavelength)){
                     continue;
                 }
                 

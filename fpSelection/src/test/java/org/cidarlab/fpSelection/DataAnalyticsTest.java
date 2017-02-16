@@ -16,8 +16,11 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment;
 import org.cidarlab.fpSelection.dom.AnalyticsPlot;
+import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
+import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.parsers.MetadataParser;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.parsers.fpSpectraParse;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -75,36 +78,36 @@ public class DataAnalyticsTest {
         }
     }
     
-    @Test
+    //@Test
     public void testVoltagePlots(){
         String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis" + Utilities.getSeparater();
         String resultsRoot = path;
         Map<String, Map<String,AnalyticsExperiment>> result = DataAnalytics.walk(path);
-        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
+        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater()  + "voltage" + Utilities.getSeparater();
         Map<String, AnalyticsPlot> voltagePlots = DataAnalytics.getVoltagePlots(result.get("voltage"));
         for(AnalyticsPlot voltageplot : voltagePlots.values()){
             DataAnalytics.plotGraph(voltageplot, plotfilepath);
         }
     }
     
-    @Test
+    //@Test
     public void testEcoliPlots(){
         String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis" + Utilities.getSeparater();
         String resultsRoot = path;
         Map<String, Map<String,AnalyticsExperiment>> result = DataAnalytics.walk(path);
-        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
+        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater()  + "ecoli" + Utilities.getSeparater();
         Map<String, AnalyticsPlot> ecoliplots = DataAnalytics.getEcoliPlots(result.get("ecoli"));
         for(AnalyticsPlot ecoliplot : ecoliplots.values()){
             DataAnalytics.plotGraph(ecoliplot, plotfilepath);
         }
     }
     
-    @Test
+    //@Test
     public void testBeadsPlots(){
         String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis" + Utilities.getSeparater();
         String resultsRoot = path;
         Map<String, Map<String,AnalyticsExperiment>> result = DataAnalytics.walk(path);
-        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
+        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater() + "beads" + Utilities.getSeparater();
         Map<String, AnalyticsPlot> beadsplots = DataAnalytics.getBeadsPlots(result.get("beads"));
         for(AnalyticsPlot beadsplot : beadsplots.values()){
             DataAnalytics.plotGraph(beadsplot, plotfilepath);
@@ -112,21 +115,33 @@ public class DataAnalyticsTest {
     }
     
     //@Test
+    public void testParseCytometer() throws IOException{
+        String path = Utilities.getResourcesFilepath() + "HarvardFortessa.csv";
+        Cytometer c = fpFortessaParse.parse(path);
+        
+        System.out.println(c.lasers.get(2).detectors.get(3).name);
+        
+    }
+    
+    @Test
     public void testOneMediaPlots() throws IOException{
-        String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis" + Utilities.getSeparater();
+        String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis_no_curve1" + Utilities.getSeparater();
         String resultsRoot = path;
         Map<String, Map<String,AnalyticsExperiment>> result = DataAnalytics.walk(path);
         
-        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
+        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater()  + "oneMedia" + Utilities.getSeparater();
         Map<String, AnalyticsPlot> oneMediaPlots = DataAnalytics.getOneMediaPlots(result.get("onemedia"));
         System.out.println("Number of OM Plots " + oneMediaPlots.values().size());
         
         String spectrafilepath = Utilities.getResourcesFilepath() + "fp_spectra.csv";
         String metadatafilepath = Utilities.getResourcesFilepath() + "fluorophore_meta_data.csv";
         
+        String pathcytometer = Utilities.getResourcesFilepath() + "HarvardFortessa.csv";
+        Cytometer c = fpFortessaParse.parse(pathcytometer);
+        Map<Integer,Laser> laserMap = DataAnalytics.getWavelengthToLaserMap(c);
         Map<String, Fluorophore> metadata = MetadataParser.parse(metadatafilepath);
         Map<String, Fluorophore> spectramap = fpSpectraParse.parse(spectrafilepath);
-        Map<String, AnalyticsPlot> adjusted = DataAnalytics.normalizeOneMediaValues(oneMediaPlots,metadata,spectramap);
+        Map<String, AnalyticsPlot> adjusted = DataAnalytics.normalizeOneMediaValues(oneMediaPlots,metadata,spectramap,laserMap);
         for(AnalyticsPlot omplot : adjusted.values()){
             DataAnalytics.plotGraph(omplot, plotfilepath);
         }

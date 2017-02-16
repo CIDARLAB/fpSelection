@@ -163,6 +163,11 @@ public class fpFortessaParse {
         //Tada, we have the cytometer object for use to be saved somewhere else.
         return configurations;
     }
+    
+    public static Cytometer parse(String filepath) throws IOException{
+        File file = new File(filepath);
+        return parse(file);
+    }
 
     public static Cytometer parse(File fortessaCSV) throws FileNotFoundException, IOException {
 
@@ -245,12 +250,19 @@ public class fpFortessaParse {
                     newDetector.filterMidpoint = Integer.parseInt(fields[8].substring(0, slash));
                     //parse substring after the '/' and before the " BP"
                     newDetector.filterWidth = Integer.parseInt(fields[8].substring(slash + 1, (fields[8].length() - 3)));
-
+                    
+                    //add detector name (parameter column)
+                    if(fields.length > 9){
+                        if(!fields[9].isEmpty()){
+                            newDetector.name = fields[9].trim().substring(1,fields[9].lastIndexOf("\""));
+                        }
+                    }
+                    //newDetector.name = f
                     //Add detector to laser and move forward
                     newLaser.addDetector(newDetector);
 
                     line = reader.readLine();
-                    fields = line.split(splitter);
+                    fields = line.split(splitter);   
                     category = fields[0];
                 } else {
                     //Push to the next laser 
