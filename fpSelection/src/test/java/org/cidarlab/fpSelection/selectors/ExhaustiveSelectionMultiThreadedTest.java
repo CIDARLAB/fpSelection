@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelection;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelectionMultiThreaded;
@@ -27,7 +28,7 @@ public class ExhaustiveSelectionMultiThreadedTest {
         
         //Get fluorophore set
         File input = new File("src/main/resources/fp_spectra.csv");
-        HashMap<String, Fluorophore> spectralMaps = parse(input);
+        Map<String, Fluorophore> spectralMaps = parse(input);
         //File input = new File("src/main/resources/Fluorophores.org/");
         //HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
 

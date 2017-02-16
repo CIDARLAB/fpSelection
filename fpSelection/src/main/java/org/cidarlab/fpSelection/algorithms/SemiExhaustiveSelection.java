@@ -28,7 +28,7 @@ public class SemiExhaustiveSelection {
     public static LinkedList<int[]> filterCombinations;
     public static LinkedList<int[]> fluorophorePermutations;
 
-    public static ArrayList<SelectionInfo> run(int n, HashMap<String, Fluorophore> spectralMaps, Cytometer cytometer, double topPercent) throws IOException {
+    public static ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer, double topPercent) throws IOException {
 
         //count fluorophores
         int numFluorophores = spectralMaps.size();

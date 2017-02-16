@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.HashMap;
+import java.util.Map;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import java.util.regex.Pattern;
 import java.util.TreeMap;
@@ -33,7 +34,7 @@ public class fpSpectraParse {
      */
     public static final Pattern p = Pattern.compile(" \\((EX|EM|AB)\\)"); //regex pattern to remove (EX),(EM), and (AB)
     
-    public static HashMap<String, Fluorophore> parse(InputStream input) throws FileNotFoundException, IOException {
+    public static Map<String, Fluorophore> parse(InputStream input) throws FileNotFoundException, IOException {
 
         //Import file, begin reading
         BufferedReader reader = new BufferedReader(new InputStreamReader(input, "utf8"));
@@ -84,8 +85,12 @@ public class fpSpectraParse {
         return spectralMaps;
     }
     
+    public static Map<String, Fluorophore> parse(String filepath) throws IOException{
+        File f = new File(filepath);
+        return parse(f);
+    }
     
-    public static HashMap<String, Fluorophore> parse(File input) throws FileNotFoundException, IOException {
+    public static Map<String, Fluorophore> parse(File input) throws FileNotFoundException, IOException {
 
         //Import file, begin reading
         BufferedReader reader = new BufferedReader(new FileReader(input.getAbsolutePath()));

@@ -44,7 +44,9 @@ public class MetadataParser {
                 fp.oligomerization = oligo;
             }
             
-            //4,5 - Brightness. Translation?
+            //4 - Brightness. Translation?
+            //5 - Brightness %GFP
+            fp.brightness = Double.valueOf(pieces[5].trim())/100;
             
             //6 - Source. Not so important?
             

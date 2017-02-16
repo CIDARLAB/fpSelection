@@ -17,6 +17,7 @@ import java.awt.Dimension;
 import java.awt.Toolkit;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
 import javax.swing.JFrame;
@@ -32,7 +33,7 @@ import org.cidarlab.fpSelection.dom.Laser;
 public class SimulatedAnneal {
 
     //only really provides useful output for n < 4
-    public static ArrayList<SelectionInfo> simulateAnnealing(HashMap<String, Fluorophore> masterList, Cytometer cyto, int n) {
+    public static ArrayList<SelectionInfo> simulateAnnealing(Map<String, Fluorophore> masterList, Cytometer cyto, int n) {
 
         //Simulated Annealing in trying to achieve most cost efficient outcome
 //        costprevious = infinite

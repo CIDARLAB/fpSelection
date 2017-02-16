@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -72,7 +73,7 @@ public class ExhaustiveServlet extends HttpServlet {
         /////////////////////
         // Parse the files //
         /////////////////////
-        HashMap<String, Fluorophore> spectralMaps = null;
+        Map<String, Fluorophore> spectralMaps = null;
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);

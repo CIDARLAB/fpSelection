@@ -43,7 +43,7 @@ public class ExhaustiveSelectionMultiThreaded {
         if(++computationIndex % onePercent == 0) System.out.println(computationIndex/onePercent + " percent");
     }
 
-    public ArrayList<SelectionInfo> run(int n, HashMap<String, Fluorophore> spectralMaps, Cytometer cytometer, int threads) throws IOException, InterruptedException, ExecutionException {
+    public ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer, int threads) throws IOException, InterruptedException, ExecutionException {
         
         //count fluorophores
         int numFluorophores = spectralMaps.size();

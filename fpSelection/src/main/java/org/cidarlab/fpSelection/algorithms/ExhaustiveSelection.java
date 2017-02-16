@@ -26,7 +26,7 @@ public class ExhaustiveSelection {
     public static LinkedList<int[]> filterCombinations;
     public static LinkedList<int[]> fluorophorePermutations;
 
-    public static ArrayList<SelectionInfo> run(int n, HashMap<String, Fluorophore> spectralMaps, Cytometer cytometer) throws IOException {
+    public static ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer) throws IOException {
         
         //count fluorophores
         int numFluorophores = spectralMaps.size();

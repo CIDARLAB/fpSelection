@@ -28,6 +28,7 @@ import org.cidarlab.fpSelection.dom.AnalyticsExperiment.CompensationMatrix;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment.OneMedia;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment.Voltage;
 import org.cidarlab.fpSelection.dom.AnalyticsPlot;
+import org.cidarlab.fpSelection.dom.Fluorophore;
 
 /**
  *
@@ -94,7 +95,7 @@ public class DataAnalytics {
                             exp.get("beads").get(pathPieces[pathPieces.length-2]).addCompensationMatrixValue(matrix);
                         } 
                         else {
-                            //Baseline?
+                            
                         }
                         
                     }
@@ -147,15 +148,42 @@ public class DataAnalytics {
                         exp.get("onemedia").get(pathPieces[pathPieces.length-1]).setAttemptedLaserPower(attemptedPow);
                         
                     }
-                    else {
+                    else if(pathPieces[pathPieces.length -1].contains("Baseline")){
                         //Something for Baseline as well?
+                        
+                        List<Integer> wl = getAllLaserWavelengths(f.getAbsolutePath());
+                        for(Integer wavelength:wl){
+                            String laserLine = getLaserSettingLine(f.getAbsolutePath(), wavelength);
+                            double maxPow = getMaxLaserPower(laserLine);
+                            double actualPow = getActualLaserPower(laserLine);
+                            String basekey = "Baseline"+wavelength;
+                            if(!exp.get("onemedia").containsKey(basekey)){
+                                exp.get("onemedia").put(basekey, new AnalyticsExperiment());
+                                exp.get("onemedia").get(basekey).setType(AnalyticsExperiment.ExperimentType.onemedia);
+                            }
+                            exp.get("onemedia").get(basekey).setActualLaserPower(actualPow);
+                            exp.get("onemedia").get(basekey).setMaxLaserPower(maxPow);
+                            exp.get("onemedia").get(basekey).setLaserWavelength(wavelength);
+                            
+                        }
+                                
                     }
                 } 
                 else if (f.getName().equals("oneMediaPlotPoints.csv")) {
                     String pathPieces[] = filepathPieces(path, resultsRoot);
                     List<OneMedia> onemedialist = parseOnemedia(f.getAbsolutePath());
+                    String settingsfilepath = f.getAbsolutePath().substring(0,f.getAbsolutePath().indexOf(pathPieces[pathPieces.length - 1]));
+                    settingsfilepath += "settings.txt";
+                    List<Integer> allWavelengths = getAllLaserWavelengths(settingsfilepath);
                     if (pathPieces[pathPieces.length - 2].contains("Baseline")) {
-                        //Baseline?
+                        for(Integer wavelength:allWavelengths){
+                            String basekey = "Baseline"+wavelength;
+                            if(!exp.get("onemedia").containsKey(basekey)){
+                                exp.get("onemedia").put(basekey, new AnalyticsExperiment());
+                                exp.get("onemedia").get(basekey).setType(AnalyticsExperiment.ExperimentType.onemedia);
+                            }
+                            exp.get("onemedia").get(basekey).addOneMediaValue(onemedialist);
+                        }
                     } 
                     else {
                         if (!exp.get("onemedia").containsKey(pathPieces[pathPieces.length - 2])) {
@@ -168,6 +196,32 @@ public class DataAnalytics {
         }
     }
 
+    public static Map<String, AnalyticsPlot> normalizeOneMediaValues(Map<String, AnalyticsPlot> aplot, Map<String, Fluorophore> metadata, Map<String, Fluorophore> spectradata){
+        Map<String, AnalyticsPlot> adjusted = new HashMap<String, AnalyticsPlot>();
+        
+        for(String fp: aplot.keySet()){
+            String fpName = aplot.get(fp).getFpname();
+            AnalyticsPlot adjustedPlot = new AnalyticsPlot();
+            for(Point p:aplot.get(fp).getPoints()){
+                double x = p.get(0).doubleValue();
+                //System.out.println(getFPMetaDataMap().get(fpName));
+                //System.out.println(metadata.get(getFPMetaDataMap().get(fpName)).name);
+                double brightness = (metadata.get(getFPMetaDataMap().get(fpName)).brightness);
+                double excitation = spectradata.get(getFPSpectraMap().get(fpName)).EXspectrum.get((double)aplot.get(fp).getLaserWavelength());
+                double y = p.get(1).doubleValue() / (brightness * excitation);
+                adjustedPlot.addPoint(new Point(x,y));
+            }
+            adjustedPlot.setLaserWavelength(aplot.get(fp).getLaserWavelength());
+            adjustedPlot.setPlotlabel(aplot.get(fp).getPlotlabel());
+            adjustedPlot.setXlabel(aplot.get(fp).getXlabel());
+            adjustedPlot.setYlabel(aplot.get(fp).getYlabel());
+            adjusted.put(fp, adjustedPlot);
+        }
+        
+        return adjusted;
+    }
+    
+    
     private static String[] filepathPieces(String filepath, String rootFilepath) {
         String relativeFilepath = filepath.substring(filepath.lastIndexOf(rootFilepath) + rootFilepath.length());
         return relativeFilepath.split("/");
@@ -214,7 +268,18 @@ public class DataAnalytics {
         String pieces[] = folder.split("_");
         return Double.valueOf(pieces[2].trim());
     }
-        
+    
+    private static List<Integer> getAllLaserWavelengths(String filepath){
+        List<Integer> wl = new ArrayList<Integer>();
+        List<String> lines = Utilities.getFileContentAsStringList(filepath);
+        for(int i=1;i<lines.size();i++){
+            String wlString = lines.get(i).substring(0,lines.get(i).indexOf("("));
+            wl.add(Integer.valueOf(wlString.trim()));
+        }
+        return wl;
+    }
+    
+    
     private static String getLaserSettingLine(String filepath, int wavelength){
         List<String> lines = Utilities.getFileContentAsStringList(filepath);
         String wl = "";
@@ -257,16 +322,56 @@ public class DataAnalytics {
         return onemedialist;
     }
     
+    private static Map<String,String> getFPMetaDataMap(){
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("RFP_B8_M9_glucose", "mRFP1");
+        map.put("GFP_B8_M9_glucose", "EGFP");
+        map.put("BFP_B8_M9_glucose", "mTagBFP");
+        map.put("TS_B2_M9_glucose", "mT-Sapphire");
+        map.put("GFP_B2_M9_glucose", "EGFP");
+        map.put("BFP_B2_M9_glucose", "mTagBFP");
+        map.put("RPF_B2_M9_glucose", "mRFP1");
+        map.put("mCitrine_B2_M9_glucose", "mCitrine");
+        return map;
+    }
+    
+    private static Map<String, String> getFPSpectraMap(){
+        Map<String,String> map = new HashMap<String,String>();
+        map.put("RFP_B8_M9_glucose", "mRFP1.4m");
+        map.put("GFP_B8_M9_glucose", "EGFPm (Tsien)");
+        map.put("BFP_B8_M9_glucose", "EBFP2");
+        map.put("TS_B2_M9_glucose", "T-Sapphire");
+        map.put("GFP_B2_M9_glucose", "EGFPm (Tsien)");
+        map.put("BFP_B2_M9_glucose", "EBFP2");
+        map.put("RPF_B2_M9_glucose", "mRFP1.4m");
+        map.put("mCitrine_B2_M9_glucose", "mCitrine");
+        return map;
+    
+    }
+    
+    private static Map<String,Integer> getFilterFPMap(){
+        Map<String,Integer> map = new HashMap<String,Integer>();
+        map.put("RFP_B8_M9_glucose", 561);
+        map.put("GFP_B8_M9_glucose", 488);
+        map.put("BFP_B8_M9_glucose", 405);
+        map.put("TS_B2_M9_glucose", 405);
+        map.put("GFP_B2_M9_glucose", 488);
+        map.put("BFP_B2_M9_glucose", 405);
+        map.put("RPF_B2_M9_glucose", 561);
+        map.put("mCitrine_B2_M9_glucose", 488);
+        return map;
+    }
+    
     private static Map<String,String> getFilterMap(){
         Map<String,String> map = new HashMap<String,String>();
         map.put("RFP_B8_M9_glucose", "MEAN_PE.Texas_Red.A");
         map.put("GFP_B8_M9_glucose", "MEAN_GFP.A");
         map.put("BFP_B8_M9_glucose", "MEAN_Pacific_Blue.A");
-        map.put("TS_B2_M9_glucose", "MEAN_YFP.A");
+        map.put("TS_B2_M9_glucose", "MEAN_Pacific_Orange.A");
         map.put("GFP_B2_M9_glucose", "MEAN_GFP.A");
         map.put("BFP_B2_M9_glucose", "MEAN_Pacific_Blue.A");
         map.put("RPF_B2_M9_glucose", "MEAN_PE.Texas_Red.A");
-        map.put("mCitrine_B2_M9_glucose", "MEAN_Pacific_Orange.A");
+        map.put("mCitrine_B2_M9_glucose", "MEAN_YFP.A");
         
         return map;
     }
@@ -280,7 +385,14 @@ public class DataAnalytics {
             AnalyticsExperiment exp = expList.get(key);
             int laserWavelength = exp.getLaserWavelength();
             for(OneMedia om:exp.getOneMediaValues()){
+                //System.out.println(getFilterFPMap().get(om.part));
+                //System.out.println(laserWavelength);
+                if(! (getFilterFPMap().get(om.part) == laserWavelength)){
+                    continue;
+                }
+                
                 String plotkey = "LASER_" + laserWavelength + "_" + om.part;
+                //System.out.println(plotkey);
                 if(!plots.containsKey(plotkey)){
                     AnalyticsPlot aplot = new AnalyticsPlot();
                     String xlabel = "Actual Laser Power";
@@ -288,6 +400,8 @@ public class DataAnalytics {
                     aplot.setPlotlabel(plotkey);
                     aplot.setXlabel(xlabel);
                     aplot.setXlabel(ylabel);
+                    aplot.setLaserWavelength(laserWavelength);
+                    aplot.setFpname(om.part);
                     plots.put(plotkey, aplot);
                 }
                 plots.get(plotkey).addPoint(new Point(exp.getActualLaserPower(),om.value));
@@ -302,8 +416,9 @@ public class DataAnalytics {
         plotToFile(getJavaPlot(plot),filepath + filename);
     }
     
+    
+    
     private static List<Point> sortPoints(List<Point> points){
-        System.out.println("-------");
         Map<Double, Double> pointMap = new HashMap<Double, Double>();
         List<Double> x = new ArrayList<Double>();
         List<Point> sorted = new ArrayList<Point>();
@@ -311,7 +426,6 @@ public class DataAnalytics {
             pointMap.put(p.get(0).doubleValue(), p.get(1).doubleValue());
         }
         x.addAll(pointMap.keySet());
-        System.out.println(x);
         for(int i=0;i<x.size();i++){
             for(int j=i;j<x.size();j++){
                 if(x.get(i) > x.get(j)){
@@ -321,12 +435,37 @@ public class DataAnalytics {
                 }
             }
         }
-        System.out.println(x);
         for(double d:x){
-            System.out.println(d+","+pointMap.get(d));
             sorted.add(new Point(d,pointMap.get(d)));
         }
         return sorted;
+    }
+    
+    public static JavaPlot getMashedOneMediaPlot(List<AnalyticsPlot> plotlist){
+        JavaPlot plot = new JavaPlot();
+        PlotStyle ps = new PlotStyle();
+        ps.setStyle(Style.LINES);
+        ps.setLineType(NamedPlotColor.BLACK);
+        
+        for (AnalyticsPlot ap : plotlist) {
+            PointDataSet pds = new PointDataSet(sortPoints(ap.getPoints()));
+            DataSetPlot dsp = new DataSetPlot(pds);
+            dsp.setPlotStyle(ps);
+            plot.addPlot(dsp);
+        }
+        
+        String title = "AllData";
+        plot.set("style fill", "transparent solid 0.5");
+        
+        plot.getAxis("x").setLabel(plotlist.get(0).getXlabel());
+        plot.getAxis("y").setLabel(plotlist.get(0).getXlabel());
+        plot.setTitle(title);
+        plot.set("xzeroaxis", "");
+        plot.set("yzeroaxis", "");
+        plot.set("key", "off");
+        
+        return plot;
+        
     }
     
     private static JavaPlot getJavaPlot(AnalyticsPlot plotdata){

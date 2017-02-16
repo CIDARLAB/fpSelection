@@ -33,7 +33,7 @@ public class ExhaustiveSelectionImproved {
     public static int bigN;
     public static double[][] filterSignal;
 
-    public static ArrayList<SelectionInfo> run(int bigN, HashMap<String, Fluorophore> spectralMaps, Cytometer cytometer) throws IOException {
+    public static ArrayList<SelectionInfo> run(int bigN, Map<String, Fluorophore> spectralMaps, Cytometer cytometer) throws IOException {
 
         //count fluorophores
         numFluorophores = spectralMaps.size();

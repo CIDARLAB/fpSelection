@@ -83,7 +83,7 @@ public class SemiExhaustiveServlet extends HttpServlet {
         /////////////////////
         // Parse the files //
         /////////////////////
-        HashMap<String, Fluorophore> spectralMaps = null;
+        Map<String, Fluorophore> spectralMaps = null;
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);

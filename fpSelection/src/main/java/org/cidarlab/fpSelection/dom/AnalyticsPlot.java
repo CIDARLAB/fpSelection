@@ -33,6 +33,14 @@ public class AnalyticsPlot {
     @Setter
     private String plotlabel;
     
+    @Getter
+    @Setter
+    private int laserWavelength;
+    
+    @Getter
+    @Setter
+    private String fpname;
+    
     public AnalyticsPlot(){
         points = new ArrayList<Point>();
     }

@@ -26,7 +26,7 @@ public class RestrictedAnneal {
 
     //IT LIVES!!!!! It actually works well!    
     
-    public static ArrayList<SelectionInfo> AnnealMeBaby(HashMap<String, Fluorophore> masterList, Cytometer cyto, int n)
+    public static ArrayList<SelectionInfo> AnnealMeBaby(Map<String, Fluorophore> masterList, Cytometer cyto, int n)
     {
         ArrayList<SelectionInfo> total = new ArrayList<>();
         for (Laser lase : cyto.lasers) {
@@ -63,7 +63,7 @@ public class RestrictedAnneal {
     
     
     
-    public static ArrayList<SelectionInfo> sortTop20P(HashMap<String, Fluorophore> masterList, Laser theLaser) {
+    public static ArrayList<SelectionInfo> sortTop20P(Map<String, Fluorophore> masterList, Laser theLaser) {
 
         //Pull Detector objects out.
         LinkedList<Detector> listDetectors = new LinkedList<>();

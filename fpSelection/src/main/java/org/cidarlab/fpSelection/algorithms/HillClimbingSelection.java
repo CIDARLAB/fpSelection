@@ -27,7 +27,7 @@ public class HillClimbingSelection {
     //Suggest proteins based on a laser & filters
     //Works best for n >= 2;
 
-    public static ArrayList<SelectionInfo> run(int n, HashMap<String, Fluorophore> masterList, Cytometer cyto) {
+    public static ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
         ArrayList<SelectionInfo> total = new ArrayList<>();
         for (Laser lase : cyto.lasers) {
             total.addAll(laserFiltersToFPs(masterList, lase));
@@ -38,7 +38,7 @@ public class HillClimbingSelection {
         return hillClimber(total, n);
     }
 
-    public static ArrayList<SelectionInfo> laserFiltersToFPs(HashMap<String, Fluorophore> masterList, Laser theLaser) {
+    public static ArrayList<SelectionInfo> laserFiltersToFPs(Map<String, Fluorophore> masterList, Laser theLaser) {
 
         //Pull Detector objects out.
         LinkedList<Detector> listDetectors = new LinkedList<>();

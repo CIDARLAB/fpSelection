@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.Map;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelectionImproved;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
@@ -31,7 +32,7 @@ public class ExhaustiveSelectionImprovedTest {
         //File input = new File("src/main/resources/fp_spectra.csv");
         //HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
         File input = new File("src/main/resources/Fluorophores.org/");
-        HashMap<String, Fluorophore> spectralMaps = fpSpectraParse.parse(input);
+        Map<String, Fluorophore> spectralMaps = fpSpectraParse.parse(input);
 
         //Get cytometer settings
         File cyto = new File("src/main/resources/ex_fortessa.csv");

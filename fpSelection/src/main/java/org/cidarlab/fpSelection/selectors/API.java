@@ -32,10 +32,10 @@ public class API {
     
     //Not really necessary, but it's nice to have a centralized location for calling our functions.
     
-    public static HashMap<String, Fluorophore> parseMasterList(File fpList) throws IOException
+    public static Map<String, Fluorophore> parseMasterList(File fpList) throws IOException
     {
         //to do
-        HashMap<String, Fluorophore> returnList = parse(fpList);
+        Map<String, Fluorophore> returnList = parse(fpList);
         return returnList;
     }
     
