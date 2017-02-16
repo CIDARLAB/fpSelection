@@ -64,7 +64,6 @@ public class DataAnalytics {
         for (File f : list) {
             if (f.isDirectory()) {
                 walk(f.getAbsolutePath(), resultsRoot, exp);
-                //System.out.println( "Dir:" + f.getAbsoluteFile() );
             } 
             else {
                 if (f.getName().equals("compensation_matrix.csv")) {
@@ -149,7 +148,6 @@ public class DataAnalytics {
                         
                     }
                     else if(pathPieces[pathPieces.length -1].contains("Baseline")){
-                        //Something for Baseline as well?
                         
                         List<Integer> wl = getAllLaserWavelengths(f.getAbsolutePath());
                         for(Integer wavelength:wl){
@@ -244,15 +242,15 @@ public class DataAnalytics {
         List<CompensationMatrix> matrix = new ArrayList<CompensationMatrix>();
         List<String[]> lines = Utilities.getCSVFileContentAsList(filepath);
         String[] bleedover = lines.get(0);
-        List<String> bleedoverOrder = new ArrayList<String>();
+        List<String> measuredFilterOrder = new ArrayList<String>();
         for(int i=1;i<bleedover.length;i++){
-            bleedoverOrder.add(bleedover[i]);
+            measuredFilterOrder.add(bleedover[i]);
         }
         for(int i=1;i<lines.size();i++){
             String[] line = lines.get(i);
-            String measuredFilter = line[0];
+            String bleedOverFilter = line[0];
             for(int j=1;j<line.length;j++){
-                String bleedOverFilter = bleedoverOrder.get(i-1);
+                String measuredFilter = measuredFilterOrder.get(j-1);
                 matrix.add(new CompensationMatrix(measuredFilter, bleedOverFilter,Double.valueOf(line[j])));
             }
         }
@@ -335,6 +333,16 @@ public class DataAnalytics {
         return map;
     }
     
+    private static Map<Integer,String> getDyeWavelengthMap(){
+        Map<Integer,String> map = new HashMap<Integer,String>();
+        
+        map.put(640,"APC-A");
+        map.put(488,"PE-A");
+        map.put(561,"PerCP-A");
+        
+        return map;
+    }
+    
     private static Map<String, String> getFPSpectraMap(){
         Map<String,String> map = new HashMap<String,String>();
         map.put("RFP_B8_M9_glucose", "mRFP1.4m");
@@ -349,7 +357,22 @@ public class DataAnalytics {
     
     }
     
-    private static Map<String,Integer> getFilterFPMap(){
+    private static Map<Integer, List<String>> getFilterFPMap(){
+        Map<Integer, List<String>> map = new HashMap<Integer, List<String>>();
+        map.put(405, new ArrayList<String>());
+        map.put(488, new ArrayList<String>());
+        map.put(561, new ArrayList<String>());
+        
+        map.get(405).add("Pacific_Blue-A");
+        map.get(405).add("Pacific_Orange-A");
+        map.get(488).add("GFP-A");
+        map.get(488).add("YFP-A");
+        map.get(561).add("PE-Texas_Red-A");
+        
+        return map;
+    }
+    
+    private static Map<String,Integer> getFPFilterMap(){
         Map<String,Integer> map = new HashMap<String,Integer>();
         map.put("RFP_B8_M9_glucose", 561);
         map.put("GFP_B8_M9_glucose", 488);
@@ -377,6 +400,141 @@ public class DataAnalytics {
     }
     //</editor-fold>
     
+    public static Map<String, AnalyticsPlot> getBeadsPlots(Map<String, AnalyticsExperiment> expList){
+        Map<String, AnalyticsPlot> plots = new HashMap<String, AnalyticsPlot>();
+        
+        for(String folder:expList.keySet()){
+            if(!getDyeWavelengthMap().containsKey(expList.get(folder).getLaserWavelength())){
+                continue;
+            }
+            String keyval = getDyeWavelengthMap().get(expList.get(folder).getLaserWavelength());
+            String noisekey = keyval + "-noise";
+            String snrkey = keyval + "-snr";
+            if(!plots.containsKey(snrkey)){
+                plots.put(snrkey, new AnalyticsPlot());
+                plots.get(snrkey).setXlabel("Power");
+                plots.get(snrkey).setYlabel("SNR");
+                plots.get(snrkey).setPlotlabel(snrkey);
+            }
+            if(!plots.containsKey(noisekey)){
+                plots.put(noisekey, new AnalyticsPlot());
+                plots.get(noisekey).setXlabel("Power");
+                plots.get(noisekey).setYlabel("SNR");
+                plots.get(noisekey).setPlotlabel(noisekey);
+            }
+            double noise = 0;
+            for(CompensationMatrix m:expList.get(folder).getMatrix()){
+                if(m.measuredFilter.equals(keyval)){
+                    if(!m.bleedOverFilter.equals(keyval)){
+                        noise += m.value;
+                    }
+                }
+            }
+            double snr = 1/noise;
+            plots.get(snrkey).addPoint(new Point(expList.get(folder).getActualLaserPower(),snr));
+            plots.get(noisekey).addPoint(new Point(expList.get(folder).getActualLaserPower(),noise));
+        }
+        
+        return plots;
+    }
+    
+    public static Map<String, AnalyticsPlot> getEcoliPlots(Map<String, AnalyticsExperiment> expList){
+        Map<String, AnalyticsPlot> plots = new HashMap<String, AnalyticsPlot>();
+        
+        for(String folder : expList.keySet()){
+            if(!getFilterFPMap().containsKey(expList.get(folder).getLaserWavelength())){
+                continue;
+            }
+            for(String filter : getFilterFPMap().get(expList.get(folder).getLaserWavelength())){
+                String keyval = filter + expList.get(folder).getLaserWavelength();
+                String noisekey = keyval + "-noise";
+                String snrkey = keyval + "-snr";
+                if(!plots.containsKey(snrkey)){
+                    plots.put(snrkey, new AnalyticsPlot());
+                    plots.get(snrkey).setPlotlabel(snrkey);
+                    plots.get(snrkey).setXlabel("LaserPow");
+                    plots.get(snrkey).setYlabel("SNR");
+                }
+                if(!plots.containsKey(noisekey)){
+                    plots.put(noisekey, new AnalyticsPlot());
+                    plots.get(noisekey).setPlotlabel(snrkey);
+                    plots.get(noisekey).setXlabel("LaserPow");
+                    plots.get(noisekey).setYlabel("Noise");
+                }
+                double noise = 0;
+                for(CompensationMatrix m:expList.get(folder).getMatrix()){
+                    if(m.measuredFilter.equals(filter)){
+                        if(!m.bleedOverFilter.equals(filter)){
+                            noise += m.value;
+                        }
+                    }
+                }
+                double snr = 1/noise;
+                plots.get(snrkey).addPoint(new Point(expList.get(folder).getActualLaserPower(),snr));
+                plots.get(noisekey).addPoint(new Point(expList.get(folder).getActualLaserPower(),noise));
+                
+            }
+        }
+        
+        return plots;
+    }
+    
+    public static Map<String, AnalyticsPlot> getVoltagePlots(Map<String, AnalyticsExperiment> expList){
+        Map<String, AnalyticsPlot> plots = new HashMap<String, AnalyticsPlot>();
+        
+        String prefix = "Voltages_1";
+        for(int i=1;i<4;i++){
+            
+            String title = "SetValues-" + expList.get(prefix + i + "1").getVoltageValues().get(0).voltage + "V-" + expList.get(prefix + i + "1").getVoltageValues().get(1).voltage + "V";
+            
+            String snrtitle =  title + "-SNR";
+            String noisetitle = title + "-Noise";
+            
+            
+            double voltageVal=0;
+            double noise = 0;
+            for(int j=1;j<4;j++){
+                String folder = prefix + i + j;
+                expList.get(folder).getVoltageValues().get(j-1);
+                voltageVal = expList.get(folder).getVoltageValues().get(j-1).voltage;
+                String mainfilter = expList.get(folder).getVoltageValues().get(j-1).filter;
+                for(CompensationMatrix m: expList.get(folder).getMatrix()){
+                    if(m.measuredFilter.equals(mainfilter)){ 
+                        if(!m.bleedOverFilter.equals(mainfilter)){
+                            noise += m.value;
+                        }
+                    }
+                }
+                double snr = 1 / noise;
+                System.out.println("Noise Value :: " + noise);
+                System.out.println("SNR Value :: " + snr);
+                if (!plots.containsKey(noisetitle)) {
+                    plots.put(noisetitle, new AnalyticsPlot());
+                    plots.get(noisetitle).setPlotlabel(noisetitle);
+                    plots.get(noisetitle).setXlabel("Noise");
+                    plots.get(noisetitle).setYlabel("Voltage");
+                }
+                if (!plots.containsKey(snrtitle)) {
+                    plots.put(snrtitle, new AnalyticsPlot());
+                    plots.get(snrtitle);
+                    plots.get(snrtitle).setPlotlabel(snrtitle);
+                    plots.get(snrtitle).setXlabel("SNR");
+                    plots.get(snrtitle).setYlabel("Voltage");
+                }
+                System.out.println("NOISE :: (" + voltageVal + "," + noise + ")");
+                System.out.println("SNR   :: (" + voltageVal + "," + snr + ")");
+                plots.get(noisetitle).addPoint(new Point(voltageVal, noise));
+                plots.get(snrtitle).addPoint(new Point(voltageVal, snr));
+
+            }
+            
+            
+            
+        }
+        
+        return plots;
+    }
+    
     public static Map<String, AnalyticsPlot> getOneMediaPlots(Map<String, AnalyticsExperiment> expList){
         Map<String, AnalyticsPlot> plots = new HashMap<String, AnalyticsPlot>();
         
@@ -387,7 +545,7 @@ public class DataAnalytics {
             for(OneMedia om:exp.getOneMediaValues()){
                 //System.out.println(getFilterFPMap().get(om.part));
                 //System.out.println(laserWavelength);
-                if(! (getFilterFPMap().get(om.part) == laserWavelength)){
+                if(! (getFPFilterMap().get(om.part) == laserWavelength)){
                     continue;
                 }
                 

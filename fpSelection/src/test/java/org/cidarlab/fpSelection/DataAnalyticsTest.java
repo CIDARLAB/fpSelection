@@ -76,6 +76,42 @@ public class DataAnalyticsTest {
     }
     
     @Test
+    public void testVoltagePlots(){
+        String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis" + Utilities.getSeparater();
+        String resultsRoot = path;
+        Map<String, Map<String,AnalyticsExperiment>> result = DataAnalytics.walk(path);
+        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
+        Map<String, AnalyticsPlot> voltagePlots = DataAnalytics.getVoltagePlots(result.get("voltage"));
+        for(AnalyticsPlot voltageplot : voltagePlots.values()){
+            DataAnalytics.plotGraph(voltageplot, plotfilepath);
+        }
+    }
+    
+    @Test
+    public void testEcoliPlots(){
+        String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis" + Utilities.getSeparater();
+        String resultsRoot = path;
+        Map<String, Map<String,AnalyticsExperiment>> result = DataAnalytics.walk(path);
+        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
+        Map<String, AnalyticsPlot> ecoliplots = DataAnalytics.getEcoliPlots(result.get("ecoli"));
+        for(AnalyticsPlot ecoliplot : ecoliplots.values()){
+            DataAnalytics.plotGraph(ecoliplot, plotfilepath);
+        }
+    }
+    
+    @Test
+    public void testBeadsPlots(){
+        String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis" + Utilities.getSeparater();
+        String resultsRoot = path;
+        Map<String, Map<String,AnalyticsExperiment>> result = DataAnalytics.walk(path);
+        String plotfilepath = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ "FP_selection_R1" + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
+        Map<String, AnalyticsPlot> beadsplots = DataAnalytics.getBeadsPlots(result.get("beads"));
+        for(AnalyticsPlot beadsplot : beadsplots.values()){
+            DataAnalytics.plotGraph(beadsplot, plotfilepath);
+        }
+    }
+    
+    //@Test
     public void testOneMediaPlots() throws IOException{
         String path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + "FP_selection_R1" + Utilities.getSeparater() + "analysis" + Utilities.getSeparater();
         String resultsRoot = path;
