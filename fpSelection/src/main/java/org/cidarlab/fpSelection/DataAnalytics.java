@@ -19,8 +19,10 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import javax.imageio.ImageIO;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment;
@@ -39,8 +41,7 @@ import org.cidarlab.fpSelection.dom.Laser;
  */
 public class DataAnalytics {
 
-    
-    
+        
     //<editor-fold desc="Parsers">
     public static Map<String, Map<String, AnalyticsExperiment>> walk(String path) {
         Map<String, Map<String, AnalyticsExperiment>> exp = new HashMap<String, Map<String, AnalyticsExperiment>>();
@@ -171,7 +172,11 @@ public class DataAnalytics {
                     }
                 } 
                 else if (f.getName().equals("oneMediaPlotPoints.csv")) {
+                    //System.out.println(f.getAbsolutePath());
                     String pathPieces[] = filepathPieces(path, resultsRoot);
+                    if (pathPieces[pathPieces.length - 2].contains("Voltages")) {
+                        continue;
+                    }
                     List<OneMedia> onemedialist = parseOnemedia(f.getAbsolutePath());
                     String settingsfilepath = f.getAbsolutePath().substring(0,f.getAbsolutePath().indexOf(pathPieces[pathPieces.length - 1]));
                     settingsfilepath += "settings.txt";
@@ -187,6 +192,7 @@ public class DataAnalytics {
                         }
                     } 
                     else {
+                        
                         if (!exp.get("onemedia").containsKey(pathPieces[pathPieces.length - 2])) {
                             exp.get("onemedia").put(pathPieces[pathPieces.length - 2], new AnalyticsExperiment());
                         }
@@ -316,6 +322,9 @@ public class DataAnalytics {
         List<Integer> wl = new ArrayList<Integer>();
         List<String> lines = Utilities.getFileContentAsStringList(filepath);
         for(int i=1;i<lines.size();i++){
+            if(lines.get(i).trim().isEmpty() || lines.get(i).startsWith("Threshold") || lines.get(i).startsWith("Beads") || lines.get(i).startsWith("E. coli")){
+                continue;
+            }
             String wlString = lines.get(i).substring(0,lines.get(i).indexOf("("));
             wl.add(Integer.valueOf(wlString.trim()));
         }
@@ -462,18 +471,18 @@ public class DataAnalytics {
                 continue;
             }
             String dyefilter = getDyeWavelengthMap().get(expList.get(folder).getLaserWavelength());
-            String keyval = "beads-" + dyefilter;
+            String keyval = dyefilter;
             String noisekey = keyval + "-noise";
             String snrkey = keyval + "-snr";
             if(!plots.containsKey(snrkey)){
                 plots.put(snrkey, new AnalyticsPlot());
-                plots.get(snrkey).setXlabel("Power");
+                plots.get(snrkey).setXlabel("Laser "+ expList.get(folder).getLaserWavelength() +"Power");
                 plots.get(snrkey).setYlabel("SNR");
                 plots.get(snrkey).setPlotlabel(snrkey);
             }
             if(!plots.containsKey(noisekey)){
                 plots.put(noisekey, new AnalyticsPlot());
-                plots.get(noisekey).setXlabel("Power");
+                plots.get(noisekey).setXlabel("Laser "+ expList.get(folder).getLaserWavelength() +"Power");
                 plots.get(noisekey).setYlabel("Noise");
                 plots.get(noisekey).setPlotlabel(noisekey);
             }
@@ -501,19 +510,20 @@ public class DataAnalytics {
                 continue;
             }
             for(String filter : getLaserWavelengthToFPMap().get(expList.get(folder).getLaserWavelength())){
-                String keyval = "ecoli-" + filter + expList.get(folder).getLaserWavelength();
+                String keyval_underscore = filter;
+                String keyval = keyval_underscore.replaceAll("_", "-");
                 String noisekey = keyval + "-noise";
                 String snrkey = keyval + "-snr";
                 if(!plots.containsKey(snrkey)){
                     plots.put(snrkey, new AnalyticsPlot());
                     plots.get(snrkey).setPlotlabel(snrkey);
-                    plots.get(snrkey).setXlabel("LaserPow");
+                    plots.get(snrkey).setXlabel("Laser " + expList.get(folder).getLaserWavelength() + " Power");
                     plots.get(snrkey).setYlabel("SNR");
                 }
                 if(!plots.containsKey(noisekey)){
                     plots.put(noisekey, new AnalyticsPlot());
                     plots.get(noisekey).setPlotlabel(noisekey);
-                    plots.get(noisekey).setXlabel("LaserPow");
+                    plots.get(noisekey).setXlabel("Laser " + expList.get(folder).getLaserWavelength() + " Power");
                     plots.get(noisekey).setYlabel("Noise");
                 }
                 double noise = 0;
@@ -540,7 +550,7 @@ public class DataAnalytics {
         String prefix = "Voltages_1";
         for(int i=1;i<4;i++){
             
-            String title = "Voltage-" + expList.get(prefix + i + "1").getVoltageValues().get(0).voltage + "V-" + expList.get(prefix + i + "1").getVoltageValues().get(1).voltage + "V";
+            String title = expList.get(prefix + i + "1").getVoltageValues().get(0).voltage + "V-" + expList.get(prefix + i + "1").getVoltageValues().get(1).voltage + "V";
             
             String snrtitle =  title + "-SNR";
             String noisetitle = title + "-Noise";
@@ -560,30 +570,29 @@ public class DataAnalytics {
                         }
                     }
                 }
+                String mainFilterLabel = mainfilter.replaceAll("_", " ");
                 double snr = 1 / noise;
-                System.out.println("Noise Value :: " + noise);
-                System.out.println("SNR Value :: " + snr);
+                //System.out.println("Noise Value :: " + noise);
+                //System.out.println("SNR Value :: " + snr);
                 if (!plots.containsKey(noisetitle)) {
                     plots.put(noisetitle, new AnalyticsPlot());
                     plots.get(noisetitle).setPlotlabel(noisetitle);
-                    plots.get(noisetitle).setXlabel("Voltage");
+                    plots.get(noisetitle).setXlabel(mainFilterLabel + " Voltage");
                     plots.get(noisetitle).setYlabel("Noise");
                 }
                 if (!plots.containsKey(snrtitle)) {
                     plots.put(snrtitle, new AnalyticsPlot());
                     plots.get(snrtitle);
                     plots.get(snrtitle).setPlotlabel(snrtitle);
-                    plots.get(snrtitle).setXlabel("Voltage");
+                    plots.get(snrtitle).setXlabel(mainFilterLabel + " Voltage");
                     plots.get(snrtitle).setYlabel("SNR");
                 }
-                System.out.println("NOISE :: (" + voltageVal + "," + noise + ")");
-                System.out.println("SNR   :: (" + voltageVal + "," + snr + ")");
+                //System.out.println("NOISE :: (" + voltageVal + "," + noise + ")");
+                //System.out.println("SNR   :: (" + voltageVal + "," + snr + ")");
                 plots.get(noisetitle).addPoint(new Point(voltageVal, noise));
                 plots.get(snrtitle).addPoint(new Point(voltageVal, snr));
 
             }
-            
-            
             
         }
         
@@ -603,16 +612,16 @@ public class DataAnalytics {
                 if(! (getFPToLaserWavelengthMap().get(om.part) == laserWavelength)){
                     continue;
                 }
-                
-                String plotkey = "LASER_" + laserWavelength + "_" + om.part;
+                String partname = om.part.replaceAll("_", " ");
+                String plotkey = "LASER" + laserWavelength + " " + partname;
                 //System.out.println(plotkey);
                 if(!plots.containsKey(plotkey)){
                     AnalyticsPlot aplot = new AnalyticsPlot();
                     String xlabel = "Actual Laser Power";
-                    String ylabel = "Measurement";
+                    String ylabel = partname;
                     aplot.setPlotlabel(plotkey);
                     aplot.setXlabel(xlabel);
-                    aplot.setXlabel(ylabel);
+                    aplot.setYlabel(ylabel);
                     aplot.setLaserWavelength(laserWavelength);
                     aplot.setFpname(om.part);
                     plots.put(plotkey, aplot);
@@ -654,13 +663,24 @@ public class DataAnalytics {
         return sorted;
     }
     
+    private static NamedPlotColor getRandomNamedPlotColor(){
+        Random random = new Random();
+        return NamedPlotColor.values()[random.nextInt(NamedPlotColor.values().length)];
+    }
+    
     public static JavaPlot getMashedOneMediaPlot(List<AnalyticsPlot> plotlist){
         JavaPlot plot = new JavaPlot();
-        PlotStyle ps = new PlotStyle();
-        ps.setStyle(Style.LINES);
-        ps.setLineType(NamedPlotColor.BLACK);
         
+        Set<NamedPlotColor> usedColors = new HashSet<NamedPlotColor>();
         for (AnalyticsPlot ap : plotlist) {
+            PlotStyle ps = new PlotStyle();
+            ps.setStyle(Style.LINES);
+            NamedPlotColor npc = getRandomNamedPlotColor();
+            while(usedColors.contains(npc)){
+                npc = getRandomNamedPlotColor();
+            }
+            usedColors.add(npc);
+            ps.setLineType(npc);
             PointDataSet pds = new PointDataSet(sortPoints(ap.getPoints()));
             DataSetPlot dsp = new DataSetPlot(pds);
             dsp.setPlotStyle(ps);
@@ -671,7 +691,7 @@ public class DataAnalytics {
         plot.set("style fill", "transparent solid 0.5");
         
         plot.getAxis("x").setLabel(plotlist.get(0).getXlabel());
-        plot.getAxis("y").setLabel(plotlist.get(0).getXlabel());
+        plot.getAxis("y").setLabel("MEFL");
         plot.setTitle(title);
         plot.set("xzeroaxis", "");
         plot.set("yzeroaxis", "");
