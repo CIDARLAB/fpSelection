@@ -91,7 +91,8 @@ public class ExhaustiveSelection {
         {
             for (int[] fluorophorePerm : fluorophorePermutations)
             {
-                if(++computationIndex % onePercent == 0) System.out.println(++percent + " percent");
+                //if(++computationIndex % onePercent == 0) 
+                    //System.out.println(++percent + " percent");
                 double signal = 0;
                 for (int i = 0; i < n; i++)
                 {

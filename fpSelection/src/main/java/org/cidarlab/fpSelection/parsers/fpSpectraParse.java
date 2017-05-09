@@ -37,12 +37,12 @@ public class fpSpectraParse {
     public static Map<String, Fluorophore> parse(InputStream input) throws FileNotFoundException, IOException {
 
         //Import file, begin reading
+        
         BufferedReader reader = new BufferedReader(new InputStreamReader(input, "utf8"));
         HashMap<String, Fluorophore> spectralMaps = new HashMap<>();
 
         //The first line describes the spectra
         String line = reader.readLine();
-        
         String[] spectra = line.split(",");
         
         String[] spectraTrimmedStrings = new String[spectra.length];

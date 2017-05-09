@@ -147,7 +147,7 @@ public class DataAnalyticsTest {
         String metadatafilepath = Utilities.getResourcesFilepath() + "fluorophore_meta_data.csv";
         
         String pathcytometer = Utilities.getResourcesFilepath() + "HarvardFortessa.csv";
-        Cytometer c = fpFortessaParse.parse(pathcytometer);
+        Cytometer c = fpFortessaParse.parse(pathcytometer, false);
         Map<Integer,Laser> laserMap = DataAnalytics.getWavelengthToLaserMap(c);
         Map<String, Fluorophore> metadata = MetadataParser.parse(metadatafilepath);
         Map<String, Fluorophore> spectramap = fpSpectraParse.parse(spectrafilepath);

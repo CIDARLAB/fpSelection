@@ -45,8 +45,10 @@ public class MetadataParser {
             }
             
             //4 - Brightness. Translation?
+            fp.brightness = Double.valueOf(pieces[4].trim());
+            
             //5 - Brightness %GFP
-            fp.brightness = Double.valueOf(pieces[5].trim())/100;
+            //fp.brightness = Double.valueOf(pieces[5].trim())/100;
             
             //6 - Source. Not so important?
             

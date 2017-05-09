@@ -31,7 +31,7 @@ public class Fluorophore {
     public TreeMap<Double, Double> EMspectrum;
     public TreeMap<Double, Double> EXspectrum;
 
-    //Generates PointDataSets for javaplot graphing
+    //Generates PointDataSets JUST for javaplot graphing
     public PointDataSet makeEXDataSet() {
         PointDataSet dataSet = new PointDataSet();
 
@@ -152,12 +152,19 @@ public class Fluorophore {
         return highWave;
     }
 
+    
     public TreeMap<Double, Double> adjustEMBrightness(double brightness, TreeMap<Double, Double> em){
         TreeMap<Double, Double> emAdjusted = new TreeMap<>();
         for(Map.Entry<Double, Double> entry: em.entrySet()){
             emAdjusted.put(entry.getKey(), (brightness*entry.getValue()));
         }
         return emAdjusted;
+    }
+    
+    public void rewriteEMBrightness(double brightness){
+        TreeMap<Double, Double> adjusted = adjustEMBrightness(brightness, this.EMspectrum);
+        this.EMspectrum = new TreeMap<Double, Double>();
+        this.EMspectrum.putAll(adjusted);
     }
     
     public TreeMap<Double, Double> adjustEMLaserPower(double laserPower, TreeMap<Double, Double> em){
@@ -167,6 +174,8 @@ public class Fluorophore {
         }
         return emAdjusted;
     }
+    
+    
     
     public Fluorophore createEmAdjustedCopy(TreeMap<Double, Double> em){
         Fluorophore emAdjusted = new Fluorophore();

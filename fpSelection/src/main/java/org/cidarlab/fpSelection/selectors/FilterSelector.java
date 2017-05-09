@@ -9,16 +9,18 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
-import javax.swing.JOptionPane;
+import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
-import static org.cidarlab.fpSelection.selectors.LaserSelector.FilterFPtoLasers;
 import static org.cidarlab.fpSelection.parsers.fpSpectraParse.parse;
 
 /**
@@ -27,11 +29,23 @@ import static org.cidarlab.fpSelection.parsers.fpSpectraParse.parse;
  */
 public class FilterSelector {
 
+    //////////////////////////////////////
+    //      ALGORITHM EXPLANATION       // -preliminary algorithm-
+    //////////////////////////////////////
+    /*
+        1. For each FP, find the best laser for it in terms of excitation wavelength. That's our preliminary guess as to where it will go.
+        2. Fit a 60 nm wide filter on each fluorophore peak in each laser.
+        3. Loop to fix overlaps - 
+            3a. shrink filter boundaries slightly, 
+            3b. push filter bounds apart from each other    
+        4. Run FP selection to suggest n filters and n FPs
+     */
     //took all filter widths from guides at bdbiosciences, left out ones that seemed niche like 28 nm wide, 44 nm wide, etc
     //https://www.bdbiosciences.com/documents/BD_Accuri_Optical_Filter_Guide.pdf
     //https://www.bdbiosciences.com/documents/multicolor_fluorochrome_laser_chart.pdf
     //:D
     private static int[] filterWidths = {15, 20, 25, 30, 40, 45, 50};
+
 
 //    public static void main(String[] args) throws IOException {
 //        File input = new File("src/main/resources/fp_spectra.csv");
@@ -53,174 +67,201 @@ public class FilterSelector {
 //
 //    }
 
-    public static ArrayList<SelectionInfo> LFPtoFilter(HashMap<String, Fluorophore> FPList, List<Laser> lasers, int nDetectors) {
+
+    public static ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
+        ArrayList<SelectionInfo> pls = LFPtoFilter(masterList, cyto.lasers, n);
+
+        ProteinSelector.calcSumSigNoise(pls);
+        ProteinSelector.generateNoise(pls);
+        return pls;
+    }
+
+    //*** Algorithm ***//
+    public static ArrayList<SelectionInfo> LFPtoFilter(Map<String, Fluorophore> FPList, List<Laser> lasers, int nDetectors) {
         ArrayList<SelectionInfo> skeleton = new ArrayList();
+        
+        // Temp solution while fortessa parse is broken
+        lasers = new ArrayList<>();
+        Laser violet = new Laser();
+        violet.name = "Violet";
+        violet.wavelength = 405;
+        lasers.add(violet);
+        Laser blue = new Laser();
+        blue.name = "Blue";
+        blue.wavelength = 488;
+        lasers.add(blue);
+        Laser bluegreen = new Laser();
+        bluegreen.name = "Blue-Green";
+        bluegreen.wavelength = 514;
+        lasers.add(bluegreen);
+        Laser yelgreen = new Laser();
+        yelgreen.name = "Yellow-Green";
+        yelgreen.wavelength = 561;
+        lasers.add(yelgreen);
+        Laser red = new Laser();
+        red.name = "Red";
+        red.wavelength = 637;
+        lasers.add(red);
 
-        //At least the 30% expressed fps pls
-        double threshold = .1;
-
-        //Generate skeleton of returnList.
+        //////////////////////////////////////////
+        // Find the best laser for each protein //
+        //////////////////////////////////////////
         for (Laser each : lasers) {
+            System.out.println(each.wavelength);
             SelectionInfo newInfo = new SelectionInfo();
-            newInfo.selectedLaser = each;
             newInfo.noise = new TreeMap<>();
             newInfo.rankedFluorophores = new ArrayList();
             newInfo.selectedIndex = 0;
-
-            for (Fluorophore fp : FPList.values()) {
-                //if an fp gets excited at all, let's add it to the list for now.
-                if (fp.EXspectrum.containsKey((double) each.wavelength)) {
-                    if (fp.EXspectrum.get((double) each.wavelength) > threshold) {
-                        newInfo.rankedFluorophores.add(fp);
-                    }
-                }
-            }
+            newInfo.selectedLaser = each;
             skeleton.add(newInfo);
         }
-        //
-        //Find EM peaks of each protein
-        //Fit a 60 wide filter on each one
-        ArrayList<SelectionInfo> individuals = new ArrayList<>();
 
-        for (SelectionInfo each : skeleton) {
-            for (Fluorophore fp : each.rankedFluorophores) {
-                SelectionInfo fpSpecific = new SelectionInfo();
-                fpSpecific.selectedLaser = each.selectedLaser;
-                fpSpecific.rankedFluorophores = new ArrayList<>();
-                fpSpecific.rankedFluorophores.add(fp);
-                fpSpecific.selectedIndex = 0;
+        for (Fluorophore fp : FPList.values()) {
+            SelectionInfo mostExcite = null;
+            double howExcite = 0;
+            int exciteIndex = -1;
 
-                Detector dumDetect = new Detector();
-                dumDetect.filterWidth = 60;
-                dumDetect.filterMidpoint = (int) fp.EMPeak();
+            int index = 0;
+            for (SelectionInfo each : skeleton) {
+                if (mostExcite == null) {
+                    mostExcite = each;
+                    exciteIndex = 0;
 
-                fpSpecific.selectedDetector = dumDetect;
-                fpSpecific.score = fp.express(fpSpecific.selectedLaser, fpSpecific.selectedDetector);
-                individuals.add(fpSpecific);
-            }
-        }
-
-        ArrayList<SelectionInfo> goodbye = new ArrayList<>();
-
-        //If filter widths overlap, cull the underperformers.
-        //
-        for (SelectionInfo each : individuals) {
-            for (SelectionInfo eachOther : individuals) {
-                //If we're looking at the same thing or filters that aren't on the same laser, skip
-                if (each == eachOther || each.selectedLaser != eachOther.selectedLaser) {
-                    continue;
                 } else {
-                    checkOverlap(each, eachOther, goodbye);
+                    if (fp.EXspectrum.containsKey((double) each.selectedLaser.wavelength)) {
+                        if (fp.EXspectrum.get((double) each.selectedLaser.wavelength) > howExcite) {
+                            mostExcite = each;
+                            howExcite = fp.EXspectrum.get((double) each.selectedLaser.wavelength);
+                            exciteIndex = index;
+                        }
+                    }
                 }
+                index++;
+            }
+            mostExcite.rankedFluorophores.add(fp);
+            Detector dumDetect = new Detector();
+            dumDetect.filterWidth = 60;
+            dumDetect.filterMidpoint = (int) fp.EMPeak();
+            mostExcite.selectedLaser.addDetector(dumDetect);
+
+            skeleton.set(exciteIndex, mostExcite);
+
+        }
+
+        /////////////////////////////////////////////
+        // Shrink/Push filter bounds apart from eachother //
+        /////////////////////////////////////////////
+        for (SelectionInfo laser : skeleton) {
+            fixOverlaps(laser);
+        }
+
+        ////////////////////////////////////////////////////////
+        // Wiggle filter boundaries to check for SNR increase //
+        ////////////////////////////////////////////////////////
+        
+        
+        //T o  B e  D o n e
+        
+        //////////////////////////////
+        // Create a new list to be displayed on the graph
+        ////////////////////////////
+        ArrayList<SelectionInfo> all = new ArrayList<>();
+
+        for (SelectionInfo laser : skeleton) {
+
+            Iterator<Detector> iter = laser.selectedLaser.detectors.listIterator();
+            for (int i = 0; i < laser.selectedLaser.detectors.size(); i++) {
+                SelectionInfo info = new SelectionInfo();
+                info.selectedLaser = laser.selectedLaser;
+                info.selectedIndex = 0;
+                info.selectedDetector = iter.next();
+                info.rankedFluorophores = new ArrayList();
+                info.rankedFluorophores.add(laser.rankedFluorophores.get(i));
+                System.out.println(info.selectedLaser.wavelength + " : " + info.selectedDetector.filterMidpoint + "/" + info.selectedDetector.filterWidth + " LP, FP: " + info.rankedFluorophores.get(0).name);
+                all.add(info);
             }
         }
-
-        //the dearly departed
-        for (SelectionInfo dying : goodbye) {
-            individuals.remove(dying);
+        
+        
+        
+        //After making slew of filters, optimize and pick the best setup of n FPs and n filters.
+        
+        Cytometer cyto = new Cytometer();
+        cyto.lasers = new LinkedList<>();
+        
+        for(SelectionInfo each : skeleton)
+        {
+            cyto.lasers.add(each.selectedLaser);
         }
-        //Narrow the filter widths and check effect on individual SNR
-        ArrayList<SelectionInfo> returnList = new ArrayList();
-        for (SelectionInfo each : individuals) {
-            returnList.add(each);
-        }
+        
+        all = HillClimbingSelection.run(nDetectors, FPList, cyto);
 
-        while (returnList.size() > nDetectors) {
-            double sumSNR = ProteinSelector.calcSumSigNoise(individuals);
-            double newSNR;
-            SelectionInfo bestRemove = individuals.get(0);
-            for (SelectionInfo iter : returnList) {
-                individuals.remove(iter);
-
-                newSNR = ProteinSelector.calcSumSigNoise(individuals);
-                iter.score = newSNR - sumSNR;
-
-                if (iter.score > bestRemove.score) {
-                    bestRemove = iter;
-                }
-
-                individuals.add(iter);
-
-            }
-
-            returnList.remove(bestRemove);
-            individuals.remove(bestRemove);
-        }
-
-        for (SelectionInfo reduce : returnList) {
-            Detector narrow = reduce.selectedDetector;
-            int bestWidth = narrow.filterWidth;
-            double SNR = ProteinSelector.calcSumSigNoise(returnList);
-            double newSNR;
-            for (int i = filterWidths.length - 1; i >= 0; i--) {
-                narrow.filterWidth = filterWidths[i];
-                newSNR = ProteinSelector.calcSumSigNoise(returnList);
-                if (newSNR > SNR) {
-                    bestWidth = narrow.filterWidth;
-                    SNR = newSNR;
-                }
-            }
-            narrow.filterWidth = bestWidth;
-
-            System.out.println(reduce.selectedLaser.name + " Detector: " + narrow.filterMidpoint + "/" + narrow.filterWidth + " or similar");
-
-        }
-
-        return returnList;
+        return all;
     }
 
-    static void checkOverlap(SelectionInfo each, SelectionInfo eachOther, ArrayList<SelectionInfo> goodbye) {
+    static void fixOverlaps(SelectionInfo laserSetup) {
 
-        Detector first = each.selectedDetector;
-        Detector second = eachOther.selectedDetector;
+        //I need the ability to randomly access
+        ArrayList<Detector> sortList = new ArrayList<>(laserSetup.selectedLaser.detectors);
 
-        double firstMin = first.filterMidpoint - first.filterWidth / 2;
-        double secondMin = second.filterMidpoint - second.filterWidth / 2;
-
-        //if they are partially overlapping or inside of eachother
-        if ((firstMin < (secondMin + second.filterWidth) && firstMin > secondMin)) {
-
-            //cull the lesser scoring fp
-            if (each.score < eachOther.score) {
-                if (!goodbye.contains(each)) {
-                    goodbye.add(each);
-                }
-            } else if (!goodbye.contains(eachOther)) {
-                goodbye.add(eachOther);
+        for (int i = 0; i < sortList.size() - 1; i++) {
+            boolean overlaps = true;
+            Detector first = sortList.get(i);
+            Detector second = sortList.get(i + 1);
+            if(checkOverlap(first, second) <= 0)
+            {
+                overlaps = false;
             }
 
-        } else if ((secondMin < (firstMin + first.filterWidth) && secondMin > firstMin)) {
-            //cull the lesser scoring fp
-            if (each.score < eachOther.score) {
-                if (!goodbye.contains(each)) {
-                    goodbye.add(each);
+            while (overlaps) {
+                
+                /////////////////////////////
+                //  if overlap, let's shrink width of left
+                ////////////////////////////
+                if (!(widthDown(first) && widthDown(second))) {
+                    second.filterMidpoint += checkOverlap(first, second);
+                    sortList.set(i, first);
+                    sortList.set(i + 1, second);
+                    overlaps = false;
                 }
-            } else if (!goodbye.contains(eachOther)) {
-                goodbye.add(eachOther);
-            }
 
-        } else if ((firstMin > secondMin && (firstMin + first.filterWidth) < (secondMin + second.filterWidth))) {
+                ///////////////////////
+                //  else push down until they don't overlap
+                //////////////////////
+                int over = checkOverlap(first, second);
+                first.filterMidpoint -= 3 * over / 10;
+                second.filterMidpoint += 3 * over / 10;
 
-            //cull the lesser scoring fp
-            if (each.score < eachOther.score) {
-                if (!goodbye.contains(each)) {
-                    goodbye.add(each);
+                if (checkOverlap(first, second) == 0) {
+                    first.identifier = (first.filterMidpoint + "/" + first.filterWidth);
+                    second.identifier = (second.filterMidpoint + "/" + second.filterWidth);
+                    sortList.set(i, first);
+                    sortList.set(i + 1, second);
+                    overlaps = false;
                 }
-            } else if (!goodbye.contains(eachOther)) {
-                goodbye.add(eachOther);
-            }
 
-        } else if ((secondMin > firstMin && (secondMin + second.filterWidth) < (firstMin + first.filterWidth))) {
-
-            //cull the lesser scoring fp
-            if (each.score < eachOther.score) {
-                if (!goodbye.contains(each)) {
-                    goodbye.add(each);
-                }
-            } else if (!goodbye.contains(eachOther)) {
-                goodbye.add(eachOther);
             }
+            //save the changes to the laser's detectors.
+            laserSetup.selectedLaser.detectors = new LinkedList<>(sortList);
+
         }
     }
 
+    static int checkOverlap(Detector first, Detector second) {
+        int overlap = (first.filterMidpoint + first.filterWidth / 2) - (second.filterMidpoint - second.filterWidth / 2);
+        if (overlap <= 0) {
+            return 0;
+        } else {
+            return overlap;
+        }
+    }
+
+    static boolean widthDown(Detector d) {
+        if (d.filterWidth >= 15) {
+            d.filterWidth -= 5;
+            return true;
+        } else {
+            return false;
+        }
+    }
 }

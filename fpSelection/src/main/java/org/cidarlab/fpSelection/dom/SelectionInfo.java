@@ -33,6 +33,7 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     public double price;
     public int oligo;
     public TreeMap<Double, Double> noise;
+    public Cytometer myFPCytometer;
     
     @Override
     public int compareTo(SelectionInfo si) { 

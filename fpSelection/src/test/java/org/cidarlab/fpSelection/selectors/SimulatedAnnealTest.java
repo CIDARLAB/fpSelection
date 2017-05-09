@@ -40,7 +40,7 @@ public class SimulatedAnnealTest {
 //        File input = new File("src/main/resources/Fluorophores.org/");
 //        HashMap<String, Fluorophore> spectralMaps = parse(input);
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parse(cyto);
+        Cytometer testCyto = fpFortessaParse.parse(cyto, false);
 
         String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         if (numString.isEmpty()) {

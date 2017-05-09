@@ -34,7 +34,7 @@ public class ExhaustiveSelectionTest {
 
         //Get cytometer settings
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer cytometer = fpFortessaParse.parse(cyto);
+        Cytometer cytometer = fpFortessaParse.parse(cyto, false);
 
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");

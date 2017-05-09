@@ -10,9 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.TreeMap;
-import org.cidarlab.fpSelection.parsers.ScrapedCSVParse;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
@@ -55,6 +55,21 @@ public class LaserSelector {
 //        ProteinSelector.plotSelection(pls);
 //
 //    }
+
+    
+    public static ArrayList<SelectionInfo> run(Map<String, Fluorophore> masterList, Cytometer cyto, int n) {
+        ArrayList<Detector> detect = new ArrayList();
+        Random next = new Random();
+        for (int i = 0; i < 5; i++) {
+            Laser get = cyto.lasers.get(next.nextInt(cyto.lasers.size()));
+            detect.add(get.detectors.get(next.nextInt(get.detectors.size())));
+        }
+        ArrayList<SelectionInfo> pls = FilterFPtoLasers(masterList, detect, n);
+
+        ProteinSelector.calcSumSigNoise(pls);
+        ProteinSelector.generateNoise(pls);
+        return pls;
+    }
     
     
     ///////////////////////////////
@@ -71,7 +86,7 @@ public class LaserSelector {
     
     */
 
-    public static ArrayList<SelectionInfo> FilterFPtoLasers(HashMap<String, Fluorophore> fpList, List<Detector> selectedDetectors, int nLasers) {
+    public static ArrayList<SelectionInfo> FilterFPtoLasers(Map<String, Fluorophore> fpList, List<Detector> selectedDetectors, int nLasers) {
 
         double spectralMin = 200;
         double spectralMax = 1000;

@@ -151,7 +151,7 @@ public class ExhaustiveSelectionMultiThreaded {
         return selected;
     }
     
-    void getCombinations(int data[], int start, int n, int index, int k) {
+    public void getCombinations(int data[], int start, int n, int index, int k) {
         if (index == k) {
             filterCombinations.add(data.clone());
             return;
@@ -161,7 +161,7 @@ public class ExhaustiveSelectionMultiThreaded {
             getCombinations(data, i + 1, n, index + 1, k);
         }
     }
-    void getPermutations(int data[], int n, int k) {
+    public void getPermutations(int data[], int n, int k) {
         if (k == 0) {
             fluorophorePermutations.add(data.clone());
             return;

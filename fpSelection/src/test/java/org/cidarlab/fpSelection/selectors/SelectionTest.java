@@ -33,7 +33,7 @@ public class SelectionTest {
 //        HashMap<String, Fluorophore> spectralMaps = parse(input);
         
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parse(cyto);
+        Cytometer testCyto = fpFortessaParse.parse(cyto, false);
 
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Give an integer n for the number of you would like: ");
