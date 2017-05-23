@@ -26,8 +26,8 @@ import org.cidarlab.fpSelection.selectors.ProteinSelector;
  */
 public class SimulatedAnnealing {
 
-    private static double temperature = 100000;
-    private static double coolingRate = 0.003;
+    private static double temperature = 10000;
+    private static double coolingRate = 0.0003;
     private static int numberOfThreads = 100;
 
     public static ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {

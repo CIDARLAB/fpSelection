@@ -109,12 +109,14 @@ public class SimulatedAnnealingThread extends Thread{
                    ProteinSelector.calcSumSigNoise(next);
                    currentSNR = selectionSNR(current);
                    InfDouble nextSNR = selectionSNR(next);
-                   if(acceptProbability(currentSNR, nextSNR, temp) > Math.random()){
-                       current = new ArrayList<SelectionInfo>();
-                       current.addAll(next);
-                       selectedDs.set(swapIndex, newD);
-                   }
                    
+                    if (!hasZeroSignal(next)) {
+                        if (acceptProbability(currentSNR, nextSNR, temp) > Math.random()) {
+                            current = new ArrayList<SelectionInfo>();
+                            current.addAll(next);
+                            selectedDs.set(swapIndex, newD);
+                        }
+                    }
                    
                 } else {
                     //Swap FP
@@ -143,17 +145,21 @@ public class SimulatedAnnealingThread extends Thread{
                    ProteinSelector.calcSumSigNoise(next);
                    currentSNR = selectionSNR(current);
                    InfDouble nextSNR = selectionSNR(next);
-                   if(acceptProbability(currentSNR, nextSNR, temp) > Math.random()){
-                       current = new ArrayList<SelectionInfo>();
-                       current.addAll(next);
-                       selectedFPs.set(swapIndex, newFP);
-                   }
-                    
+                   
+                    if (!hasZeroSignal(next)) {
+                        if (acceptProbability(currentSNR, nextSNR, temp) > Math.random()) {
+                            current = new ArrayList<SelectionInfo>();
+                            current.addAll(next);
+                            selectedFPs.set(swapIndex, newFP);
+                        }
+                    } 
                 }
                 
                 if(currentSNR.compare(bestSNR) > 0){
                     best = new ArrayList<SelectionInfo>();
                     best.addAll(current);
+                    ProteinSelector.calcSumSigNoise(best);
+                    bestSNR = selectionSNR(best);
                 }
                 
                 //System.out.println("Thread " + id + " current temperature = " + temp);
@@ -230,6 +236,16 @@ public class SimulatedAnnealingThread extends Thread{
                 t = new Thread(this);
                 t.start();
             }
+        }
+        
+        private static boolean hasZeroSignal(ArrayList<SelectionInfo> selection){
+            for(SelectionInfo si:selection){
+                if(si.isSignalZero()){
+                    return true;
+                }
+            }
+            
+            return false;
         }
         
     }

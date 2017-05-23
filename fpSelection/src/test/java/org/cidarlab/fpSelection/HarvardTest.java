@@ -120,7 +120,7 @@ public class HarvardTest {
         String resultFilepath = Utilities.getResourcesFilepath() + "HarvardTestResult.txt";
         List<String> lines = new ArrayList<String>();
         int startIndx = 1;
-        int endIndx = 6;
+        int endIndx = 10;
         for(int i=startIndx;i<=endIndx;i++){
             long start = System.nanoTime();
             
