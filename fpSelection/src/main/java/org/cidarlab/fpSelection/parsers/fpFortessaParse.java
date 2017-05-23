@@ -170,7 +170,11 @@ public class fpFortessaParse {
                         newDetector.filterMidpoint = Integer.parseInt(fields[8].substring(0, slash));
                         //parse substring after the '/' and before the " BP"
                         newDetector.filterWidth = Integer.parseInt(fields[8].substring(slash + 1, (fields[8].length() - 3)));
-
+                        
+                        String detectorname = fields[9];
+                        detectorname = detectorname.replaceAll("\"", "");
+                        newDetector.name = detectorname;
+                        
                         //Add detector to laser and move forward
                         newLaser.addDetector(newDetector);
 

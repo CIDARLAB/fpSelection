@@ -25,6 +25,7 @@ import java.util.TreeMap;
 import javax.swing.JFrame;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
+import org.cidarlab.fpSelection.dom.InfDouble;
 import org.cidarlab.fpSelection.dom.Laser;
 
 /**
@@ -36,34 +37,34 @@ public class ProteinSelector {
     public static void plotSelection(ArrayList<SelectionInfo> info) {
         //sort selection info so that filters with same lasers are plotted on same graph
         Collections.sort(info);
-        
+
         //hash set that checks if lasers have been plotted already
         HashSet<Laser> usedLasers = new HashSet<>();
-        
+
         //create the plot and initialize style/axes
         JavaPlot newPlot = new JavaPlot();
         Graph g = new Graph();
-        
+
         //get dimensions of computer screen
         Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
         int width = screenSize.width;
         int height = screenSize.height;
-        
+
         newPlot.set("terminal", "png transparent truecolor nocrop enhanced size " + Integer.toString(width) + "," + Integer.toString(height - 150) + "font 'arial,7'");
         newPlot.set("style fill", "transparent solid 0.3");
         newPlot.set("style data", "lines");
         newPlot.set("style data filledcurves", "x1");
         newPlot.set("key", "font ',8'");
 
-         //if first plot to be added
+        //if first plot to be added
         boolean first = true;
         boolean later = false;
-        
+
         //iterate through laser/filter/protein combos
         for (SelectionInfo entry : info) {
             if (!usedLasers.contains(entry.selectedLaser)) {
                 usedLasers.add(entry.selectedLaser);
-                
+
                 //add noise plot
                 PointDataSet noiseDataSet = (entry.makeDataSet());
                 AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
@@ -76,17 +77,16 @@ public class ProteinSelector {
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
-                
+
                 //add filter bounds plot
                 PlotStyle ps = new PlotStyle(Style.LINES);
                 PointDataSet bounds = entry.selectedDetector.drawBounds();
                 AbstractPlot boundsPlot = new DataSetPlot(bounds);
                 boundsPlot.setPlotStyle(ps);
                 boundsPlot.setTitle("");
-                
+
                 //first round add to javaplot (otherwise extra plot is added)
-                if(first)
-                {
+                if (first) {
                     newPlot.addPlot(noisePlot);
                     newPlot.addPlot(emPlot);
                     newPlot.addPlot(boundsPlot);
@@ -96,10 +96,8 @@ public class ProteinSelector {
                     newPlot.getAxis("y").setBoundaries(0, 125);
                     first = false;
                     later = true;
-                }
-                //otherwise add to graph object that is added to javaplot
-                else
-                {
+                } //otherwise add to graph object that is added to javaplot
+                else {
                     g = new Graph();
                     g.addPlot(noisePlot);
                     g.addPlot(emPlot);
@@ -111,7 +109,7 @@ public class ProteinSelector {
                     newPlot.addGraph(g);
                     later = false;
                 }
-                
+
             } else {
 
                 //add emission plot
@@ -120,7 +118,6 @@ public class ProteinSelector {
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);
-                
 
                 //add filter bounds plot
                 PlotStyle ps = new PlotStyle(Style.LINES);
@@ -128,21 +125,18 @@ public class ProteinSelector {
                 AbstractPlot boundsPlot = new DataSetPlot(bounds);
                 boundsPlot.setPlotStyle(ps);
                 boundsPlot.setTitle("");
-                
+
                 //in case the second graph shares the same laser as the first, it must be added to the javaplot
-                if (later)
-                {
+                if (later) {
                     newPlot.addPlot(emPlot);
                     newPlot.addPlot(boundsPlot);
-                }
-                else
-                {
+                } else {
                     g.addPlot(emPlot);
                     g.addPlot(boundsPlot);
                 }
             }
         }
-        
+
         JPlot graph = new JPlot(newPlot);
         graph.plot();
         graph.repaint();
@@ -151,6 +145,31 @@ public class ProteinSelector {
         frame.pack();
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setVisible(true);
+    }
+
+    public static InfDouble totalSNR(ArrayList<SelectionInfo> selection) {
+        InfDouble snr = new InfDouble(InfDouble.InfDoubleMode.add);
+        for (SelectionInfo si : selection) {
+            snr.includeSNR(si.SNR);
+        }
+        return snr;
+    }
+
+    public static InfDouble prodSNR(ArrayList<SelectionInfo> selection) {
+        InfDouble snr = new InfDouble(InfDouble.InfDoubleMode.multiply);
+        for (SelectionInfo si : selection) {
+            snr.includeSNR(si.SNR);
+        }
+        return snr;
+    }
+
+    public static boolean snrLessThanOne(ArrayList<SelectionInfo> candidate) {
+        for (SelectionInfo si : candidate) {
+            if (si.isSNRlessThanOne()) {
+                return true;
+            }
+        }
+        return false;
     }
     
     public static double calcSumSigNoise(ArrayList<SelectionInfo> allInfo) {
@@ -163,7 +182,10 @@ public class ProteinSelector {
 
             //signal is info expressing in it's own channel with it's own laser.
             double signal = fp.express(info.selectedLaser, info.selectedDetector);
-            double noise = 1;
+            double noise = 0;
+            if (allInfo.size() == 1) {
+                noise = 1;
+            }
 
             for (SelectionInfo otherInfo : allInfo) {
                 if (info == otherInfo) {
@@ -175,49 +197,60 @@ public class ProteinSelector {
                 noise += noiseFP.express(info.selectedLaser, info.selectedDetector);
 
             }
+            if (signal == 0) {
+                info.setSignalZero(true);
+            }
+
+            if (noise == 0) {
+                info.setNoiseZero(true);
+            }
             info.SNR = signal / noise;
+            if (info.SNR < 1) {
+                info.setSNRlessThanOne(true);
+            }
             info.SNDiff = signal - noise;
 //            sumSNR += info.SNR;
             sumDiff += info.SNDiff;
+//            sumDiff += info.SNR;
         }
 
         //SOOOOOOOOO:
-        
         //SNR provides higher average but not everything will be readable.
         //Signal - Noise provides lower average, but all signals are readable.
         //Ex: SNR yields 9 proteins, 1 has <1 SNR
         //    Signal - Noise yeilds 9, minimum has SNR = 3.
-        
-        
         return sumDiff;
     }
 
     public static int getTotalOligos(ArrayList<SelectionInfo> selected) {
-        int count =0; 
-        
+        int count = 0;
+
         //Map<String, Fluorophore> chosenOnes = new HashMap<String, Fluorophore>();
-        for(SelectionInfo si:selected){
+        for (SelectionInfo si : selected) {
             count += si.rankedFluorophores.get(si.selectedIndex).oligomerization;
         }
-        
+
         return count;
     }
-    
-    public static double getTotalCost(ArrayList<SelectionInfo> selected){
+
+    public static double getTotalCost(ArrayList<SelectionInfo> selected) {
         double price = 0;
-        for(SelectionInfo si:selected){
+        for (SelectionInfo si : selected) {
             price += si.rankedFluorophores.get(si.selectedIndex).price;
         }
-        
+
         return price;
     }
-    
+
     public static void generateNoise(ArrayList<SelectionInfo> selected) {
         //noise is otherInfo's fluorophore expressing in info's channel with info's laser
         for (SelectionInfo info : selected) {
             //in case something got in there
-            if(info.noise != null) info.noise.clear();
-            else info.noise = new TreeMap<>();
+            if (info.noise != null) {
+                info.noise.clear();
+            } else {
+                info.noise = new TreeMap<>();
+            }
 
             for (SelectionInfo otherInfo : selected) {
                 if (info.selectedLaser == otherInfo.selectedLaser) {
@@ -247,11 +280,9 @@ public class ProteinSelector {
             }
         }
     }
-    
-    public static void weightedSelection(int n, HashMap<String, Fluorophore> spectralMaps, Cytometer cytometer, Algorithm algorithm, double oligo_weight, double price_weight, double snr_weight){
-        
-        
-        
+
+    public static void weightedSelection(int n, HashMap<String, Fluorophore> spectralMaps, Cytometer cytometer, Algorithm algorithm, double oligo_weight, double price_weight, double snr_weight) {
+
     }
-    
+
 }

@@ -10,6 +10,8 @@ import com.panayotis.gnuplot.dataset.PointDataSet;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.TreeMap;
+import lombok.Getter;
+import lombok.Setter;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
@@ -21,6 +23,19 @@ import org.cidarlab.fpSelection.dom.Laser;
 public class SelectionInfo implements Comparable<SelectionInfo>{
 
     //Results
+    
+    @Getter
+    @Setter
+    private boolean signalZero = false;
+    
+    @Getter
+    @Setter
+    private boolean SNRlessThanOne = false;
+    
+    @Getter
+    @Setter
+    private boolean noiseZero = false;
+    
     public Laser selectedLaser;
     public Detector selectedDetector;
     public ArrayList<Fluorophore> rankedFluorophores;

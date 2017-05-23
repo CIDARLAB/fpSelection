@@ -66,7 +66,7 @@ public class HillClimbingSelection {
             tempList = new ArrayList<>();
             int threshold = 80;
 
-            while (threshold > 40 && tempList.size() < (.1 * masterList.size() + 3)) {
+            while (threshold > 0 && tempList.size() < (.1 * masterList.size() + 3)) {
                 threshold--;
 
                 for (Map.Entry<String, Fluorophore> entry : masterList.entrySet()) {
@@ -108,10 +108,12 @@ public class HillClimbingSelection {
         ArrayList<SelectionInfo> iterateInfo = new ArrayList<>();
 
         //Test each FP with the other lasers based on simple SNR, keep the best.
-        for (SelectionInfo info : suggestions) {
-            allInfo.add(info);
-            iterateInfo.add(info);
-        }
+//        for (SelectionInfo info : suggestions) {
+//            allInfo.add(info);
+//            iterateInfo.add(info);
+//        }
+        allInfo.addAll(suggestions);
+        iterateInfo.addAll(suggestions);
 
         boolean duplicates = true;
         ArrayList<SelectionInfo> removes = new ArrayList<>();
@@ -191,12 +193,20 @@ public class HillClimbingSelection {
                 allInfo.add(info);
 
                 //if removal positive, score should be positive since SNR should have increased
-                //The more positive the impact, the higher the score.
+                //The more positive the impact, the higher the score.                
                 info.score = SNR - sumSNR;
-
+                
                 if (info.score > highestScore.score) {
                     highestScore = info;
                 }
+                
+//                if(info.isZeroNoise()){
+//                    highestScore = info;
+//                    
+//                }
+//                if(info.isSNRlessThanOne()){
+//                    highestScore = info;
+//                }
 
             }
             iterateInfo.remove(highestScore);

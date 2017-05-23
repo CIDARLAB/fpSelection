@@ -19,6 +19,7 @@ import org.cidarlab.fpSelection.dom.AnalyticsPlot;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
+import org.cidarlab.fpSelection.parsers.FPParser;
 import org.cidarlab.fpSelection.parsers.MetadataParser;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.parsers.fpSpectraParse;
@@ -38,6 +39,7 @@ public class DataAnalyticsTest {
     private String _path = "";
     private Map<String, Map<String,AnalyticsExperiment>> _result = new HashMap<String,Map<String,AnalyticsExperiment>>();  
     private String _plotfilepathroot = "";
+    private static String FluorophoresOrgFolder = Utilities.getResourcesFilepath() + "Fluorophores.org" + Utilities.getSeparater();
         
     
     public DataAnalyticsTest() {
@@ -68,7 +70,7 @@ public class DataAnalyticsTest {
     
     @Test
     public void testCreateAllPlots() throws IOException{
-        String mainTest = "FP_selection_R2";
+        String mainTest = "FP_selection_R3";
         DataAnalyticsTest test = new DataAnalyticsTest();
         for(int i=1;i<=5;i++){
             test = new DataAnalyticsTest();
@@ -151,6 +153,7 @@ public class DataAnalyticsTest {
         Map<Integer,Laser> laserMap = DataAnalytics.getWavelengthToLaserMap(c);
         Map<String, Fluorophore> metadata = MetadataParser.parse(metadatafilepath);
         Map<String, Fluorophore> spectramap = fpSpectraParse.parse(spectrafilepath);
+        spectramap.putAll(FPParser.parseFluorophoreOrg(FluorophoresOrgFolder));
         Map<String, AnalyticsPlot> adjusted = DataAnalytics.normalizeOneMediaValues(oneMediaPlots,metadata,spectramap,laserMap);
         for(AnalyticsPlot omplot : oneMediaPlots.values()){
             DataAnalytics.plotGraph(omplot, plotfilepath);

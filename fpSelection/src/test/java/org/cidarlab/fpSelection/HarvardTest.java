@@ -18,6 +18,7 @@ import java.util.logging.Logger;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelection;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelectionMultiThreaded;
 import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
+import org.cidarlab.fpSelection.algorithms.SimulatedAnnealing;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
@@ -40,30 +41,42 @@ public class HarvardTest {
     private static Set<String> initialize(){
         Set<String> fps = new HashSet<String>();
         
-        fps.add("TagBFP");
-        fps.add("CFP");
-        fps.add("EGFP");
-        fps.add("copGFP");
-        fps.add("eYFP");
-        fps.add("mOrange");
-        fps.add("tdTomato");
-        fps.add("DsRed2");
-        fps.add("mApple");
-        fps.add("TagRFP");
-        fps.add("mCherry");
-        fps.add("mScarlet");
+//        fps.add("Sirius");
+//        fps.add("CFP");
+//        fps.add("EGFP");
+//        fps.add("copGFP");
+//        fps.add("eYFP");
+//        fps.add("mOrange");
+//        fps.add("tdTomato");
+//        fps.add("DsRed2");
+//        fps.add("mApple");
+//        fps.add("TagRFP");
+//        fps.add("mCherry");
+//        fps.add("mScarlet");
+//        fps.add("iRFP670");
+//        fps.add("iRFP713");
+//        fps.add("iRFP720");
+//        fps.add("EYFP");
+//        fps.add("mPlum");
+//        fps.add("mKO");
+//        fps.add("ECFP");
+//        fps.add("mKate2");
+//        fps.add("Cerulean");
+//        fps.add("EBFP2");
+        
         fps.add("iRFP670");
-        fps.add("iRFP713");
-        fps.add("iRFP720");
-        fps.add("EYFP");
-        fps.add("mPlum");
-        fps.add("mKO");
+        fps.add("Sirius");
         fps.add("ECFP");
+        fps.add("mKO");
+        fps.add("iRFP713");
         fps.add("mKate2");
-        fps.add("Cerulean");
+        fps.add("tagRFP");
+        fps.add("mOrange");
+        fps.add("mApple");
+        fps.add("mCherry");
+        fps.add("mPlum");
         fps.add("EBFP2");
-        
-        
+        fps.add("EYFP");
         
         return fps;
     }
@@ -81,31 +94,6 @@ public class HarvardTest {
             Logger.getLogger(HarvardTest.class.getName()).log(Level.SEVERE, null, ex);
         }
         fps.putAll(FPParser.parseFluorophoreOrg(FluorophoresOrgFolder));
-        
-//        for(String fp:fps.keySet()){
-//            if(fp.contains("CFP")){
-//                System.out.println(fp);
-//            }
-//            if(fp.contains("eYFP")){
-//                System.out.println(fp);
-//            }
-//            if(fp.contains("copGFP")){
-//                System.out.println(fp);
-//            }
-//            if(fp.contains("DsRed2")){
-//                System.out.println(fp);
-//            }
-//        }
-//        System.out.println(fps.size());
-    
-//        int count = 0;
-//        for(String fp:list){
-//            if(fps.containsKey(fp)){
-//                count++;
-//            } 
-//        }
-//        System.out.println("List Size :: " + list.size());
-//        System.out.println("Total Count :: " + count);
         
         String pathcytometer = Utilities.getResourcesFilepath() + "HarvardFortessa.csv";
         Cytometer c = fpFortessaParse.parse(pathcytometer, false);
@@ -129,19 +117,49 @@ public class HarvardTest {
                 
             }
         }
-        for(int i=1;i<=10;i++){
-            ExhaustiveSelectionMultiThreaded multithreaded = new ExhaustiveSelectionMultiThreaded();
-            ArrayList<SelectionInfo> result = multithreaded.run(i, finalFPList, c,10);
-            System.out.println("RESULT " + i + " === FPs ===");
-            for(SelectionInfo si : result){
-                
-                System.out.println(si.getFP(0).name);
-            }
+        String resultFilepath = Utilities.getResourcesFilepath() + "HarvardTestResult.txt";
+        List<String> lines = new ArrayList<String>();
+        int startIndx = 1;
+        int endIndx = 6;
+        for(int i=startIndx;i<=endIndx;i++){
+            long start = System.nanoTime();
             
-            System.out.println("======================================\n\n");
+            //Exhaustive approach
+//            ExhaustiveSelectionMultiThreaded multithreaded = new ExhaustiveSelectionMultiThreaded();
+//            ArrayList<SelectionInfo> result = multithreaded.run(i, finalFPList, c,10);
+            
+            //Hill Climbing
+//            HillClimbingSelection hill = new HillClimbingSelection();
+//            ArrayList<SelectionInfo> result = hill.run(i, finalFPList,c);
+            
+            //SimulatedAnnealing
+            SimulatedAnnealing anneal = new SimulatedAnnealing();
+            ArrayList<SelectionInfo> result = anneal.run(i, finalFPList,c);
+            
+            //System.out.println("RESULT " + i + " === FPs ===");
+            long end = System.nanoTime();
+            double elapsed = elapsedTime(start,end);
+            System.out.println("RESULT " + i + " === FPs ===");
+            lines.add("RESULT " + i + " === FPs ===");
+            for(SelectionInfo si : result){
+
+                lines.add(si.getFP().name);
+                lines.add("SNR      :: " + si.SNR);
+                lines.add("Laser    :: " + si.selectedLaser.name);
+                lines.add("Detector :: " + si.selectedDetector.identifier);
+                lines.add("--------------------------------------");
+            }
+            System.out.println(i + " completed in " + elapsed + " seconds.");
+            //System.out.println("======================================\n\n");
+            lines.add("======================================\n\n");
             
         }
+        Utilities.writeToFile(resultFilepath, lines);
         
     }
-    
+    private static double elapsedTime(long start, long end){
+        long elapsed = end - start;
+        double seconds = (double)elapsed / 1000000000.0;
+        return seconds;
+    }
 }

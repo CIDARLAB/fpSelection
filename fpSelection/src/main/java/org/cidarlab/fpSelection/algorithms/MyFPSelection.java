@@ -3,26 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package org.cidarlab.fpSelection.Algorithms;
+package org.cidarlab.fpSelection.algorithms;
 
-import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 import org.cidarlab.fpSelection.dom.Cytometer;
-import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
-import org.cidarlab.fpSelection.selectors.ProteinSelector;
 
 /**
  *

@@ -236,11 +236,11 @@ public class DataAnalytics {
     
     private static double getEmissionValue(Fluorophore fp, Detector d, double excitation){
         double emission = 0;
-        int low = (int)Math.ceil(d.filterMidpoint - (d.filterWidth/2));
+        double low = (int)Math.ceil(d.filterMidpoint - (d.filterWidth/2));
         double high = (int)Math.floor(d.filterMidpoint + (d.filterWidth/2));
         
-        for(int i=low;i<=high;i++){
-            emission += fp.EMspectrum.get((double)i);
+        for(double i=low;i<=high;i++){
+            emission += fp.EMspectrum.get(i);
         }
         emission *= excitation;
         return emission;
@@ -249,6 +249,9 @@ public class DataAnalytics {
     private static Detector getDetector(String detector, Laser l){
         
         for(Detector d:l.detectors){
+            if(d.name == null){
+                continue;
+            } 
             if(d.name.equals(detector)){
                 return d;
             }
@@ -267,6 +270,10 @@ public class DataAnalytics {
         map.put("BFP_B2_M9_glucose", "Pacific Blue");
         map.put("RPF_B2_M9_glucose", "PE-Texas Red");
         map.put("mCitrine_B2_M9_glucose", "YFP");
+        
+        map.put("Alexafluor647_PBS", "APC");
+        map.put("PE_PBS","PE");
+        map.put("PerCP_PBS", "PerCP");
         
         return map;
     }
@@ -393,6 +400,11 @@ public class DataAnalytics {
         map.put("BFP_B2_M9_glucose", "mTagBFP");
         map.put("RPF_B2_M9_glucose", "mRFP1");
         map.put("mCitrine_B2_M9_glucose", "mCitrine");
+        
+        map.put("Alexafluor647_PBS", "AlexaFluor647");
+        map.put("PE_PBS","R-phycoerythrin");
+        map.put("PerCP_PBS", "PerCP-Cy5.5");
+        
         return map;
     }
     
@@ -416,6 +428,10 @@ public class DataAnalytics {
         map.put("BFP_B2_M9_glucose", "EBFP2");
         map.put("RPF_B2_M9_glucose", "mRFP1.4m");
         map.put("mCitrine_B2_M9_glucose", "mCitrine");
+        
+        map.put("Alexafluor647_PBS", "AlexaFluor647");
+        map.put("PE_PBS","R-phycoerythrin");
+        map.put("PerCP_PBS", "PerCP-Cy5.5");
         return map;
     
     }
@@ -445,6 +461,11 @@ public class DataAnalytics {
         map.put("BFP_B2_M9_glucose", 405);
         map.put("RPF_B2_M9_glucose", 561);
         map.put("mCitrine_B2_M9_glucose", 488);
+        
+        
+        map.put("Alexafluor647_PBS", 640);
+        map.put("PE_PBS", 561);
+        map.put("PerCP_PBS", 488);
         return map;
     }
     
@@ -458,6 +479,10 @@ public class DataAnalytics {
         map.put("BFP_B2_M9_glucose", "MEAN_Pacific_Blue.A");
         map.put("RPF_B2_M9_glucose", "MEAN_PE.Texas_Red.A");
         map.put("mCitrine_B2_M9_glucose", "MEAN_YFP.A");
+        
+        map.put("Alexafluor647_PBS", "MEAN_APC.A");
+        map.put("PE_PBS", "MEAN_PE.A");
+        map.put("PerCP_PBS", "MEAN_PerCP.A");
         
         return map;
     }

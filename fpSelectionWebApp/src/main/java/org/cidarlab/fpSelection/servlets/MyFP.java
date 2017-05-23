@@ -25,7 +25,7 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.cidarlab.fpSelection.Algorithms.MyFPSelection;
+import org.cidarlab.fpSelection.algorithms.MyFPSelection;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelectionMultiThreaded;
 import org.cidarlab.fpSelection.dom.Cytometer;

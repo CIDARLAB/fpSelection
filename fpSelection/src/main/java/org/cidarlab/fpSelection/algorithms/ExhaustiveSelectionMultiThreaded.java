@@ -7,7 +7,6 @@ package org.cidarlab.fpSelection.algorithms;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -17,125 +16,164 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
+import org.cidarlab.fpSelection.dom.InfDouble;
+import org.cidarlab.fpSelection.dom.InfDouble.InfDoubleMode;
 
 /**
  *
  * @author Alex
  */
 public class ExhaustiveSelectionMultiThreaded {
-    
+
+    public static AtomicInteger counter = new AtomicInteger(0);
+
     public LinkedList<int[]> filterCombinations;
     public LinkedList<int[]> fluorophorePermutations;
-    
+    public Fluorophore[] fluorophores;
+    public Laser[] lasers;
+    public Detector[] detectors;
 
     public double[][] filterSignal;
-    
+
     public volatile int computationIndex = 0;
     public int onePercent = 0;
-    
+
     public synchronized void syncPercent() {
-        if(++computationIndex % onePercent == 0) System.out.println(computationIndex/onePercent + " percent");
+        if (++computationIndex % onePercent == 0) {
+            System.out.println(computationIndex / onePercent + " percent");
+        }
     }
 
     public ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer, int threads) throws IOException, InterruptedException, ExecutionException {
-        
+
         //count fluorophores
         int numFluorophores = spectralMaps.size();
-        
+
+        //System.out.println("Number of Fluorophores :: " + numFluorophores);
         //count filters
         int numFilters = 0;
         for (Laser laser : cytometer.lasers) {
             numFilters += laser.detectors.size();
         }
-        
+        //System.out.println("Number of Filters      :: " + numFilters);
         //preprocess data structures
-        
+
         //fluorophore index --> fluorophore object
-        Fluorophore[] fluorophores = new Fluorophore[numFluorophores];      
+        fluorophores = new Fluorophore[numFluorophores];
         int fpi = 0;
         for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
             Fluorophore fluorophore = entry.getValue();
             fluorophores[fpi] = fluorophore;
             fpi++;
         }
-        
+//        System.out.println("Fluorophores with Index :: ");
+//        for(int i=0;i<fluorophores.length;i++){
+//            System.out.println(i + " :: " + fluorophores[i].name);
+//        }
         //filter index --> fluorophore index --> riemann sun
-        filterSignal = new double[numFilters][numFluorophores];       
+        filterSignal = new double[numFilters][numFluorophores];
         //filter index --> laser
-        Laser[] lasers = new Laser[numFilters];
+        lasers = new Laser[numFilters];
         //filter index --> detector
-        Detector[] detectors = new Detector[numFilters];
+        detectors = new Detector[numFilters];
         int filterIndex = 0;
         for (Laser laser : cytometer.lasers) {
             for (Detector detector : laser.detectors) {
                 lasers[filterIndex] = laser;
                 detectors[filterIndex] = detector;
-                int fluorophoreIndex = 0;
-                for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
-                    Fluorophore fluorophore = entry.getValue();
-                    filterSignal[filterIndex][fluorophoreIndex] = fluorophore.express(laser, detector);
-                    fluorophoreIndex++;
+                for (int i = 0; i < fluorophores.length; i++) {
+                    Fluorophore fluorophore = fluorophores[i];
+                    filterSignal[filterIndex][i] = fluorophore.express(laser, detector);
                 }
+//                for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
+//                    Fluorophore fluorophore = entry.getValue();
+//                    filterSignal[filterIndex][fluorophoreIndex] = fluorophore.express(laser, detector);
+//                    fluorophoreIndex++;
+//                }
                 filterIndex++;
             }
         }
-        
+//        System.out.println("\nLASERS :: ");
+//        for(int i=0;i<lasers.length;i++){
+//            System.out.println(i + " :: " + lasers[i].name);
+//        }
+//        System.out.println("\nDetectors::");
+//        for(int i=0;i<detectors.length;i++){
+//            System.out.println(i + " :: " + detectors[i].identifier);
+//        }
         //get all combinations of filters (order not important)
         filterCombinations = new LinkedList<>();
         int tempData[] = new int[n];
-        getCombinations(tempData, 0, numFilters - 1, 0, n); 
-        
+        getCombinations(tempData, 0, numFilters - 1, 0, n);
+
+//        System.out.println("ALL COMBINATIONS");
+//        for(int[] combinations: filterCombinations){
+//            for(int i=0;i<combinations.length;i++){
+//                System.out.print(combinations[i] + ",");
+//            }
+//            System.out.println("");
+//        }
+        //System.out.println("Number of filter combinations :: " + filterCombinations.size());
         //get all permutations of fluorophores to match to filters (order is important)
         fluorophorePermutations = new LinkedList<>();
         tempData = new int[n];
         getPermutations(tempData, numFluorophores, n);
-        
+
+//        System.out.println("ALL Permutations");
+//        for(int[] permutations: fluorophorePermutations){
+//            for(int i=0;i<permutations.length;i++){
+//                System.out.print(permutations[i] + ",");
+//            }
+//            System.out.println("");
+//        }
+        //System.out.println("Number of fluorophore permutations :: " + fluorophorePermutations.size());
         //iterate through all possible combinations of filters/fluorophores
-        double bestSignal = 0;
         int[] bestFilters = new int[n];
         int[] bestFluorophores = new int[n];
         int totalComputations = filterCombinations.size() * fluorophorePermutations.size();
-        onePercent = (int)(totalComputations * .01);
-        
+        onePercent = (int) (totalComputations * .01);
+
         ExecutorService exec = Executors.newFixedThreadPool(threads);
         List<Future<BestResult>> resultList = new ArrayList<>();
 
         int chunkSize = filterCombinations.size() / threads;
         int start = 0;
         int finish = chunkSize;
-        for(int i = 0; i < threads; i++) 
-        {
+        for (int i = 0; i < threads; i++) {
             Future<BestResult> result = exec.submit(new SignalThread(start, finish, n));
             resultList.add(result);
             start += chunkSize;
             finish += chunkSize;
-            if(i == (threads - 2)) finish = filterCombinations.size();
-        }    
+            if (i == (threads - 2)) {
+                finish = filterCombinations.size();
+            }
+        }
         exec.shutdown();
         exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
-        
-        for (Future<BestResult> result : resultList)
-        {
+
+        InfDouble bestSignal = new InfDouble(InfDoubleMode.add);
+        double avgSNR = 0;
+
+        for (Future<BestResult> result : resultList) {
             BestResult br = result.get();
-            if (br.bestSignal > bestSignal)
-            {
+            int compare = br.bestSignal.compare(bestSignal);
+            if (compare > 0) {
                 bestSignal = br.bestSignal;
                 bestFilters = br.bestFilters;
                 bestFluorophores = br.bestFluorophores;
             }
         }
-            
 
         //prepare data for graphs
         ArrayList<SelectionInfo> selected = new ArrayList<>();
-        for (int i = 0; i < n; i++)
-        {
+        for (int i = 0; i < n; i++) {
             SelectionInfo si = new SelectionInfo();
             si.rankedFluorophores = new ArrayList<>();
             si.rankedFluorophores.add(fluorophores[bestFluorophores[i]]);
@@ -144,13 +182,13 @@ public class ExhaustiveSelectionMultiThreaded {
             si.selectedLaser = lasers[bestFilters[i]];
             selected.add(si);
         }
-        
+
         ProteinSelector.calcSumSigNoise(selected);
         ProteinSelector.generateNoise(selected);
-        
+        System.out.println("Number of Combinations/Permutations where all SNR > 1 :: " + counter.get());
         return selected;
     }
-    
+
     public void getCombinations(int data[], int start, int n, int index, int k) {
         if (index == k) {
             filterCombinations.add(data.clone());
@@ -161,76 +199,140 @@ public class ExhaustiveSelectionMultiThreaded {
             getCombinations(data, i + 1, n, index + 1, k);
         }
     }
+
     public void getPermutations(int data[], int n, int k) {
         if (k == 0) {
             fluorophorePermutations.add(data.clone());
             return;
-        }      
+        }
         outerloop:
         for (int i = 0; i < n; ++i) {
-            for (int j = data.length-1; j >= k; j--) {
-                if (data[j] == i) continue outerloop;
+            for (int j = data.length - 1; j >= k; j--) {
+                if (data[j] == i) {
+                    continue outerloop;
+                }
             }
             data[k - 1] = i;
             getPermutations(data, n, k - 1);
         }
     }
-    
+
     class SignalThread implements Callable<BestResult> {
-        
+
         int start;
         int finish;
         int n;
-   
-        SignalThread(int start, int finish, int n)
-        {
+
+        SignalThread(int start, int finish, int n) {
             this.start = start;
             this.finish = finish;
             this.n = n;
         }
-        
+
+//        @Override
+//        public BestResult call() {
+//            BestResult bestResult = new BestResult(n);
+//            for (int i = start; i < finish; i++)
+//            {
+//                int[] filterCombo = filterCombinations.get(i);
+//                for (int[] fluorophorePerm : fluorophorePermutations)
+//                {
+//                    //syncPercent();
+//                    double signal = 0;
+//                    for (int j = 0; j < n; j++)
+//                    {
+//                        for (int k = 0; k < n; k++)
+//                        {
+//                            //desired signal
+//                            if (j == k) signal += filterSignal[filterCombo[j]][fluorophorePerm[k]];
+//                            //undesired noise
+//                            else signal -= filterSignal[filterCombo[j]][fluorophorePerm[k]];
+//                        }
+//                    }
+//                    if (signal > bestResult.bestSignal)
+//                    {
+//                        bestResult.bestSignal = signal;
+//                        bestResult.bestFilters = filterCombo;
+//                        bestResult.bestFluorophores = fluorophorePerm;
+//                    }
+//                }
+//            }
+//            return bestResult;
+//        }
         @Override
         public BestResult call() {
             BestResult bestResult = new BestResult(n);
-            for (int i = start; i < finish; i++)
-            {
+            for (int i = start; i < finish; i++) {
                 int[] filterCombo = filterCombinations.get(i);
-                for (int[] fluorophorePerm : fluorophorePermutations)
-                {
+                for (int[] fluorophorePerm : fluorophorePermutations) {
                     //syncPercent();
-                    double signal = 0;
-                    for (int j = 0; j < n; j++)
-                    {
-                        for (int k = 0; k < n; k++)
-                        {
-                            //desired signal
-                            if (j == k) signal += filterSignal[filterCombo[j]][fluorophorePerm[k]];
-                            //undesired noise
-                            else signal -= filterSignal[filterCombo[j]][fluorophorePerm[k]];
-                        }
+                    ArrayList<SelectionInfo> candidate = assignCandidate(fluorophorePerm, filterCombo, n);
+
+                    ProteinSelector.calcSumSigNoise(candidate);
+                    ProteinSelector.generateNoise(candidate);
+//                    double signal = ProteinSelector.totalSNR(candidate);
+                    InfDouble signal = ProteinSelector.prodSNR(candidate);
+                    //System.out.println("SNR :: " + signal);
+                    if (!ProteinSelector.snrLessThanOne(candidate)) {
+                        counter.getAndIncrement();
                     }
-                    if (signal > bestResult.bestSignal)
-                    {
+                    int compare = signal.compare(bestResult.bestSignal);
+                    //compare = 1 implies that current is greater than bestResult.
+                    if (compare > 0) {
                         bestResult.bestSignal = signal;
                         bestResult.bestFilters = filterCombo;
                         bestResult.bestFluorophores = fluorophorePerm;
                     }
+
                 }
             }
             return bestResult;
         }
     }
-    class BestResult
-    {
-        double bestSignal;
+
+    
+
+    private ArrayList<SelectionInfo> assignCandidate(int[] fluorophorePerm, int[] filterComb, int n) {
+        ArrayList<SelectionInfo> candidate = new ArrayList<SelectionInfo>();
+
+        //System.out.println("\nNEW SELECTION :: ");
+        for (int i = 0; i < n; i++) {
+            SelectionInfo si = new SelectionInfo();
+            si.rankedFluorophores = new ArrayList<>();
+            si.rankedFluorophores.add(fluorophores[fluorophorePerm[i]]);
+
+            si.selectedIndex = 0;
+            si.selectedDetector = detectors[filterComb[i]];
+            si.selectedLaser = lasers[filterComb[i]];
+            candidate.add(si);
+            //System.out.println(fluorophores[fluorophorePerm[i]].name + "," + lasers[filterComb[i]].name + "," + detectors[filterComb[i]].identifier);
+        }
+
+        return candidate;
+    }
+
+    private static String printFPPerumation(int[] fluorophorePerm, Fluorophore[] fluorophores) {
+        String line = "";
+        for (int i = 0; i < fluorophorePerm.length; i++) {
+            line += fluorophores[fluorophorePerm[i]].name + ",";
+        }
+        return line;
+    }
+
+    class BestResult {
+
+        InfDouble bestSignal;
+        double avgSNR;
         int[] bestFilters;
         int[] bestFluorophores;
 
-        public BestResult(int n) 
-        {
-            bestSignal = 0;
+        public BestResult(int n) {
+            avgSNR = 0;
+            bestSignal = new InfDouble(InfDoubleMode.add);
             bestFilters = new int[n];
             bestFluorophores = new int[n];
-        }       
+        }
+
     }
+
 }

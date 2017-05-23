@@ -220,6 +220,23 @@ public class Utilities {
         }
     }
     
+    public static void writeToFile(String filepath, List<String> lines){
+        File file = new File(filepath);
+        try {
+            FileWriter fr = new FileWriter(file);
+            BufferedWriter br = new BufferedWriter(fr);
+            for(String line:lines){
+                br.write(line);
+                br.newLine();
+            }
+            
+            br.flush();
+            br.close();
+        } catch (IOException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     public static char getSeparater(){
         if(Utilities.isWindows()){
             return '\\';
