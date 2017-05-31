@@ -19,6 +19,7 @@ import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.ProteinComparator;
+import org.cidarlab.fpSelection.dom.RankedInfo;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 
 /**
@@ -94,7 +95,7 @@ public class LaserSelector {
         double peak;
         double divisions;
 
-        ArrayList<SelectionInfo> generalList = new ArrayList<>();
+        ArrayList<RankedInfo> generalList = new ArrayList<>();
 
         ///////////////////////////////////////
         //Group proteins by n general lasers.//
@@ -114,19 +115,19 @@ public class LaserSelector {
                 }
             }
 
-            for (SelectionInfo info : generalList) {
+            for (RankedInfo info : generalList) {
                 if (info.selectedLaser.wavelength == peak) {
-                    info.selectedFluorophore.add(each);
+                    info.rankedFluorophores.add(each);
                     insert = true;
                 }
             }
             if (insert == false) {
-                SelectionInfo newInfo = new SelectionInfo();
+                RankedInfo newInfo = new RankedInfo();
                 Laser newLase = new Laser();
                 newLase.wavelength = (int) peak;
                 newInfo.selectedLaser = newLase;
-                newInfo.selectedFluorophore = new ArrayList<>();
-                newInfo.selectedFluorophore.add(each);
+                newInfo.rankedFluorophores = new ArrayList<>();
+                newInfo.rankedFluorophores.add(each);
                 theLasers.add(newLase);
                 generalList.add(newInfo);
             }
@@ -136,13 +137,13 @@ public class LaserSelector {
         //Separate lasers into emission ranges//
         ////////////////////////////////////////
 
-        ArrayList<SelectionInfo> EMspecific = new ArrayList<>();
+        ArrayList<RankedInfo> EMspecific = new ArrayList<>();
 
-        for (SelectionInfo each : generalList) {
+        for (RankedInfo each : generalList) {
             Detector testDetect;
             for (int i = (int) spectralMin; i < spectralMax; i += 100) {
-                SelectionInfo specificInfo = new SelectionInfo();
-                specificInfo.selectedFluorophore = new ArrayList<>();
+                RankedInfo specificInfo = new RankedInfo();
+                specificInfo.rankedFluorophores = new ArrayList<>();
                 specificInfo.score = 0;
                 specificInfo.noise = new TreeMap<>();
                 testDetect = new Detector();
@@ -151,14 +152,14 @@ public class LaserSelector {
                 testDetect.identifier = "";
                 testDetect.mirror = -5;
 
-                for (Fluorophore fp : each.selectedFluorophore) {
+                for (Fluorophore fp : each.rankedFluorophores) {
                     double expression = fp.express(each.selectedLaser, testDetect);
 
-                    specificInfo.selectedFluorophore.add(fp);
+                    specificInfo.rankedFluorophores.add(fp);
                     specificInfo.score += expression;
 
                 }
-                if (specificInfo.selectedFluorophore.isEmpty()) {
+                if (specificInfo.rankedFluorophores.isEmpty()) {
                     continue;
                 } else {
                     specificInfo.selectedDetector = testDetect;
@@ -173,11 +174,11 @@ public class LaserSelector {
         
 
         for (Detector detector : selectedDetectors) {
-            SelectionInfo highestScore = new SelectionInfo();
+            RankedInfo highestScore = new RankedInfo();
             highestScore.score = 0;
             double detectMin = detector.filterMidpoint - .5 * detector.filterWidth;
             double detectMax = detectMin + detector.filterWidth;
-            for (SelectionInfo each : EMspecific) {
+            for (RankedInfo each : EMspecific) {
                 Detector eachDetector = each.selectedDetector;
                 if (detectMin >= (eachDetector.filterMidpoint - eachDetector.filterWidth / 2)) {
                     if (detectMax <= (eachDetector.filterMidpoint + eachDetector.filterWidth / 2)) {
@@ -197,14 +198,14 @@ public class LaserSelector {
         
         //aka where n comes to die
         
-        ArrayList<SelectionInfo> delete = new ArrayList();
+        ArrayList<RankedInfo> delete = new ArrayList();
 
-        for (SelectionInfo check : EMspecific) {
+        for (RankedInfo check : EMspecific) {
             if (check.selectedDetector.identifier == "" && check.selectedDetector.mirror == -5) {
                 delete.add(check);
             }
         }
-        for (SelectionInfo yes : delete) {
+        for (RankedInfo yes : delete) {
             EMspecific.remove(yes);
 
         }
@@ -212,13 +213,13 @@ public class LaserSelector {
         ///////////////////////////////////////////////////////////
         //Scan wavelengths to finely adjust the n general lasers.//
         ///////////////////////////////////////////////////////////
-        ArrayList<SelectionInfo> averageMe;
+        ArrayList<RankedInfo> averageMe;
 
         for (Laser each : theLasers) {
             averageMe = new ArrayList();
             int laserlength = each.wavelength;
 
-            for (SelectionInfo info : EMspecific) {
+            for (RankedInfo info : EMspecific) {
                 if (info.selectedLaser == each) {
                     averageMe.add(info);
                 }
@@ -230,8 +231,8 @@ public class LaserSelector {
                 double sum = 0;
                 each.wavelength = i;
 
-                for (SelectionInfo info : averageMe) {
-                    for (Fluorophore fp : info.selectedFluorophore) {
+                for (RankedInfo info : averageMe) {
+                    for (Fluorophore fp : info.rankedFluorophores) {
                         sum += fp.express(each, info.selectedDetector);
                     }
                 }
@@ -249,17 +250,23 @@ public class LaserSelector {
         /////////////////////////////////////////////////////////////////////
         //Sort each ArrayList of Fluorophores to get the best one in front.//
         /////////////////////////////////////////////////////////////////////
-        for (SelectionInfo each : EMspecific) {
+        for (RankedInfo each : EMspecific) {
             ProteinComparator qCompare = new ProteinComparator();
             qCompare.setDefaults();
             qCompare.laser = each.selectedLaser;
             qCompare.detect = each.selectedDetector;
             each.selectedIndex = 0;
 
-            each.selectedFluorophore.sort(qCompare);
+            each.rankedFluorophores.sort(qCompare);
         }
 
-        return EMspecific;
+        ArrayList<SelectionInfo> result = new ArrayList<>();
+        for(RankedInfo ri:EMspecific){
+            SelectionInfo si = new SelectionInfo(ri);
+            result.add(si);
+        }
+        
+        return result;
     }
 
 }

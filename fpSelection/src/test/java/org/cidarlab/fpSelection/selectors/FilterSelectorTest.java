@@ -72,14 +72,7 @@ public class FilterSelectorTest {
     /**
      * Test of fixOverlaps method, of class FilterSelector.
      */
-    @Test
-    public void testFixOverlaps() {
-        System.out.println("fixOverlaps");
-        SelectionInfo laserSetup = null;
-        FilterSelector.fixOverlaps(laserSetup);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+    
 
     /**
      * Test of checkOverlap method, of class FilterSelector.

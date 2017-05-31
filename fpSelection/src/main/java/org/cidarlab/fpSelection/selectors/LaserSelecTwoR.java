@@ -18,10 +18,10 @@ import org.cidarlab.fpSelection.dom.EXPeakComparator;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.ListHelper;
+import org.cidarlab.fpSelection.dom.RankedInfo;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.parsers.ScrapedCSVParse;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
-import static org.cidarlab.fpSelection.selectors.LaserSelector.FilterFPtoLasers;
 
 /**
  *
@@ -197,15 +197,15 @@ public class LaserSelecTwoR {
             //keep going until you go through all ups and downs and your std deviation only increases.
         } while (nextAvgDev < avgStdDev);
 
-        ArrayList<SelectionInfo> selections = new ArrayList<>();
+        ArrayList<RankedInfo> selections = new ArrayList<>();
         //Create lasers based on avg wavelengths of each group.
         for(int i = 0; i < nLasers; i++)
         {
-            SelectionInfo info = new SelectionInfo();
+            RankedInfo info = new RankedInfo();
             info.selectedLaser = new Laser();
             info.selectedLaser.detectors = new LinkedList<>();
             info.selectedLaser.wavelength = (int) ((double)groups.avgWavelengths.get(i));
-            info.selectedFluorophore = groups.groupToList(i);
+            info.rankedFluorophores = groups.groupToList(i);
             
             selections.add(info);
             
