@@ -8,6 +8,7 @@ package org.cidarlab.fpSelection.algorithms;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import org.cidarlab.fpSelection.dom.Cytometer;
@@ -15,6 +16,7 @@ import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.ProteinComparator;
+import org.cidarlab.fpSelection.dom.RankedInfo;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
 
@@ -28,7 +30,7 @@ public class HillClimbingSelection {
     //Works best for n >= 2;
 
     public static ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
-        ArrayList<SelectionInfo> total = new ArrayList<>();
+        ArrayList<RankedInfo> total = new ArrayList<>();
         for (Laser lase : cyto.lasers) {
             total.addAll(laserFiltersToFPs(masterList, lase));
 
@@ -38,7 +40,7 @@ public class HillClimbingSelection {
         return hillClimber(total, n);
     }
 
-    public static ArrayList<SelectionInfo> laserFiltersToFPs(Map<String, Fluorophore> masterList, Laser theLaser) {
+    public static ArrayList<RankedInfo> laserFiltersToFPs(Map<String, Fluorophore> masterList, Laser theLaser) {
 
         //Pull Detector objects out.
         LinkedList<Detector> listDetectors = new LinkedList<>();
@@ -50,10 +52,10 @@ public class HillClimbingSelection {
         }
 
         //Each Detector has a best fluorophore:
-        ArrayList<SelectionInfo> bestFPs = new ArrayList<>();
+        ArrayList<RankedInfo> bestFPs = new ArrayList<>();
 
         ArrayList<Fluorophore> tempList;
-        SelectionInfo choiceInfo;
+        RankedInfo choiceInfo;
 
         //  For each filter, create list of proteins ranked in terms of expression.  
         for (Detector aDetector : listDetectors) {
@@ -86,10 +88,10 @@ public class HillClimbingSelection {
             tempList.sort(qCompare);
 
             //Put into the selectionInfo object, one for each channel
-            choiceInfo = new SelectionInfo();
+            choiceInfo = new RankedInfo();
             choiceInfo.selectedLaser = theLaser;
             choiceInfo.selectedDetector = aDetector;
-            choiceInfo.selectedFluorophore = tempList;
+            choiceInfo.rankedFluorophores = tempList;
             choiceInfo.selectedIndex = 0;
             choiceInfo.noise = new TreeMap<>();
 
@@ -100,12 +102,12 @@ public class HillClimbingSelection {
 
     }
 
-    public static ArrayList<SelectionInfo> hillClimber(ArrayList<SelectionInfo> suggestions, int n) {
+    public static ArrayList<SelectionInfo> hillClimber(ArrayList<RankedInfo> suggestions, int n) {
         //Build list of things to check.
 
         double sumSNR = 0;
-        ArrayList<SelectionInfo> allInfo = new ArrayList<>();
-        ArrayList<SelectionInfo> iterateInfo = new ArrayList<>();
+        ArrayList<RankedInfo> allInfo = new ArrayList<>();
+        ArrayList<RankedInfo> iterateInfo = new ArrayList<>();
 
         //Test each FP with the other lasers based on simple SNR, keep the best.
 //        for (SelectionInfo info : suggestions) {
@@ -116,23 +118,23 @@ public class HillClimbingSelection {
         iterateInfo.addAll(suggestions);
 
         boolean duplicates = true;
-        ArrayList<SelectionInfo> removes = new ArrayList<>();
+        ArrayList<RankedInfo> removes = new ArrayList<>();
 
         while (duplicates) {
             duplicates = false;
 
-            for (SelectionInfo info : iterateInfo) {
+            for (RankedInfo info : iterateInfo) {
 
-                Fluorophore fp1 = info.selectedFluorophore.get(info.selectedIndex);
-                for (SelectionInfo otherInfo : allInfo) {
-                    Fluorophore fp2 = otherInfo.selectedFluorophore.get(otherInfo.selectedIndex);
+                Fluorophore fp1 = info.rankedFluorophores.get(info.selectedIndex);
+                for (RankedInfo otherInfo : allInfo) {
+                    Fluorophore fp2 = otherInfo.rankedFluorophores.get(otherInfo.selectedIndex);
 
                     //if the same FP is chosen 
                     if (fp1 == fp2 && info.selectedDetector != otherInfo.selectedDetector) {
 
                         //if true, keep info. False, keep otherInfo
                         if (ProteinComparator.dupeCompare(info, otherInfo, ProteinComparator.compareTypes.Brightness, false)) {
-                            if (otherInfo.selectedFluorophore.size() - 1 == otherInfo.selectedIndex) {
+                            if (otherInfo.rankedFluorophores.size() - 1 == otherInfo.selectedIndex) {
                                 if (!removes.contains(otherInfo)) {
 
                                     removes.add(otherInfo);
@@ -142,7 +144,7 @@ public class HillClimbingSelection {
 
                                 otherInfo.selectedIndex++;
                             }
-                        } else if (info.selectedFluorophore.size() - 1 == info.selectedIndex) {
+                        } else if (info.rankedFluorophores.size() - 1 == info.selectedIndex) {
                             if (!removes.contains(info)) {
 
                                 removes.add(info);
@@ -161,7 +163,7 @@ public class HillClimbingSelection {
             }
         }
 
-        for (SelectionInfo info : removes) {
+        for (RankedInfo info : removes) {
             if (iterateInfo.contains(info)) {
                 iterateInfo.remove(info);
             }
@@ -170,7 +172,7 @@ public class HillClimbingSelection {
             }
         }
 
-        sumSNR = ProteinSelector.calcSumSigNoise(allInfo);
+        sumSNR = ProteinSelector.calcRankedSumSigNoise(allInfo);
 
         //Start with all of the proteins, clip one by one and record how the SNR changes.
         //After each loop of clipping, whichever had the most positive change stays clipped.
@@ -179,15 +181,15 @@ public class HillClimbingSelection {
 
         //Pick the N best proteins.
         while (allInfo.size() > n) {
-            SelectionInfo highestScore = iterateInfo.get(0);
+            RankedInfo highestScore = iterateInfo.get(0);
 
-            for (SelectionInfo info : iterateInfo) {
+            for (RankedInfo info : iterateInfo) {
 
                 //Remove the protein in question from the arraylist
                 allInfo.remove(info);
 
                 //Calculate the total Signal - Noise from that removal
-                SNR = ProteinSelector.calcSumSigNoise(allInfo);
+                SNR = ProteinSelector.calcRankedSumSigNoise(allInfo);
 
                 //Add the protein back into the arraylist
                 allInfo.add(info);
@@ -213,10 +215,18 @@ public class HillClimbingSelection {
             allInfo.remove(highestScore);
 
         }
-        ProteinSelector.generateNoise(allInfo);
-        sumSNR = ProteinSelector.calcSumSigNoise(allInfo);
+        
+        ArrayList<SelectionInfo> result = new ArrayList<>();
+        
+        for(RankedInfo ri: allInfo){
+            SelectionInfo si = new SelectionInfo(ri);
+            result.add(si);
+        }
+        
+        ProteinSelector.generateNoise(result);
+        sumSNR = ProteinSelector.calcSumSigNoise(result);
 
-        return allInfo;
+        return result;
     }
 
 }
