@@ -10,9 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
-import javafx.util.Pair;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelection;
-import org.cidarlab.fpSelection.algorithms.ExhaustiveSelectionImproved;
 import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
 import org.cidarlab.fpSelection.algorithms.SemiExhaustiveSelection;
 import org.cidarlab.fpSelection.algorithms.SimulatedAnnealing;
@@ -20,9 +18,7 @@ import org.cidarlab.fpSelection.parsers.ScrapedCSVParse;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import static org.cidarlab.fpSelection.parsers.fpSpectraParse.parse;
 import org.cidarlab.fpSelection.dom.Cytometer;
-import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 
 /**
