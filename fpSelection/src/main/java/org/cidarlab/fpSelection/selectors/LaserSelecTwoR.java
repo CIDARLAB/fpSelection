@@ -205,7 +205,7 @@ public class LaserSelecTwoR {
             info.selectedLaser = new Laser();
             info.selectedLaser.detectors = new LinkedList<>();
             info.selectedLaser.wavelength = (int) ((double)groups.avgWavelengths.get(i));
-            info.rankedFluorophores = groups.groupToList(i);
+            info.selectedFluorophore = groups.groupToList(i);
             
             selections.add(info);
             

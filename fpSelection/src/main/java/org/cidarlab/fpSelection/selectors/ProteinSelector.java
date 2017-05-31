@@ -72,7 +72,7 @@ public class ProteinSelector {
                 noisePlot.set("fs", "transparent solid 0.2 noborder");
 
                 //add emission plot
-                Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
+                Fluorophore fp = entry.selectedFluorophore.get(entry.selectedIndex);
                 System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
@@ -113,7 +113,7 @@ public class ProteinSelector {
             } else {
 
                 //add emission plot
-                Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
+                Fluorophore fp = entry.selectedFluorophore.get(entry.selectedIndex);
                 System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
@@ -178,7 +178,7 @@ public class ProteinSelector {
 
         for (SelectionInfo info : allInfo) {
 
-            Fluorophore fp = info.rankedFluorophores.get(info.selectedIndex);
+            Fluorophore fp = info.selectedFluorophore.get(info.selectedIndex);
 
             //signal is info expressing in it's own channel with it's own laser.
             double signal = fp.express(info.selectedLaser, info.selectedDetector);
@@ -193,7 +193,7 @@ public class ProteinSelector {
                 }
 
                 //noise is otherInfo's fluorophore expressing in info's channel with info's laser
-                Fluorophore noiseFP = otherInfo.rankedFluorophores.get(otherInfo.selectedIndex);
+                Fluorophore noiseFP = otherInfo.selectedFluorophore.get(otherInfo.selectedIndex);
                 noise += noiseFP.express(info.selectedLaser, info.selectedDetector);
 
             }
@@ -227,7 +227,7 @@ public class ProteinSelector {
 
         //Map<String, Fluorophore> chosenOnes = new HashMap<String, Fluorophore>();
         for (SelectionInfo si : selected) {
-            count += si.rankedFluorophores.get(si.selectedIndex).oligomerization;
+            count += si.selectedFluorophore.get(si.selectedIndex).oligomerization;
         }
 
         return count;
@@ -236,7 +236,7 @@ public class ProteinSelector {
     public static double getTotalCost(ArrayList<SelectionInfo> selected) {
         double price = 0;
         for (SelectionInfo si : selected) {
-            price += si.rankedFluorophores.get(si.selectedIndex).price;
+            price += si.selectedFluorophore.get(si.selectedIndex).price;
         }
 
         return price;
@@ -257,7 +257,7 @@ public class ProteinSelector {
                     continue;
                 }
 
-                Fluorophore noiseFp = otherInfo.rankedFluorophores.get(otherInfo.selectedIndex);
+                Fluorophore noiseFp = otherInfo.selectedFluorophore.get(otherInfo.selectedIndex);
 
                 if (noiseFp.EXspectrum.containsKey((double) info.selectedLaser.wavelength)) {
                     //Get a decimal of how excited the noiseFPs are

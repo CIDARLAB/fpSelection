@@ -116,7 +116,7 @@ public class LaserSelector {
 
             for (SelectionInfo info : generalList) {
                 if (info.selectedLaser.wavelength == peak) {
-                    info.rankedFluorophores.add(each);
+                    info.selectedFluorophore.add(each);
                     insert = true;
                 }
             }
@@ -125,8 +125,8 @@ public class LaserSelector {
                 Laser newLase = new Laser();
                 newLase.wavelength = (int) peak;
                 newInfo.selectedLaser = newLase;
-                newInfo.rankedFluorophores = new ArrayList<>();
-                newInfo.rankedFluorophores.add(each);
+                newInfo.selectedFluorophore = new ArrayList<>();
+                newInfo.selectedFluorophore.add(each);
                 theLasers.add(newLase);
                 generalList.add(newInfo);
             }
@@ -142,7 +142,7 @@ public class LaserSelector {
             Detector testDetect;
             for (int i = (int) spectralMin; i < spectralMax; i += 100) {
                 SelectionInfo specificInfo = new SelectionInfo();
-                specificInfo.rankedFluorophores = new ArrayList<>();
+                specificInfo.selectedFluorophore = new ArrayList<>();
                 specificInfo.score = 0;
                 specificInfo.noise = new TreeMap<>();
                 testDetect = new Detector();
@@ -151,14 +151,14 @@ public class LaserSelector {
                 testDetect.identifier = "";
                 testDetect.mirror = -5;
 
-                for (Fluorophore fp : each.rankedFluorophores) {
+                for (Fluorophore fp : each.selectedFluorophore) {
                     double expression = fp.express(each.selectedLaser, testDetect);
 
-                    specificInfo.rankedFluorophores.add(fp);
+                    specificInfo.selectedFluorophore.add(fp);
                     specificInfo.score += expression;
 
                 }
-                if (specificInfo.rankedFluorophores.isEmpty()) {
+                if (specificInfo.selectedFluorophore.isEmpty()) {
                     continue;
                 } else {
                     specificInfo.selectedDetector = testDetect;
@@ -231,7 +231,7 @@ public class LaserSelector {
                 each.wavelength = i;
 
                 for (SelectionInfo info : averageMe) {
-                    for (Fluorophore fp : info.rankedFluorophores) {
+                    for (Fluorophore fp : info.selectedFluorophore) {
                         sum += fp.express(each, info.selectedDetector);
                     }
                 }
@@ -256,7 +256,7 @@ public class LaserSelector {
             qCompare.detect = each.selectedDetector;
             each.selectedIndex = 0;
 
-            each.rankedFluorophores.sort(qCompare);
+            each.selectedFluorophore.sort(qCompare);
         }
 
         return EMspecific;

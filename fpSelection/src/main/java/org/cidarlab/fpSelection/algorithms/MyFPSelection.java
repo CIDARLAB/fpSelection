@@ -28,7 +28,7 @@ public class MyFPSelection {
         ArrayList<SelectionInfo> selected = new ArrayList<>();
         SelectionInfo si = new SelectionInfo();
         si.myFPCytometer = cytometer;
-        si.rankedFluorophores = fluorophores;
+        si.selectedFluorophore = fluorophores;
         selected.add(si);
         
         return selected;

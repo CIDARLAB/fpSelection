@@ -70,7 +70,7 @@ public class PlotAdaptor {
             for (Laser laser : cyto.lasers) {
                 g = new Graph();
                 //add emission plot
-                for (Fluorophore fp : entry.rankedFluorophores) {
+                for (Fluorophore fp : entry.selectedFluorophore) {
                     PointDataSet EMDataSet = (fp.makeEMDataSet(laser));
                     AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                     emPlot.setTitle(fp.name);
@@ -118,7 +118,7 @@ public class PlotAdaptor {
                     noisePlot.set("fs", "transparent solid 0.2 noborder");
 
                     //add emission plot
-                    Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
+                    Fluorophore fp = entry.selectedFluorophore.get(entry.selectedIndex);
                     SNR += fp.name + " Detector: " + entry.selectedDetector.identifier + " Laser: " + entry.selectedLaser.name + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
                     totalSNR += entry.SNR;
                     snrCount++;
@@ -162,7 +162,7 @@ public class PlotAdaptor {
                 } else {
 
                     //add emission plot
-                    Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
+                    Fluorophore fp = entry.selectedFluorophore.get(entry.selectedIndex);
                     SNR += fp.name + " Detector: " + entry.selectedDetector.identifier + " Laser: " + entry.selectedLaser.name + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
                     totalSNR += entry.SNR;
                     snrCount++;

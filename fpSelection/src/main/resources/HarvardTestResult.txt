@@ -8,15 +8,15 @@ Detector :: D
 
 
 RESULT 2 === FPs ===
-Sirius
+iRFP713
+SNR      :: Infinity
+Laser    :: Yel/Grn
+Detector :: B
+--------------------------------------
+EBFP2
 SNR      :: Infinity
 Laser    :: Violet
 Detector :: B
---------------------------------------
-mKate2
-SNR      :: Infinity
-Laser    :: Blue
-Detector :: D
 --------------------------------------
 ======================================
 
@@ -25,290 +25,290 @@ RESULT 3 === FPs ===
 iRFP713
 SNR      :: Infinity
 Laser    :: Red
-Detector :: A
---------------------------------------
-Sirius
-SNR      :: Infinity
-Laser    :: UV
 Detector :: B
 --------------------------------------
-mPlum
+mOrange
 SNR      :: Infinity
 Laser    :: Blue
-Detector :: C
+Detector :: D
+--------------------------------------
+EBFP2
+SNR      :: Infinity
+Laser    :: UV
+Detector :: A
 --------------------------------------
 ======================================
 
 
 RESULT 4 === FPs ===
+mPlum
+SNR      :: Infinity
+Laser    :: Blue
+Detector :: A
+--------------------------------------
+EYFP
+SNR      :: 538049.2309877625
+Laser    :: Blue
+Detector :: B
+--------------------------------------
 iRFP713
 SNR      :: Infinity
 Laser    :: Red
 Detector :: A
 --------------------------------------
-EBFP2
-SNR      :: 84268.2494189914
+Sirius
+SNR      :: 2.1795492899692336E8
 Laser    :: UV
 Detector :: B
---------------------------------------
-EYFP
-SNR      :: Infinity
-Laser    :: Violet
-Detector :: A
---------------------------------------
-mCherry
-SNR      :: Infinity
-Laser    :: Blue
-Detector :: A
 --------------------------------------
 ======================================
 
 
 RESULT 5 === FPs ===
-mKO
-SNR      :: Infinity
-Laser    :: Violet
-Detector :: A
+EYFP
+SNR      :: 18.851676260918058
+Laser    :: Blue
+Detector :: C
 --------------------------------------
-iRFP670
+EBFP2
+SNR      :: 0.003062107677965686
+Laser    :: Violet
+Detector :: D
+--------------------------------------
+iRFP713
 SNR      :: Infinity
 Laser    :: Red
 Detector :: A
 --------------------------------------
-EBFP2
-SNR      :: 10619.577259729549
+Sirius
+SNR      :: 847.6505762895569
 Laser    :: UV
-Detector :: B
+Detector :: A
 --------------------------------------
-mCherry
-SNR      :: 0.06539464689509099
+ECFP
+SNR      :: Infinity
 Laser    :: Blue
-Detector :: D
---------------------------------------
-mPlum
-SNR      :: 3.696237474313438E-4
-Laser    :: Blue
-Detector :: C
+Detector :: A
 --------------------------------------
 ======================================
 
 
 RESULT 6 === FPs ===
-mOrange
-SNR      :: 0.162105880483631
-Laser    :: Blue
-Detector :: B
+mPlum
+SNR      :: 0.01567350327202126
+Laser    :: Yel/Grn
+Detector :: C
 --------------------------------------
-EYFP
-SNR      :: 101.59389750980944
+mOrange
+SNR      :: 4.0497841456388075
 Laser    :: Blue
 Detector :: C
 --------------------------------------
-mKO
-SNR      :: 0.8739352280464842
-Laser    :: Blue
-Detector :: D
+iRFP713
+SNR      :: 1691.0888774468415
+Laser    :: Yel/Grn
+Detector :: A
 --------------------------------------
 mCherry
-SNR      :: 0.7975423302833273
-Laser    :: Blue
-Detector :: A
+SNR      :: 2.3006722903438337E-4
+Laser    :: Yel/Grn
+Detector :: B
 --------------------------------------
-iRFP670
-SNR      :: Infinity
+mKate2
+SNR      :: 1.2705282874337064E-4
 Laser    :: Red
-Detector :: A
+Detector :: B
 --------------------------------------
-Sirius
-SNR      :: 356.13392027050924
-Laser    :: Violet
-Detector :: C
+EBFP2
+SNR      :: Infinity
+Laser    :: UV
+Detector :: A
 --------------------------------------
 ======================================
 
 
 RESULT 7 === FPs ===
-EBFP2
-SNR      :: 0.0030621074126662854
-Laser    :: Violet
+mCherry
+SNR      :: 0.06403512203162219
+Laser    :: Yel/Grn
 Detector :: D
 --------------------------------------
-mOrange
-SNR      :: 2.224827161466512
+iRFP670
+SNR      :: 0.0
+Laser    :: Violet
+Detector :: C
+--------------------------------------
+mPlum
+SNR      :: 0.0
+Laser    :: Violet
+Detector :: A
+--------------------------------------
+iRFP713
+SNR      :: 0.025295488845813757
 Laser    :: Yel/Grn
 Detector :: E
 --------------------------------------
-mCherry
-SNR      :: 0.812275512162392
-Laser    :: Blue
+mKate2
+SNR      :: 0.0
+Laser    :: UV
 Detector :: A
 --------------------------------------
 ECFP
-SNR      :: 14.896502891637459
-Laser    :: Blue
-Detector :: D
---------------------------------------
-Sirius
-SNR      :: 2547.977400395621
+SNR      :: Infinity
 Laser    :: UV
 Detector :: B
 --------------------------------------
-iRFP713
-SNR      :: Infinity
-Laser    :: Yel/Grn
-Detector :: A
---------------------------------------
-EYFP
-SNR      :: 5.0066569178864055
+mOrange
+SNR      :: 0.03325524072834071
 Laser    :: Blue
-Detector :: B
+Detector :: D
 --------------------------------------
 ======================================
 
 
 RESULT 8 === FPs ===
+mOrange
+SNR      :: 1.066561915464561
+Laser    :: Yel/Grn
+Detector :: D
+--------------------------------------
 mKO
-SNR      :: 0.0016759154022889318
-Laser    :: Violet
-Detector :: A
---------------------------------------
-Sirius
-SNR      :: 1757.188503538532
-Laser    :: UV
-Detector :: A
---------------------------------------
-mKate2
-SNR      :: Infinity
-Laser    :: Red
-Detector :: A
---------------------------------------
-EBFP2
-SNR      :: 0.0030621074530703
-Laser    :: Violet
-Detector :: D
---------------------------------------
-ECFP
-SNR      :: 9.9524949273145
+SNR      :: 0.09126181019759799
 Laser    :: Blue
-Detector :: D
+Detector :: B
 --------------------------------------
 mPlum
-SNR      :: 0.004757721278276534
+SNR      :: 0.0052367156831542375
 Laser    :: Yel/Grn
 Detector :: E
---------------------------------------
-mOrange
-SNR      :: 0.04540904020355606
-Laser    :: Yel/Grn
-Detector :: B
---------------------------------------
-mCherry
-SNR      :: 0.528225674185343
-Laser    :: Yel/Grn
-Detector :: D
---------------------------------------
-======================================
-
-
-RESULT 9 === FPs ===
-mKate2
-SNR      :: Infinity
-Laser    :: Red
-Detector :: A
---------------------------------------
-mPlum
-SNR      :: 0.13712364678060338
-Laser    :: Blue
-Detector :: A
---------------------------------------
-Sirius
-SNR      :: 282.2316120295432
-Laser    :: Violet
-Detector :: D
---------------------------------------
-EBFP2
-SNR      :: 3.8662926734384085E-4
-Laser    :: UV
-Detector :: B
---------------------------------------
-mOrange
-SNR      :: 0.001010863109079737
-Laser    :: Blue
-Detector :: C
 --------------------------------------
 ECFP
 SNR      :: 0.0015042090962541876
 Laser    :: Red
 Detector :: B
 --------------------------------------
-EYFP
-SNR      :: 0.0043009160120317394
+Sirius
+SNR      :: 282.23161202954327
 Laser    :: Violet
-Detector :: B
---------------------------------------
-mCherry
-SNR      :: 0.37234785238147294
-Laser    :: Yel/Grn
-Detector :: C
---------------------------------------
-mKO
-SNR      :: 0.06733492013326356
-Laser    :: Yel/Grn
 Detector :: D
 --------------------------------------
-======================================
-
-
-RESULT 10 === FPs ===
+mKate2
+SNR      :: Infinity
+Laser    :: Red
+Detector :: A
+--------------------------------------
 EBFP2
 SNR      :: 4.0903049223331043E-4
 Laser    :: UV
 Detector :: A
 --------------------------------------
-ECFP
-SNR      :: 1.9108974220831223E-7
-Laser    :: Red
-Detector :: B
---------------------------------------
-mPlum
-SNR      :: 0.13712364678060335
+EYFP
+SNR      :: 15.896283235321047
 Laser    :: Blue
-Detector :: A
+Detector :: C
 --------------------------------------
-Sirius
-SNR      :: 2547.7410583958367
-Laser    :: UV
-Detector :: B
---------------------------------------
-mOrange
-SNR      :: 0.4258058182246888
+======================================
+
+
+RESULT 9 === FPs ===
+mKO
+SNR      :: 0.07366164456375093
 Laser    :: Yel/Grn
 Detector :: D
 --------------------------------------
-mKO
-SNR      :: 0.0547489595529445
+ECFP
+SNR      :: 7.942922969738117
 Laser    :: Blue
+Detector :: D
+--------------------------------------
+EBFP2
+SNR      :: 0.0030546125080656208
+Laser    :: Violet
+Detector :: B
+--------------------------------------
+EYFP
+SNR      :: 6.350488032464461E-4
+Laser    :: UV
+Detector :: A
+--------------------------------------
+mPlum
+SNR      :: 0.004034795482216453
+Laser    :: Yel/Grn
+Detector :: E
+--------------------------------------
+Sirius
+SNR      :: 282.2316120295432
+Laser    :: Violet
+Detector :: D
+--------------------------------------
+iRFP713
+SNR      :: Infinity
+Laser    :: Red
+Detector :: A
+--------------------------------------
+mCherry
+SNR      :: 0.5337074509975075
+Laser    :: Blue
+Detector :: A
+--------------------------------------
+mOrange
+SNR      :: 7.898574738575771E-5
+Laser    :: Yel/Grn
+Detector :: B
+--------------------------------------
+======================================
+
+
+RESULT 10 === FPs ===
+mOrange
+SNR      :: 0.06175322254375225
+Laser    :: Yel/Grn
 Detector :: D
 --------------------------------------
 mKate2
-SNR      :: 0.04626479444409784
-Laser    :: Yel/Grn
-Detector :: C
---------------------------------------
-EYFP
-SNR      :: 15.865252868824438
+SNR      :: 0.003954972661613259
 Laser    :: Blue
-Detector :: C
+Detector :: D
 --------------------------------------
-mCherry
-SNR      :: 5.388450433070216E-5
+mKO
+SNR      :: 0.0016759154022889318
+Laser    :: Violet
+Detector :: A
+--------------------------------------
+iRFP670
+SNR      :: 6.234207917989579
+Laser    :: Yel/Grn
+Detector :: E
+--------------------------------------
+iRFP713
+SNR      :: 0.17543217658500262
+Laser    :: Yel/Grn
+Detector :: B
+--------------------------------------
+ECFP
+SNR      :: 0.06838154587052526
 Laser    :: Blue
 Detector :: B
 --------------------------------------
-iRFP713
-SNR      :: 356242.84768851765
-Laser    :: Red
+Sirius
+SNR      :: 1757.188503538532
+Laser    :: UV
 Detector :: A
+--------------------------------------
+mPlum
+SNR      :: 3.4693262355423344E-5
+Laser    :: Yel/Grn
+Detector :: A
+--------------------------------------
+mCherry
+SNR      :: 0.2572663848490857
+Laser    :: Blue
+Detector :: A
+--------------------------------------
+EBFP2
+SNR      :: 0.0033081014176965925
+Laser    :: Violet
+Detector :: C
 --------------------------------------
 ======================================
 

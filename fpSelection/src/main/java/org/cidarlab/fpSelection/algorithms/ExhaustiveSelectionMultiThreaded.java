@@ -175,8 +175,8 @@ public class ExhaustiveSelectionMultiThreaded {
         ArrayList<SelectionInfo> selected = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             SelectionInfo si = new SelectionInfo();
-            si.rankedFluorophores = new ArrayList<>();
-            si.rankedFluorophores.add(fluorophores[bestFluorophores[i]]);
+            si.selectedFluorophore = new ArrayList<>();
+            si.selectedFluorophore.add(fluorophores[bestFluorophores[i]]);
             si.selectedIndex = 0;
             si.selectedDetector = detectors[bestFilters[i]];
             si.selectedLaser = lasers[bestFilters[i]];
@@ -298,8 +298,8 @@ public class ExhaustiveSelectionMultiThreaded {
         //System.out.println("\nNEW SELECTION :: ");
         for (int i = 0; i < n; i++) {
             SelectionInfo si = new SelectionInfo();
-            si.rankedFluorophores = new ArrayList<>();
-            si.rankedFluorophores.add(fluorophores[fluorophorePerm[i]]);
+            si.selectedFluorophore = new ArrayList<>();
+            si.selectedFluorophore.add(fluorophores[fluorophorePerm[i]]);
 
             si.selectedIndex = 0;
             si.selectedDetector = detectors[filterComb[i]];

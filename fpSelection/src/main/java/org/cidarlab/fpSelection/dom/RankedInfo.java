@@ -12,16 +12,12 @@ import java.util.Map;
 import java.util.TreeMap;
 import lombok.Getter;
 import lombok.Setter;
-import org.cidarlab.fpSelection.dom.Detector;
-import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.Laser;
 
 /**
  *
- * @author david
+ * @author prash
  */
-public class SelectionInfo implements Comparable<SelectionInfo>{
-
+public class RankedInfo implements Comparable<RankedInfo> {
     //Results
     
     @Getter
@@ -38,7 +34,7 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     
     public Laser selectedLaser;
     public Detector selectedDetector;
-    public ArrayList<Fluorophore> selectedFluorophore;
+    public ArrayList<Fluorophore> rankedFluorophores;
 
     //For use in algorithms
     public int selectedIndex;
@@ -51,10 +47,9 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     public Cytometer myFPCytometer;
     
     @Override
-    public int compareTo(SelectionInfo si) { 
+    public int compareTo(RankedInfo si) { 
         return (int) (si.selectedLaser.wavelength - this.selectedLaser.wavelength);
     }
-    
     
     //Utility functions
     public PointDataSet makeDataSet()
@@ -70,10 +65,10 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     
     public Fluorophore getFP()
     {
-        return selectedFluorophore.get(selectedIndex);
+        return rankedFluorophores.get(selectedIndex);
     }
     public Fluorophore getFP(int index)
     {
-        return selectedFluorophore.get(index);
+        return rankedFluorophores.get(index);
     }
 }

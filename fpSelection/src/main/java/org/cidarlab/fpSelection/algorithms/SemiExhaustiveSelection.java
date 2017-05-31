@@ -119,8 +119,8 @@ public class SemiExhaustiveSelection {
         for (int i = 0; i < n; i++)
         {
             SelectionInfo si = new SelectionInfo();
-            si.rankedFluorophores = new ArrayList<>();
-            si.rankedFluorophores.add(ranked[bestFilters[i]][bestFluorophores[i]].fluorophore);
+            si.selectedFluorophore = new ArrayList<>();
+            si.selectedFluorophore.add(ranked[bestFilters[i]][bestFluorophores[i]].fluorophore);
             si.selectedIndex = 0;
             si.selectedDetector = ranked[bestFilters[i]][bestFluorophores[i]].detector;
             si.selectedLaser = ranked[bestFilters[i]][bestFluorophores[i]].laser;

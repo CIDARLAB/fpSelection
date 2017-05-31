@@ -89,7 +89,7 @@ public class HillClimbingSelection {
             choiceInfo = new SelectionInfo();
             choiceInfo.selectedLaser = theLaser;
             choiceInfo.selectedDetector = aDetector;
-            choiceInfo.rankedFluorophores = tempList;
+            choiceInfo.selectedFluorophore = tempList;
             choiceInfo.selectedIndex = 0;
             choiceInfo.noise = new TreeMap<>();
 
@@ -123,16 +123,16 @@ public class HillClimbingSelection {
 
             for (SelectionInfo info : iterateInfo) {
 
-                Fluorophore fp1 = info.rankedFluorophores.get(info.selectedIndex);
+                Fluorophore fp1 = info.selectedFluorophore.get(info.selectedIndex);
                 for (SelectionInfo otherInfo : allInfo) {
-                    Fluorophore fp2 = otherInfo.rankedFluorophores.get(otherInfo.selectedIndex);
+                    Fluorophore fp2 = otherInfo.selectedFluorophore.get(otherInfo.selectedIndex);
 
                     //if the same FP is chosen 
                     if (fp1 == fp2 && info.selectedDetector != otherInfo.selectedDetector) {
 
                         //if true, keep info. False, keep otherInfo
                         if (ProteinComparator.dupeCompare(info, otherInfo, ProteinComparator.compareTypes.Brightness, false)) {
-                            if (otherInfo.rankedFluorophores.size() - 1 == otherInfo.selectedIndex) {
+                            if (otherInfo.selectedFluorophore.size() - 1 == otherInfo.selectedIndex) {
                                 if (!removes.contains(otherInfo)) {
 
                                     removes.add(otherInfo);
@@ -142,7 +142,7 @@ public class HillClimbingSelection {
 
                                 otherInfo.selectedIndex++;
                             }
-                        } else if (info.rankedFluorophores.size() - 1 == info.selectedIndex) {
+                        } else if (info.selectedFluorophore.size() - 1 == info.selectedIndex) {
                             if (!removes.contains(info)) {
 
                                 removes.add(info);

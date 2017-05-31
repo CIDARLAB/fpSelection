@@ -100,8 +100,8 @@ public class ProteinComparator implements Comparator<Fluorophore> {
         //All comparison variables have been normalized to a (0-100) range
         //Comparison in terms of brightness in desired filter.
 
-        Fluorophore fp1 = o1.rankedFluorophores.get(o1.selectedIndex);
-        Fluorophore fp2 = o2.rankedFluorophores.get(o2.selectedIndex);
+        Fluorophore fp1 = o1.selectedFluorophore.get(o1.selectedIndex);
+        Fluorophore fp2 = o2.selectedFluorophore.get(o2.selectedIndex);
 
         double num1Express = fp1.express(o1.selectedLaser, o1.selectedDetector);
         double num2Express = fp2.express(o2.selectedLaser, o2.selectedDetector);

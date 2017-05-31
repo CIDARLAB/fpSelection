@@ -70,10 +70,10 @@ public class SimulatedAnneal {
             Detector filter = beam.detectors.get(generator.nextInt(beam.detectors.size()));
 
             SelectionInfo info = new SelectionInfo();
-            info.rankedFluorophores = new ArrayList<>(masterList.values());
+            info.selectedFluorophore = new ArrayList<>(masterList.values());
             info.selectedLaser = beam;
             info.selectedDetector = filter;
-            info.selectedIndex = generator.nextInt(info.rankedFluorophores.size());
+            info.selectedIndex = generator.nextInt(info.selectedFluorophore.size());
             info.noise = new TreeMap<>();
             info.SNR = 1;
 
@@ -183,7 +183,7 @@ public class SimulatedAnneal {
 
                 newPlot.addPlot(noisePlot);
 
-                Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
+                Fluorophore fp = entry.selectedFluorophore.get(entry.selectedIndex);
                 System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
 
                 //Graph continuous line & attach name in legend
@@ -208,7 +208,7 @@ public class SimulatedAnneal {
                 int index = lazies.indexOf(entry.selectedLaser);
                 JavaPlot plot = plotsies.get(index);
 
-                Fluorophore fp = entry.rankedFluorophores.get(entry.selectedIndex);
+                Fluorophore fp = entry.selectedFluorophore.get(entry.selectedIndex);
                 System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
 
                 //Graph continuous line & attach name in legend
@@ -271,7 +271,7 @@ public class SimulatedAnneal {
                 info.selectedLaser = cyto.lasers.get(generator.nextInt(cyto.lasers.size()));
                 info.selectedDetector = info.selectedLaser.detectors.get(generator.nextInt(info.selectedLaser.detectors.size()));
                 
-                info.rankedFluorophores = oldInfo.rankedFluorophores;
+                info.selectedFluorophore = oldInfo.selectedFluorophore;
                 info.selectedIndex = oldInfo.selectedIndex;
 
 
@@ -280,7 +280,7 @@ public class SimulatedAnneal {
                 info.selectedDetector = oldInfo.selectedLaser.detectors.get(generator.nextInt(oldInfo.selectedLaser.detectors.size()));
 
                 info.selectedLaser = oldInfo.selectedLaser;
-                info.rankedFluorophores = oldInfo.rankedFluorophores;
+                info.selectedFluorophore = oldInfo.selectedFluorophore;
                 info.selectedIndex = oldInfo.selectedIndex;
             case 2:
                 ArrayList<Integer> taken = new ArrayList<>();
@@ -293,12 +293,12 @@ public class SimulatedAnneal {
                 //change FP
                 info.selectedLaser = oldInfo.selectedLaser;
                 info.selectedDetector = oldInfo.selectedDetector;
-                info.rankedFluorophores = oldInfo.rankedFluorophores;
+                info.selectedFluorophore = oldInfo.selectedFluorophore;
                 
                 do {
-                    info.selectedIndex = generator.nextInt(info.rankedFluorophores.size());
+                    info.selectedIndex = generator.nextInt(info.selectedFluorophore.size());
                     
-                    fp = info.rankedFluorophores.get(info.selectedIndex);
+                    fp = info.selectedFluorophore.get(info.selectedIndex);
                     count++;
                 } while (fp.express(info.selectedLaser, info.selectedDetector) < threshold && count <= 500 && taken.contains(info.selectedIndex));
 

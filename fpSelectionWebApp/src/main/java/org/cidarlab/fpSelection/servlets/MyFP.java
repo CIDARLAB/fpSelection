@@ -142,7 +142,7 @@ public class MyFP extends HttpServlet {
         String optimalInfo = "Optimal Selection:\r\n";
         for (SelectionInfo si : optimal)
         {
-            optimalInfo += si.rankedFluorophores.get(si.selectedIndex).name + " Detector: " + si.selectedDetector.identifier + " Laser: " + si.selectedLaser.name + " SNR : " + String.format("%.3f", si.SNR) + "\r\n";;
+            optimalInfo += si.selectedFluorophore.get(si.selectedIndex).name + " Detector: " + si.selectedDetector.identifier + " Laser: " + si.selectedLaser.name + " SNR : " + String.format("%.3f", si.SNR) + "\r\n";;
         }
 
         result.put("img", info.get(0));

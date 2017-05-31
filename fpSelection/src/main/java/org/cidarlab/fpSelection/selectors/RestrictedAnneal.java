@@ -114,7 +114,7 @@ public class RestrictedAnneal {
             choiceInfo = new SelectionInfo();
             choiceInfo.selectedLaser = theLaser;
             choiceInfo.selectedDetector = aDetector;
-            choiceInfo.rankedFluorophores = tempList;
+            choiceInfo.selectedFluorophore = tempList;
             choiceInfo.selectedIndex = 0;
             choiceInfo.noise = new TreeMap<>();
 
@@ -177,7 +177,7 @@ public class RestrictedAnneal {
 
             prevNum = toModify.selectedIndex;
             do {
-                newNum = choice.nextInt(toModify.rankedFluorophores.size());
+                newNum = choice.nextInt(toModify.selectedFluorophore.size());
             } while(chosen.contains(toModify.getFP(newNum)));
             
             

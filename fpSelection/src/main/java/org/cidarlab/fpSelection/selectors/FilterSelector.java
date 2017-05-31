@@ -110,7 +110,7 @@ public class FilterSelector {
             System.out.println(each.wavelength);
             SelectionInfo newInfo = new SelectionInfo();
             newInfo.noise = new TreeMap<>();
-            newInfo.rankedFluorophores = new ArrayList();
+            newInfo.selectedFluorophore = new ArrayList();
             newInfo.selectedIndex = 0;
             newInfo.selectedLaser = each;
             skeleton.add(newInfo);
@@ -138,7 +138,7 @@ public class FilterSelector {
                 }
                 index++;
             }
-            mostExcite.rankedFluorophores.add(fp);
+            mostExcite.selectedFluorophore.add(fp);
             Detector dumDetect = new Detector();
             dumDetect.filterWidth = 60;
             dumDetect.filterMidpoint = (int) fp.EMPeak();
@@ -175,9 +175,9 @@ public class FilterSelector {
                 info.selectedLaser = laser.selectedLaser;
                 info.selectedIndex = 0;
                 info.selectedDetector = iter.next();
-                info.rankedFluorophores = new ArrayList();
-                info.rankedFluorophores.add(laser.rankedFluorophores.get(i));
-                System.out.println(info.selectedLaser.wavelength + " : " + info.selectedDetector.filterMidpoint + "/" + info.selectedDetector.filterWidth + " LP, FP: " + info.rankedFluorophores.get(0).name);
+                info.selectedFluorophore = new ArrayList();
+                info.selectedFluorophore.add(laser.selectedFluorophore.get(i));
+                System.out.println(info.selectedLaser.wavelength + " : " + info.selectedDetector.filterMidpoint + "/" + info.selectedDetector.filterWidth + " LP, FP: " + info.selectedFluorophore.get(0).name);
                 all.add(info);
             }
         }
