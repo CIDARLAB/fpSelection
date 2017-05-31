@@ -165,9 +165,7 @@ public class MainServlet extends HttpServlet {
         ArrayList<SelectionInfo> selected = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             SelectionInfo si = new SelectionInfo();
-            si.selectedFluorophore = new ArrayList<>();
-            si.selectedFluorophore.add(ranked[bestFilters[i]][bestFluorophores[i]].fluorophore);
-            si.selectedIndex = 0;
+            si.selectedFluorophore = ranked[bestFilters[i]][bestFluorophores[i]].fluorophore;
             si.selectedDetector = ranked[bestFilters[i]][bestFluorophores[i]].detector;
             si.selectedLaser = ranked[bestFilters[i]][bestFluorophores[i]].laser;
             selected.add(si);

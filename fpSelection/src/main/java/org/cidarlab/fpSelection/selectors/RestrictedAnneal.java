@@ -17,6 +17,7 @@ import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
+import org.cidarlab.fpSelection.dom.RankedInfo;
 
 /**
  *
@@ -28,7 +29,7 @@ public class RestrictedAnneal {
     
     public static ArrayList<SelectionInfo> AnnealMeBaby(Map<String, Fluorophore> masterList, Cytometer cyto, int n)
     {
-        ArrayList<SelectionInfo> total = new ArrayList<>();
+        ArrayList<RankedInfo> total = new ArrayList<>();
         for (Laser lase : cyto.lasers) {
             total.addAll(sortTop20P(masterList, lase));
 
@@ -63,7 +64,7 @@ public class RestrictedAnneal {
     
     
     
-    public static ArrayList<SelectionInfo> sortTop20P(Map<String, Fluorophore> masterList, Laser theLaser) {
+    public static ArrayList<RankedInfo> sortTop20P(Map<String, Fluorophore> masterList, Laser theLaser) {
 
         //Pull Detector objects out.
         LinkedList<Detector> listDetectors = new LinkedList<>();
@@ -75,10 +76,10 @@ public class RestrictedAnneal {
         }
 
         //Each Detector has a best fluorophore:
-        ArrayList<SelectionInfo> bestFPs = new ArrayList<>();
+        ArrayList<RankedInfo> bestFPs = new ArrayList<>();
 
         ArrayList<Fluorophore> tempList;
-        SelectionInfo choiceInfo;
+        RankedInfo choiceInfo;
 
         //  For each filter, create list of proteins ranked in terms of expression.  
         for (Detector aDetector : listDetectors) {
@@ -111,10 +112,10 @@ public class RestrictedAnneal {
             tempList.sort(qCompare);
 
             //Put into the selectionInfo object, one for each channel
-            choiceInfo = new SelectionInfo();
+            choiceInfo = new RankedInfo();
             choiceInfo.selectedLaser = theLaser;
             choiceInfo.selectedDetector = aDetector;
-            choiceInfo.selectedFluorophore = tempList;
+            choiceInfo.rankedFluorophores = tempList;
             choiceInfo.selectedIndex = 0;
             choiceInfo.noise = new TreeMap<>();
 
@@ -138,14 +139,14 @@ public class RestrictedAnneal {
 
     }
 
-    public static ArrayList<SelectionInfo> simAnneal(ArrayList<SelectionInfo> suggesteds, int n) {
-        ArrayList<SelectionInfo> returnList = new ArrayList<>();
+    public static ArrayList<SelectionInfo> simAnneal(ArrayList<RankedInfo> suggesteds, int n) {
+        ArrayList<RankedInfo> returnList = new ArrayList<>();
         Random choice = new Random();
         
         ArrayList<Fluorophore> chosen = new ArrayList();
 
         for (int i = 0; i < n; i++) {
-            SelectionInfo toAdd = suggesteds.get(choice.nextInt(suggesteds.size()));
+            RankedInfo toAdd = suggesteds.get(choice.nextInt(suggesteds.size()));
             if(!chosen.contains(toAdd.getFP()))
             {
                 returnList.add(toAdd);
@@ -161,7 +162,7 @@ public class RestrictedAnneal {
         double tempEnd = Math.pow(10, -100);
         double coolFactor = .99;
 
-        double bestSNR = ProteinSelector.calcSumSigNoise(returnList);
+        double bestSNR = ProteinSelector.calcRankedSumSigNoise(returnList);
         double prevSNR = bestSNR;
         double newSNR;
         double diff;
@@ -170,19 +171,19 @@ public class RestrictedAnneal {
         int newNum;
 
 
-        SelectionInfo toModify;
+        RankedInfo toModify;
 
         while (temperature > tempEnd) {
             toModify = returnList.get(choice.nextInt(returnList.size()));
 
             prevNum = toModify.selectedIndex;
             do {
-                newNum = choice.nextInt(toModify.selectedFluorophore.size());
+                newNum = choice.nextInt(toModify.rankedFluorophores.size());
             } while(chosen.contains(toModify.getFP(newNum)));
             
             
             toModify.selectedIndex = newNum;
-            newSNR = ProteinSelector.calcSumSigNoise(returnList);
+            newSNR = ProteinSelector.calcRankedSumSigNoise(returnList);
 
             diff = newSNR - prevSNR;
             if (diff > 0) {
@@ -207,8 +208,14 @@ public class RestrictedAnneal {
             temperature *= coolFactor;
 
         }
+        
+        ArrayList<SelectionInfo> result = new ArrayList<SelectionInfo>();
+        for(RankedInfo ri:returnList){
+            SelectionInfo si = new SelectionInfo(ri);
+            result.add(si);
+        }
 
-        return returnList;
+        return result;
     }
 
 }

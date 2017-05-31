@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import javax.swing.JOptionPane;
+import org.cidarlab.fpSelection.algorithms.SimulatedAnnealing;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
@@ -49,7 +50,7 @@ public class SimulatedAnnealTest {
         int n = Integer.parseInt(numString);
 
         //Anneal that shit
-        ArrayList<SelectionInfo> selected = SimulatedAnneal.simulateAnnealing(spectralMaps, testCyto, n);
+        ArrayList<SelectionInfo> selected = SimulatedAnnealing.run(n,spectralMaps, testCyto);
         
 //        System.out.println("Return didn't break me");
         
@@ -57,7 +58,7 @@ public class SimulatedAnnealTest {
         
 //        System.out.println("Noise didn't break me");
 
-        SimulatedAnneal.plotSelection(selected);
+        //SimulatedAnneal.plotSelection(selected);
 //        System.out.println("Nothing broke me wtf");
     }
 

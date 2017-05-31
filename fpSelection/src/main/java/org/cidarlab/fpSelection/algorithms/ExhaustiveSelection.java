@@ -118,9 +118,7 @@ public class ExhaustiveSelection {
         for (int i = 0; i < n; i++)
         {
             SelectionInfo si = new SelectionInfo();
-            si.selectedFluorophore = new ArrayList<>();
-            si.selectedFluorophore.add(fluorophores[bestFluorophores[i]]);
-            si.selectedIndex = 0;
+            si.selectedFluorophore = fluorophores[bestFluorophores[i]];
             si.selectedDetector = detectors[bestFilters[i]];
             si.selectedLaser = lasers[bestFilters[i]];
             selected.add(si);

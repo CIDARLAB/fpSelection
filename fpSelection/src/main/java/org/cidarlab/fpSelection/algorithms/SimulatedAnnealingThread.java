@@ -95,9 +95,7 @@ public class SimulatedAnnealingThread extends Thread{
                    for(int i=0;i<current.size();i++){
                        if(i == swapIndex){
                            SelectionInfo newSI = new SelectionInfo();
-                           newSI.selectedFluorophore = new ArrayList<Fluorophore>();
-                           newSI.selectedIndex = 0;
-                           newSI.selectedFluorophore.add(current.get(i).getFP());
+                           newSI.selectedFluorophore = current.get(i).getFP();
                            newSI.selectedLaser = lasers.get(newD);
                            newSI.selectedDetector = detectors.get(newD);
                            next.add(newSI);
@@ -129,9 +127,7 @@ public class SimulatedAnnealingThread extends Thread{
                    for(int i=0;i<current.size();i++){
                        if(i == swapIndex){
                            SelectionInfo newSI = new SelectionInfo();
-                           newSI.selectedFluorophore = new ArrayList<Fluorophore>();
-                           newSI.selectedIndex = 0;
-                           newSI.selectedFluorophore.add(fps.get(newFP));
+                           newSI.selectedFluorophore = fps.get(newFP);
                            newSI.selectedLaser = current.get(i).selectedLaser;
                            newSI.selectedDetector = current.get(i).selectedDetector;
                            next.add(newSI);
@@ -213,9 +209,7 @@ public class SimulatedAnnealingThread extends Thread{
                 }
                 selectedFPs.add(fpIndx);
                 
-                si.selectedFluorophore = new ArrayList<Fluorophore>();
-                si.selectedFluorophore.add(fps.get(fpIndx));
-                si.selectedIndex = 0;
+                si.selectedFluorophore = fps.get(fpIndx);
                 
                 int dIndx = random(0,detectors.size()-1);
                 while(selectedDs.contains(dIndx)){

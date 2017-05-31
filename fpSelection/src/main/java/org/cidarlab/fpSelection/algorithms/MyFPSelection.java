@@ -19,17 +19,15 @@ public class MyFPSelection {
 
     public static ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer) {
         
-        ArrayList<Fluorophore> fluorophores = new ArrayList<>();
+        ArrayList<SelectionInfo> selected = new ArrayList<>();
         for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
-            fluorophores.add(entry.getValue());
+            SelectionInfo si = new SelectionInfo();
+            si.myFPCytometer = cytometer;
+            si.selectedFluorophore = entry.getValue();
+            selected.add(si);
         }        
 
         //prepare data for graphs
-        ArrayList<SelectionInfo> selected = new ArrayList<>();
-        SelectionInfo si = new SelectionInfo();
-        si.myFPCytometer = cytometer;
-        si.selectedFluorophore = fluorophores;
-        selected.add(si);
         
         return selected;
     }

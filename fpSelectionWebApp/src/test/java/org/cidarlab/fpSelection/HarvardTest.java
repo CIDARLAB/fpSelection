@@ -9,7 +9,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -27,8 +26,6 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -159,7 +156,7 @@ public class HarvardTest {
             System.out.println("RESULT " + i + " === FPs ===");
             for(SelectionInfo si : result){
                 
-                System.out.println(si.getFP(0).name);
+                System.out.println(si.getFP().name);
             }
             
             System.out.println("======================================\n\n");

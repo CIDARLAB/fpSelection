@@ -38,10 +38,10 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     
     public Laser selectedLaser;
     public Detector selectedDetector;
-    public ArrayList<Fluorophore> selectedFluorophore;
+    public Fluorophore selectedFluorophore;
 
     //For use in algorithms
-    public int selectedIndex;
+    //public int selectedIndex;
     public double score;
     public double SNR;
     public double SNDiff;
@@ -49,6 +49,30 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     public int oligo;
     public TreeMap<Double, Double> noise;
     public Cytometer myFPCytometer;
+
+    public SelectionInfo(){
+        
+    }
+    
+    public SelectionInfo(RankedInfo ri){
+        
+        this.score = ri.score;
+        this.SNDiff = ri.SNDiff;
+        this.SNR = ri.SNR;
+        
+        this.price = ri.price;
+        this.oligo = ri.oligo;
+        
+        this.SNRlessThanOne = ri.isSNRlessThanOne();
+        this.noiseZero = ri.isNoiseZero();
+        this.signalZero = ri.isSignalZero();
+        
+        this.myFPCytometer = ri.myFPCytometer;
+        this.selectedDetector = ri.selectedDetector;
+        this.selectedLaser = ri.selectedLaser;
+        this.selectedFluorophore = ri.rankedFluorophores.get(ri.selectedIndex);
+        
+    }
     
     @Override
     public int compareTo(SelectionInfo si) { 
@@ -70,10 +94,7 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     
     public Fluorophore getFP()
     {
-        return selectedFluorophore.get(selectedIndex);
+        return selectedFluorophore;
     }
-    public Fluorophore getFP(int index)
-    {
-        return selectedFluorophore.get(index);
-    }
+    
 }

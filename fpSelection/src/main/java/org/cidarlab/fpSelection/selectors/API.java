@@ -15,6 +15,7 @@ import org.cidarlab.fpSelection.algorithms.ExhaustiveSelection;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelectionImproved;
 import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
 import org.cidarlab.fpSelection.algorithms.SemiExhaustiveSelection;
+import org.cidarlab.fpSelection.algorithms.SimulatedAnnealing;
 import org.cidarlab.fpSelection.parsers.ScrapedCSVParse;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import static org.cidarlab.fpSelection.parsers.fpSpectraParse.parse;
@@ -66,7 +67,7 @@ public class API {
     }
     public static ArrayList<SelectionInfo> simulatedAnnealSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
     {
-        return SimulatedAnneal.simulateAnnealing(fps, cyto, n);
+        return SimulatedAnnealing.run(n, fps, cyto);
     }
     //For validating existing setups, provide a Hashmap of fluorophores chosen and your full cytometer data.
     public static ArrayList<SelectionInfo> validator(HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException

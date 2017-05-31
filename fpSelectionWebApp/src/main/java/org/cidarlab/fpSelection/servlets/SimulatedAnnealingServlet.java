@@ -32,6 +32,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
+import org.cidarlab.fpSelection.algorithms.SimulatedAnnealing;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.parsers.fpSpectraParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
@@ -106,7 +107,9 @@ public class SimulatedAnnealingServlet extends HttpServlet {
         // Parse the rest of the request variables//
         ////////////////////////////////////////////
         //LET THE MAGIC OCCUR.
-        ArrayList<SelectionInfo> solution = RestrictedAnneal.AnnealMeBaby(spectralMaps, cytoSettings, n);
+        
+        //ArrayList<SelectionInfo> solution = RestrictedAnneal.AnnealMeBaby(spectralMaps, cytoSettings, n);
+        ArrayList<SelectionInfo> solution = SimulatedAnnealing.run(n, spectralMaps, cytoSettings);
 
         ProteinSelector.generateNoise(solution);
         LinkedList<String> info = PlotAdaptor.webPlot(solution);
