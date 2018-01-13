@@ -171,7 +171,7 @@ public class DataAnalytics {
                                 
                     }
                 } 
-                else if (f.getName().equals("oneMediaPlotPoints.csv")) {
+                else if (f.getName().equals("oneMediaPlotPoints_beads.csv")) {
                     //System.out.println(f.getAbsolutePath());
                     String pathPieces[] = filepathPieces(path, resultsRoot);
                     if (pathPieces[pathPieces.length - 2].contains("Voltages")) {

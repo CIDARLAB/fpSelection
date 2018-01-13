@@ -6,14 +6,11 @@
 package org.cidarlab.fpSelection;
 
 import com.panayotis.gnuplot.JavaPlot;
-import com.panayotis.gnuplot.dataset.Point;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import org.cidarlab.fpSelection.dom.AnalyticsExperiment;
 import org.cidarlab.fpSelection.dom.AnalyticsPlot;
 import org.cidarlab.fpSelection.dom.Cytometer;
@@ -28,7 +25,6 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import static org.junit.Assert.*;
 
 /**
  *
@@ -70,9 +66,12 @@ public class DataAnalyticsTest {
     
     @Test
     public void testCreateAllPlots() throws IOException{
-        String mainTest = "FP_selection_R3";
+        String mainTest = "FP_selection_R4";
         DataAnalyticsTest test = new DataAnalyticsTest();
         for(int i=1;i<=5;i++){
+            if(i==4)
+                continue;
+            
             test = new DataAnalyticsTest();
             test._path = Utilities.getResourcesFilepath()  + "fpSelectionData" + Utilities.getSeparater() + mainTest + Utilities.getSeparater() + "analysis" + getFolderSuffix(i) + Utilities.getSeparater();
             test._plotfilepathroot = Utilities.getResourcesFilepath() + "fpSelectionData" + Utilities.getSeparater()+ mainTest + Utilities.getSeparater() + "plots" + getFolderSuffix(i) + Utilities.getSeparater();
