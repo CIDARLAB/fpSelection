@@ -1,16 +1,58 @@
 <ul class="nav nav-tabs" style="margin-top: 100px;">
     <li class="tooltipNav" title="Choose fluorophores based on cytometer/laser settings"><a href="/MainServlet">FP Selection</a></li>
     <li class="tooltipNav active" title="Choose laser settings based on fluorophore/cytometer settings"><a href="/LaserSelection">Laser Selection</a></li>
-    <li class="tooltipNav" title="Choose cytometer settings based on laser/filter settings"><a href="/CytometerSelection">Cytometer Selection</a></li>
+    <li class="tooltipNav" title="Choose filter settings based on fluorophore/laser settings"><a href="/FilterSelection">Filter Selection</a></li>
     <li class="tooltipNav" title="Test the SNR of your own custom fluorophore/cytometer/laser settings"><a href="/MyFP">"My" FP</a></li>
 </ul>
 <br>
 <fieldset>
     <legend>Settings</legend>
     <form id="MainForm" enctype="multipart/form-data" method="post" name="goodForm">
-
+         <div class="wrapperDiv">
+            <div class="leftDiv">
+                <label>Cytometer Settings:</label>
+                <a href="samplecsvs/ex_fortessa.csv">sample</a>
+            </div>
+            <div class="form-group rightDiv" title="Upload the settings of your cytometer, laser information will not be taken into account">
+                <input id = "cytometer" type = "file" accept = ".csv" name = "cytometer" href="#">    
+            </div>
+            <div style="clear:both"></div>
+        </div>
+        <div class="wrapperDiv">
+            <div class="leftDiv">
+                <label>Fluorophore Spectra List:</label>
+                <a href="samplecsvs/fp_spectra.csv">sample</a>
+            </div>
+            <div class="form-group rightDiv" title="Upload your list of available fluorophores">
+                <input id = "FPMasterList" type = "file" accept=".csv" name = "FPMasterList">                       
+            </div>
+            <div style="clear:both"></div>
+        </div>
+        <div class="wrapperDiv">
+            <div class="leftDiv">
+                <label class="padded">N: </label>
+            </div>
+            <div class="form-group rightDiv" title="Choose the number of filters you want to generate">
+                <input class="form-control input-sm" id="n" type ="number" value="2" name ="n"href="#"/>                 
+            </div>
+            <div style="clear:both"></div>
+        </div>
+        <div class="wrapperDiv">
+            <div class="leftDiv"></div>
+            <div class="form-group rightDiv">
+                <button class = "btn btn-primary" type = "submit">GO!</button>
+            </div>
+            <div style="clear:both"></div>
+        </div>
+        <input type="hidden" id="algo" value="LaserSelection"/>
     </form>
 </fieldset>
 <fieldset>
     <legend>Results</legend>
+    <p id="placeholder" class="text-muted paddedLeft" style="padding-bottom:0px; margin-bottom:0px">Press "GO!" to see results</p>
+    <p id="title" class="paddedLeft" style="color: black; font-weight: bold; padding-bottom: 15px;"></p>
+    <a id="download" class = "btn btn-primary" style="margin-bottom: 10px; display: none; margin-left: 30px;" href="" download="plot.jpg">Download Image</a>
+    <a id="downloadList" class = "btn btn-primary" style="margin-bottom: 10px; display: none;" href="" download="selection.txt">Download List</a>
+    <p id="SNR" class="paddedLeft" style="white-space: pre-line; color: black;"></p>
+    <img id="img" src="image/blank.png" alt="Plot of Laser, Filter, and FP selections" style="width: 100%; display:none; padding: 15px;"/>
 </fieldset>

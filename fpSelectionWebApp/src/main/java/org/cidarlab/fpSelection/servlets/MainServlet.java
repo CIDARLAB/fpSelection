@@ -22,6 +22,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -92,7 +93,7 @@ public class MainServlet extends HttpServlet {
         File input = new File("src/main/resources/Fluorophores/org/");
         HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
         File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer cytometer = fpFortessaParse.parse(cyto);
+        Cytometer cytometer = fpFortessaParse.parse(cyto, false);
         int n = 6;
         double topPercent = .005;
         int numFluorophores = spectralMaps.size();

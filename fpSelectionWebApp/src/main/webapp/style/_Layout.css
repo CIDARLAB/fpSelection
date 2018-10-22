@@ -75,12 +75,32 @@ body {
 
 #footer {
     height: 70px;
-    background-color: #f2f2f2;
+    border-top: 1px solid #ddd;
 }
 .cont {
     width: auto;
+    display: flex;
+    align-items: center;
+    vertical-align: middle;
+    justify-content: center;
+    padding-top: 13px;
+    padding-bottom: 13px;
 }
-.cont .credit {
-    text-align: center;
-    padding-top: 25px;
+.cont img {
+    height: 50px;
+    margin-left: 10px;
+    margin-right: 10px;
+}
+.one-fourth-column {
+    width: 22%;
+    margin-right: 4%;
+    position: relative;
+    float: left;
+    margin-bottom: 19px;
+}
+.attr-img {
+    
+}
+.column-last {
+    margin-right: 0px;
 }

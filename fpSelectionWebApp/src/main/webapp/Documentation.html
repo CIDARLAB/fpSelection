@@ -1,0 +1,124 @@
+<legend style="margin-top: 100px;"> Select a subject to read more about it </legend>
+
+<br>
+
+<div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingOne">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="false" aria-controls="collapseOne">
+                    FP Selection
+                </a>
+            </h4>
+        </div>
+        <div id="collapseOne" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingOne">
+            <div class="panel-body">
+                The Fluorescent Protein Selection tool (shown below) takes in the user's cytometer settings and a full list of possible fluorophores, including their excitation and emission spectrums, and optimally selects a setup for the user based on how many fluorophores they would like to use, indicated by the input 'N'. In the result generated, it matches N chosen fluorophores with N individual filters for the user to use. If N exceeds the number of filters, it selects a fluorophore for all of the filters. If N exceeds the number of fluorophores, it will use as many of the fluorophores as possible.
+                
+                <br>
+                <ul>
+                    <li> Exhaustive (Slow) - This option takes the longest amount of time to generate a result for larger 'N', but provides the best result </li>
+                    <li> Beam Width Search (Medium) - This option utilizes preprocessing of fluorophores to speed up the search time. Provides similar if not the same result as Exhaustive. The size of the list of fluorophores to search is determined by the percentage input by the user</li>
+                    <li> Hill Climbing (Fast) - This option preprocesses the list of fluorophores and trims the full list down to 'N' to provide a result to the user. Provides similar if not the same result as the above two, but for large N the selection is least optimal. However, for large lists of fluorophores and large N, this option provides the fastest response to the user.
+                </ul>
+                <br>
+
+                <img src="image/FPSel.png" alt="A visual depicting the FP Selection tool and steps on how to use it">
+
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingTwo">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="false" aria-controls="collapseTwo">
+                    Laser Selection
+                </a>
+            </h4>
+        </div>
+        <div id="collapseTwo" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingTwo">
+            <div class="panel-body">
+                The Laser Selection tool (shown below) takes in the user's filter settings (in the form of a formatted cytometer csv file) and a full list of possible fluorophores, including their excitation and emission spectrums, and based on the input 'N' fits up to N lasers with the user's given information. In the result generated, the algorithm provides a sample setup with the generated number of lasers. The algorithm divides the visible spectrum into N sections, and creates a sample laser in each section. Varying their wavelengths to scan a section of the spectrum, a laser is only considered if there is considerable response from a given fluorophore in that laser. If less than N lasers are generated, the algorithm achieved better results with each filter and fluorophore by matching them with similar laser wavelengths, and received lower Signal to Noise ratios by using N lasers.
+                
+                <br>
+                
+                <img src="image/LaserSel.png" alt="A visual depicting the Laser Selection tool and steps on how to use it">
+                
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingThree">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="false" aria-controls="collapseThree">
+                    Filter Selection
+                </a>
+            </h4>
+        </div>
+        <div id="collapseThree" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingThree">
+            <div class="panel-body">
+                The Filter Selection tool (shown below), takes in the user's laser settings (in the form of a formatted cytometer csv file) and a full list of possible fluorophores, including their excitation and emission spectrums, and based on the input 'N' fits up to N filters with the user's given information. The algorithm systematically fits varying width filters with each fluorophore if the fluorophore is responsive above a certain threshold in a given laser. In the result generated, the algorithm provides a setup with the generated number of filters. If less than N filters are generated, the algorithm achieved worse results by using more than the shown number of filters.
+                
+                <br>
+                
+                <img src='image/FilterSel.png' alt='A visual depicting the Filter Selection tool and steps on how to use it'>
+                
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingFour">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="false" aria-controls="collapseFour">
+                    "My" FP
+                </a>
+            </h4>
+        </div>
+        <div id="collapseFour" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFour">
+            <div class="panel-body">
+                The "My" FP tool (shown below), takes in the user's cytometer settings and a list of all fluorophores being used, including their excitation and emission spectrums. Using these files, the selection algorithm will run and produce what it believes to be the optimal setup for that combination of settings and fluorophores. The algorithm assumes that the number of fluorophores to select, 'N', is equal to the total number of fluorophores present.
+                
+                <br>
+                
+                <img src='image/MyFP.png' alt='A visual depicting the "My" FP tool and steps on how to use it'>
+                
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingFive">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseFive" aria-expanded="false" aria-controls="collapseFive">
+                    Cytometer CSV Generator (Extras!)
+                </a>
+            </h4>
+        </div>
+        <div id="collapseFive" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingFive">
+            <div class="panel-body">
+                The Cytometer CSV Generator tool (shown below), generates a .csv for the user based on all of the input fields. The generated document is compatible with any and all of the tools on this website that utilize a Cytometer Settings .csv file.
+                <br>
+                
+                <img src='image/CytoGen.png' alt='A visual depicting the Filter Selection tool and steps on how to use it'>
+                
+            </div>
+        </div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="headingSix">
+            <h4 class="panel-title">
+                <a class="collapsed" role="button" data-toggle="collapse" data-parent="#accordion" href="#collapseSix" aria-expanded="false" aria-controls="collapseFive">
+                    Understanding Results
+                </a>
+            </h4>
+        </div>
+        <div id="collapseSix" class="panel-collapse collapse" role="tabpanel" aria-labelledby="headingSix">
+            <div class="panel-body">
+                
+                <br>
+                
+                <img src='image/UnderstandingResults.png' alt='A visual depicting generic results and what each element represents.'>
+                
+            </div>
+        </div>
+    </div>
+</div>
