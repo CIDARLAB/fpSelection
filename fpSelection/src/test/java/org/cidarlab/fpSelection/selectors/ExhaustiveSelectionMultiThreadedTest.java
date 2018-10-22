@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelection;
@@ -27,24 +28,22 @@ public class ExhaustiveSelectionMultiThreadedTest {
     public static void main(String[] args) throws IOException, InterruptedException, ExecutionException {
         
         //Get fluorophore set
-        File input = new File("src/main/resources/fp_spectra.csv");
-        Map<String, Fluorophore> spectralMaps = parse(input);
+        Map<String, Fluorophore> spectralMaps = parse(ParserTest.fpSpectrafp);
         //File input = new File("src/main/resources/Fluorophores.org/");
         //HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
 
         //Get cytometer settings
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer cytometer = fpFortessaParse.parse(cyto, false);
+        Cytometer cytometer = fpFortessaParse.parse(ParserTest.fortessafp, false);
 
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         //int n = Integer.parseInt(numString);
-        int n = 5;
+        int n = 2;
         
         final long startTime = System.currentTimeMillis();
 
         ExhaustiveSelectionMultiThreaded esmt = new ExhaustiveSelectionMultiThreaded();
-        ArrayList<SelectionInfo> selected = esmt.run(n,spectralMaps,cytometer,8);
+        List<SelectionInfo> selected = esmt.run(n,spectralMaps,cytometer,8);
         
         final long endTime = System.currentTimeMillis();
         System.out.println("Total time: " + (endTime - startTime) + " ms");

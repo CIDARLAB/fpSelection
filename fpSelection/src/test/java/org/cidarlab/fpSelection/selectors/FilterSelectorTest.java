@@ -46,8 +46,8 @@ public class FilterSelectorTest {
         int n = 0;
         HashMap<String, Fluorophore> masterList = null;
         Cytometer cyto = null;
-        ArrayList<SelectionInfo> expResult = null;
-        ArrayList<SelectionInfo> result = FilterSelector.run(n, masterList, cyto);
+        List<SelectionInfo> expResult = null;
+        List<SelectionInfo> result = FilterSelector.run(n, masterList, cyto);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -62,8 +62,8 @@ public class FilterSelectorTest {
         HashMap<String, Fluorophore> FPList = null;
         List<Laser> lasers = null;
         int nDetectors = 0;
-        ArrayList<SelectionInfo> expResult = null;
-        ArrayList<SelectionInfo> result = FilterSelector.LFPtoFilter(FPList, lasers, nDetectors);
+        List<SelectionInfo> expResult = null;
+        List<SelectionInfo> result = FilterSelector.LFPtoFilter(FPList, lasers, nDetectors);
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");

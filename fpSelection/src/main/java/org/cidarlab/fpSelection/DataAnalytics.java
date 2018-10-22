@@ -249,10 +249,10 @@ public class DataAnalytics {
     private static Detector getDetector(String detector, Laser l){
         
         for(Detector d:l.detectors){
-            if(d.name == null){
+            if(d.parameter == null){
                 continue;
             } 
-            if(d.name.equals(detector)){
+            if(d.parameter.equals(detector)){
                 return d;
             }
         }
@@ -337,7 +337,6 @@ public class DataAnalytics {
         }
         return wl;
     }
-    
     
     private static String getLaserSettingLine(String filepath, int wavelength){
         List<String> lines = Utilities.getFileContentAsStringList(filepath);
@@ -662,8 +661,6 @@ public class DataAnalytics {
         filename += ".png";
         plotToFile(getJavaPlot(plot),filepath + filename);
     }
-    
-    
     
     private static List<Point> sortPoints(List<Point> points){
         Map<Double, Double> pointMap = new HashMap<Double, Double>();

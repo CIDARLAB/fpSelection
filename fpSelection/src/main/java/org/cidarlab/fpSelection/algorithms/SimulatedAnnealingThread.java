@@ -13,9 +13,10 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ThreadLocalRandom;
 import lombok.Getter;
+import org.cidarlab.fpSelection.Utilities;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.InfDouble;
+import org.cidarlab.fpSelection.dom.SNR;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
@@ -24,222 +25,191 @@ import org.cidarlab.fpSelection.selectors.ProteinSelector;
  *
  * @author prash
  */
-public class SimulatedAnnealingThread extends Thread{
-        
-    
-        private Thread t;
-        
-        private final int id;
-        
-        private double temp;
-        private final double rate;
-        private int n;
-        private CountDownLatch latch;
-        
-        private List<Fluorophore> fps;
-        private Map<Integer,Laser> lasers;
-        private List<Detector> detectors;
-        
-        List<Integer> selectedFPs;
-        List<Integer> selectedDs;
-        
-        InfDouble.InfDoubleMode mode = InfDouble.InfDoubleMode.multiply;
-        
-        @Getter
-        InfDouble selectionSNR;
-        
-        @Getter
-        private ArrayList<SelectionInfo> selection;
-             
-        
-        SimulatedAnnealingThread(double _temp, double _rate, int _id, CountDownLatch _latch, int _n, List<Fluorophore> _fps, Map<Integer,Laser> _lasers, List<Detector> _detectors){
-            temp = _temp;
-            rate = _rate;
-            id = _id;
-            n = _n;
-            fps = _fps;
-            lasers = _lasers;
-            detectors = _detectors;
-            latch = _latch;
-            selection = new ArrayList<SelectionInfo>();
-            selectedFPs = new ArrayList<Integer>();
-            selectedDs = new ArrayList<Integer>();
-            selectionSNR = new InfDouble(mode);
-        }
-        
-        @Override
-        public void run() {
-            
-            ArrayList<SelectionInfo> current =  startingAssignment();
-            ArrayList<SelectionInfo> best =  current;
-            
-            ProteinSelector.calcSumSigNoise(current);
-            
-            InfDouble currentSNR = selectionSNR(current);
-            InfDouble bestSNR = currentSNR;
-            
-            while(temp > 1){
-                
-                ArrayList<SelectionInfo> next = new ArrayList<SelectionInfo>();
-                int swapIndex = random(0,n-1);
-                
-                
-                if(random(0,1) == 0){
-                    //Swap detector
-                   int newD = random(0,detectors.size()-1);
-                   while(selectedDs.contains(newD)){
-                       newD = random(0,detectors.size()-1);
-                   }
-                   
-                   //Create new solution
-                   for(int i=0;i<current.size();i++){
-                       if(i == swapIndex){
-                           SelectionInfo newSI = new SelectionInfo();
-                           newSI.selectedFluorophore = current.get(i).getFP();
-                           newSI.selectedLaser = lasers.get(newD);
-                           newSI.selectedDetector = detectors.get(newD);
-                           next.add(newSI);
-                       } else {
-                           next.add(current.get(i));
-                       }
-                   }
-                   ProteinSelector.calcSumSigNoise(current);
-                   ProteinSelector.calcSumSigNoise(next);
-                   currentSNR = selectionSNR(current);
-                   InfDouble nextSNR = selectionSNR(next);
-                   
-                    if (!hasZeroSignal(next)) {
-                        if (acceptProbability(currentSNR, nextSNR, temp) > Math.random()) {
-                            current = new ArrayList<SelectionInfo>();
-                            current.addAll(next);
-                            selectedDs.set(swapIndex, newD);
-                        }
-                    }
-                   
-                } else {
-                    //Swap FP
-                    int newFP = random(0, fps.size() - 1);
-                    while (selectedFPs.contains(newFP)) {
-                        newFP = random(0, fps.size() - 1);
-                    }
-                    
-                    //Create new solution
-                   for(int i=0;i<current.size();i++){
-                       if(i == swapIndex){
-                           SelectionInfo newSI = new SelectionInfo();
-                           newSI.selectedFluorophore = fps.get(newFP);
-                           newSI.selectedLaser = current.get(i).selectedLaser;
-                           newSI.selectedDetector = current.get(i).selectedDetector;
-                           next.add(newSI);
-                       } else {
-                           next.add(current.get(i));
-                       }
-                   }
-                    
-                    
-                   ProteinSelector.calcSumSigNoise(current);
-                   ProteinSelector.calcSumSigNoise(next);
-                   currentSNR = selectionSNR(current);
-                   InfDouble nextSNR = selectionSNR(next);
-                   
-                    if (!hasZeroSignal(next)) {
-                        if (acceptProbability(currentSNR, nextSNR, temp) > Math.random()) {
-                            current = new ArrayList<SelectionInfo>();
-                            current.addAll(next);
-                            selectedFPs.set(swapIndex, newFP);
-                        }
-                    } 
-                }
-                
-                if(currentSNR.compare(bestSNR) > 0){
-                    best = new ArrayList<SelectionInfo>();
-                    best.addAll(current);
-                    ProteinSelector.calcSumSigNoise(best);
-                    bestSNR = selectionSNR(best);
-                }
-                
-                //System.out.println("Thread " + id + " current temperature = " + temp);
-                temp *= (1-rate);
-            }
-            
-            this.selection = best;
-            ProteinSelector.calcSumSigNoise(selection);
-            this.selectionSNR = selectionSNR(selection);
-            latch.countDown();
-            
-        }
-        
-        public InfDouble selectionSNR(ArrayList<SelectionInfo> coll){
-            if(mode.equals(InfDouble.InfDoubleMode.add)){
-                return ProteinSelector.totalSNR(coll);
-            } else {
-                return ProteinSelector.prodSNR(coll);
-            }
-        }
-        
-        public static double acceptProbability(InfDouble current, InfDouble next, double temp){
-        
-            if(next.compare(current) > 0){
-                return 1;
-            } 
-            if(current.getSnr() < next.getSnr()){
-                return Math.exp((current.getSnr() - next.getSnr())/temp);
-            }
-            return Math.exp((next.getSnr() - current.getSnr())/temp);
-        }
-        
-        
-        public int threadID(){
-            return this.id;
-        }
-        
-        public int random(int start, int end){
-            return ThreadLocalRandom.current().nextInt(start, end+1);
-        }
-        
-        private ArrayList<SelectionInfo>  startingAssignment(){
-            ArrayList<SelectionInfo> current = new ArrayList<SelectionInfo>();
-            
-            for(int i=0;i<n;i++){
-                
-                SelectionInfo si = new SelectionInfo();
-                int fpIndx = random(0,fps.size()-1);
-                while(selectedFPs.contains(fpIndx)){
-                    fpIndx = random(0,fps.size()-1);
-                }
-                selectedFPs.add(fpIndx);
-                
-                si.selectedFluorophore = fps.get(fpIndx);
-                
-                int dIndx = random(0,detectors.size()-1);
-                while(selectedDs.contains(dIndx)){
-                    dIndx = random(0,detectors.size()-1);
-                }
-                selectedDs.add(dIndx);
-                si.selectedDetector = detectors.get(dIndx);
-                si.selectedLaser = lasers.get(dIndx);
-                current.add(si);
-            }
-            return current;
-        }
-        
-        @Override
-        public void start(){
-            //System.out.println("Starting thread " + this.id);
-            if( t == null){
-                t = new Thread(this);
-                t.start();
-            }
-        }
-        
-        private static boolean hasZeroSignal(ArrayList<SelectionInfo> selection){
-            for(SelectionInfo si:selection){
-                if(si.isSignalZero()){
-                    return true;
-                }
-            }
-            
-            return false;
-        }
-        
+public class SimulatedAnnealingThread extends Thread {
+
+    private Thread t;
+
+    private final int id;
+
+    private double temp;
+    private final double rate;
+    private int n;
+    private CountDownLatch latch;
+
+    private List<Fluorophore> fluorophores;
+    private Map<Detector, Laser> detectorMap;
+    private List<Detector> detectors;
+
+    List<Integer> selectedFPs;
+    List<Integer> selectedDs;
+
+    @Getter
+    private SNR selectionSNR;
+
+    @Getter
+    private List<SelectionInfo> selection;
+
+    SimulatedAnnealingThread(double _temp, double _rate, int _id, CountDownLatch _latch, int _n, List<Fluorophore> _fluorophores, List<Detector> _detectors, Map<Detector, Laser> _detectorMap) {
+        temp = _temp;
+        rate = _rate;
+        id = _id;
+        n = _n;
+        fluorophores = _fluorophores;
+        detectorMap = _detectorMap;
+        detectors = _detectors;
+        latch = _latch;
+        selection = new ArrayList<SelectionInfo>();
+        selectedFPs = new ArrayList<Integer>();
+        selectedDs = new ArrayList<Integer>();
     }
+
+    @Override
+    public void run() {
+        List<Fluorophore> currentFluorophores = HillClimbingSelection.getRandomFluorophores(n, fluorophores);
+        List<Detector> currentDetectors = HillClimbingSelection.getRandomDetectors(n, detectors);
+
+        List<SelectionInfo> current = HillClimbingSelection.getSelection(currentFluorophores, currentDetectors, detectorMap);
+        SNR bestSNR = new SNR(current);
+
+        List<SelectionInfo> best = current;
+        SNR currentSNR = bestSNR;
+
+        while (temp > 1) {
+
+            int swapIndex = Utilities.getRandom(0, n - 1);
+
+            List<Fluorophore> nextFluorophores;
+            List<Detector> nextDetectors;
+
+            if (Utilities.getRandom(0, 1) == 0) {
+                //Heads Swap an FP
+                nextFluorophores = swapFluorophore(swapIndex, currentFluorophores, fluorophores);
+                nextDetectors = new ArrayList<>(currentDetectors);
+            } else {
+                //Tails Swap Detector
+                nextFluorophores = new ArrayList<>(currentFluorophores);
+                nextDetectors = swapDetector(swapIndex, currentDetectors, detectors);
+            }
+            List<SelectionInfo> next = HillClimbingSelection.getSelection(nextFluorophores, nextDetectors, detectorMap);
+            SNR nextSNR = new SNR(next);
+
+            if (nextSNR.greaterThan(bestSNR)) {
+                bestSNR = nextSNR;
+                best = new ArrayList<>(next);
+            }
+            double random = Math.random();
+            double ap = acceptanceProbability(currentSNR,nextSNR,temp);
+            if(random <= ap){
+                //SWAP!!!
+                current = new ArrayList<>(next);
+                currentSNR = nextSNR;
+                currentFluorophores = new ArrayList<>(nextFluorophores);
+                currentDetectors = new ArrayList<>(nextDetectors);
+                
+            }
+            //System.out.println("Thread " + id + " current temperature = " + temp);
+            temp *= (1 - rate);
+        }
+
+        this.selection = best;
+        ProteinSelector.generateNoise(selection);
+        this.selectionSNR = new SNR(selection);
+        latch.countDown();
+
+    }
+
+    private static List<Fluorophore> swapFluorophore(int index, List<Fluorophore> selected, List<Fluorophore> all) {
+        List<Fluorophore> newList = new ArrayList<>();
+        Fluorophore newFP = all.get(Utilities.getRandom(0, all.size() - 1));
+        if (selected.contains(newFP)) {
+            int swapIndex = selected.indexOf(newFP);
+            Fluorophore indexFP = selected.get(index);
+            for (int i = 0; i < selected.size(); i++) {
+                if (i == index) {
+                    newList.add(newFP);
+                } else if (i == swapIndex) {
+                    newList.add(indexFP);
+                } else {
+                    newList.add(selected.get(i));
+                }
+            }
+        } else {
+            for (int i = 0; i < selected.size(); i++) {
+                if (i == index) {
+                    newList.add(newFP);
+                } else {
+                    newList.add(selected.get(i));
+                }
+            }
+        }
+        return newList;
+    }
+
+    private static List<Detector> swapDetector(int index, List<Detector> selected, List<Detector> all) {
+        List<Detector> newList = new ArrayList<>();
+        Detector newD = all.get(Utilities.getRandom(0, all.size() - 1));
+        if (selected.contains(newD)) {
+            int swapIndex = selected.indexOf(newD);
+            Detector indexD = selected.get(index);
+            for (int i = 0; i < selected.size(); i++) {
+                if (i == index) {
+                    newList.add(newD);
+                } else if (i == swapIndex) {
+                    newList.add(indexD);
+                } else {
+                    newList.add(selected.get(i));
+                }
+            }
+        } else {
+            for (int i = 0; i < selected.size(); i++) {
+                if (i == index) {
+                    newList.add(newD);
+                } else {
+                    newList.add(selected.get(i));
+                }
+            }
+        }
+        return newList;
+    }
+
+    public static double acceptanceProbability(SNR current, SNR next, double temp) {
+
+        if (next.greaterThan(current)) {
+            System.out.println("Next SNR Greater. Acceptance Probability = 1");
+            return 1;
+        }
+        if(current.getSnr() == next.getSnr()){
+            System.out.println("Next SNR = Current SNR. Acceptance Probability = 0.5");
+            return 0.5;
+        }
+        double deltaE = next.getSnr() - current.getSnr();
+        double exp = (-deltaE) / (temp);
+        double prob = 1.0 / (1.0 + (Math.pow(Math.E, exp)));
+        System.out.println("Next SNR = " + next.getSnr() + ":: Current SNR = " + current.getSnr() + ":: Acceptance Probability = " + prob);
+        return prob;
+    }
+
+    public int threadID() {
+        return this.id;
+    }
+
+    @Override
+    public void start() {
+        //System.out.println("Starting thread " + this.id);
+        if (t == null) {
+            t = new Thread(this);
+            t.start();
+        }
+    }
+
+    private static boolean hasZeroSignal(ArrayList<SelectionInfo> selection) {
+        for (SelectionInfo si : selection) {
+            if (si.isSignalZero()) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+}

@@ -6,6 +6,8 @@
 package org.cidarlab.fpSelection.dom;
 
 import java.util.LinkedList;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
@@ -13,35 +15,34 @@ import java.util.LinkedList;
  */
 public class Laser {
     
-public String name;
-    
-public String type;
-    
-public int wavelength;
-    
-public double power;
-    
-public String detectorArray;
-    
-public int position;
+    @Getter
+    @Setter
+    private String name;
 
-public LinkedList<Detector> detectors;
-    
+    public String type;
+
+    public int wavelength;
+
+    public double power;
+
+    public String detectorArray;
+
+    public int position;
+
+    public LinkedList<Detector> detectors;
+
     //Default initialization
-    public Laser()
-    {
+    public Laser() {
         type = null;
         wavelength = 0;
         power = 0;
         detectorArray = null;
         detectors = new LinkedList<>();
     }
-   
-    
+
     //Hooray more detectors! I thought this might be easier than gathering them all at once and then setting the whole list
-    public void addDetector(Detector newDetector)
-    {
+    public void addDetector(Detector newDetector) {
         detectors.add(newDetector);
         return;
-    }    
+    }
 }

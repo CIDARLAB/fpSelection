@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import javax.swing.JOptionPane;
 import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
 import org.cidarlab.fpSelection.parsers.ScrapedCSVParse;
@@ -30,11 +31,10 @@ public class TheAmazingRaceTest {
 
 
         //Large folder
-        File input = new File("src/main/resources/Fluorophores.org/");
+        File input = new File("resources/Fluorophores.org/");
         HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
 
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parse(cyto, false);
+        Cytometer testCyto = fpFortessaParse.parse(ParserTest.fortessafp, false);
 
         for (int n = 5; n < 9; n++) {
             System.out.println();
@@ -42,8 +42,8 @@ public class TheAmazingRaceTest {
             System.out.println("_________________________________");
             System.out.println("RACE # " + n);
 
-            ArrayList<SelectionInfo> annealSelect;
-            ArrayList<SelectionInfo> hillSelect;
+            List<SelectionInfo> annealSelect;
+            List<SelectionInfo> hillSelect;
 
             long annealTime;
             long hillTime;

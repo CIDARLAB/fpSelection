@@ -23,8 +23,7 @@ import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
-import org.cidarlab.fpSelection.dom.InfDouble;
-import org.cidarlab.fpSelection.dom.InfDouble.InfDoubleMode;
+import org.cidarlab.fpSelection.dom.SNR;
 
 /**
  *
@@ -51,20 +50,17 @@ public class ExhaustiveSelectionMultiThreaded {
         }
     }
 
-    public ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer, int threads) throws IOException, InterruptedException, ExecutionException {
+    public List<SelectionInfo> run(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer, int threads) throws IOException, InterruptedException, ExecutionException {
 
-        //count fluorophores
         int numFluorophores = spectralMaps.size();
 
         //System.out.println("Number of Fluorophores :: " + numFluorophores);
-        //count filters
         int numFilters = 0;
         for (Laser laser : cytometer.lasers) {
             numFilters += laser.detectors.size();
         }
         //System.out.println("Number of Filters      :: " + numFilters);
-        //preprocess data structures
-
+        
         //fluorophore index --> fluorophore object
         fluorophores = new Fluorophore[numFluorophores];
         int fpi = 0;
@@ -73,11 +69,7 @@ public class ExhaustiveSelectionMultiThreaded {
             fluorophores[fpi] = fluorophore;
             fpi++;
         }
-//        System.out.println("Fluorophores with Index :: ");
-//        for(int i=0;i<fluorophores.length;i++){
-//            System.out.println(i + " :: " + fluorophores[i].name);
-//        }
-        //filter index --> fluorophore index --> riemann sun
+
         filterSignal = new double[numFilters][numFluorophores];
         //filter index --> laser
         lasers = new Laser[numFilters];
@@ -88,10 +80,10 @@ public class ExhaustiveSelectionMultiThreaded {
             for (Detector detector : laser.detectors) {
                 lasers[filterIndex] = laser;
                 detectors[filterIndex] = detector;
-                for (int i = 0; i < fluorophores.length; i++) {
-                    Fluorophore fluorophore = fluorophores[i];
-                    filterSignal[filterIndex][i] = fluorophore.express(laser, detector);
-                }
+//                for (int i = 0; i < fluorophores.length; i++) {
+//                    Fluorophore fluorophore = fluorophores[i];
+//                    filterSignal[filterIndex][i] = fluorophore.express(laser, detector);
+//                }
 //                for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
 //                    Fluorophore fluorophore = entry.getValue();
 //                    filterSignal[filterIndex][fluorophoreIndex] = fluorophore.express(laser, detector);
@@ -158,33 +150,19 @@ public class ExhaustiveSelectionMultiThreaded {
         exec.shutdown();
         exec.awaitTermination(Long.MAX_VALUE, TimeUnit.SECONDS);
 
-        InfDouble bestSignal = new InfDouble(InfDoubleMode.add);
-        double avgSNR = 0;
+        BestResult first = resultList.get(0).get();
+        SNR bestSNR = first.bestSNR;
+        List<SelectionInfo> bestSelection = first.bestSelection;
 
         for (Future<BestResult> result : resultList) {
             BestResult br = result.get();
-            int compare = br.bestSignal.compare(bestSignal);
-            if (compare > 0) {
-                bestSignal = br.bestSignal;
-                bestFilters = br.bestFilters;
-                bestFluorophores = br.bestFluorophores;
+            if(br.bestSNR.greaterThan(bestSNR)){
+                bestSNR = br.bestSNR;
+                bestSelection = new ArrayList<>(br.bestSelection);
             }
         }
-
-        //prepare data for graphs
-        ArrayList<SelectionInfo> selected = new ArrayList<>();
-        for (int i = 0; i < n; i++) {
-            SelectionInfo si = new SelectionInfo();
-            si.selectedFluorophore = fluorophores[bestFluorophores[i]];
-            si.selectedDetector = detectors[bestFilters[i]];
-            si.selectedLaser = lasers[bestFilters[i]];
-            selected.add(si);
-        }
-
-        ProteinSelector.calcSumSigNoise(selected);
-        ProteinSelector.generateNoise(selected);
-        System.out.println("Number of Combinations/Permutations where all SNR > 1 :: " + counter.get());
-        return selected;
+        ProteinSelector.generateNoise(bestSelection);
+        return bestSelection;
     }
 
     public void getCombinations(int data[], int start, int n, int index, int k) {
@@ -227,61 +205,25 @@ public class ExhaustiveSelectionMultiThreaded {
             this.n = n;
         }
 
-//        @Override
-//        public BestResult call() {
-//            BestResult bestResult = new BestResult(n);
-//            for (int i = start; i < finish; i++)
-//            {
-//                int[] filterCombo = filterCombinations.get(i);
-//                for (int[] fluorophorePerm : fluorophorePermutations)
-//                {
-//                    //syncPercent();
-//                    double signal = 0;
-//                    for (int j = 0; j < n; j++)
-//                    {
-//                        for (int k = 0; k < n; k++)
-//                        {
-//                            //desired signal
-//                            if (j == k) signal += filterSignal[filterCombo[j]][fluorophorePerm[k]];
-//                            //undesired noise
-//                            else signal -= filterSignal[filterCombo[j]][fluorophorePerm[k]];
-//                        }
-//                    }
-//                    if (signal > bestResult.bestSignal)
-//                    {
-//                        bestResult.bestSignal = signal;
-//                        bestResult.bestFilters = filterCombo;
-//                        bestResult.bestFluorophores = fluorophorePerm;
-//                    }
-//                }
-//            }
-//            return bestResult;
-//        }
         @Override
         public BestResult call() {
-            BestResult bestResult = new BestResult(n);
+            BestResult bestResult = new BestResult();
+            ArrayList<SelectionInfo> firstCandidate = assignCandidate(fluorophorePermutations.get(0), filterCombinations.get(start), n);
+            bestResult.bestSelection = new ArrayList<>(firstCandidate);
+            bestResult.bestSNR = new SNR(firstCandidate);
+                    
+            
             for (int i = start; i < finish; i++) {
                 int[] filterCombo = filterCombinations.get(i);
                 for (int[] fluorophorePerm : fluorophorePermutations) {
                     //syncPercent();
                     ArrayList<SelectionInfo> candidate = assignCandidate(fluorophorePerm, filterCombo, n);
-
-                    ProteinSelector.calcSumSigNoise(candidate);
-                    ProteinSelector.generateNoise(candidate);
-//                    double signal = ProteinSelector.totalSNR(candidate);
-                    InfDouble signal = ProteinSelector.prodSNR(candidate);
-                    //System.out.println("SNR :: " + signal);
-                    if (!ProteinSelector.snrLessThanOne(candidate)) {
-                        counter.getAndIncrement();
+                    SNR snr = new SNR(candidate);
+                    
+                    if(snr.greaterThan(bestResult.bestSNR)){
+                        bestResult.bestSNR = snr;
+                        bestResult.bestSelection = new ArrayList<>(candidate);
                     }
-                    int compare = signal.compare(bestResult.bestSignal);
-                    //compare = 1 implies that current is greater than bestResult.
-                    if (compare > 0) {
-                        bestResult.bestSignal = signal;
-                        bestResult.bestFilters = filterCombo;
-                        bestResult.bestFluorophores = fluorophorePerm;
-                    }
-
                 }
             }
             return bestResult;
@@ -316,16 +258,11 @@ public class ExhaustiveSelectionMultiThreaded {
 
     class BestResult {
 
-        InfDouble bestSignal;
-        double avgSNR;
-        int[] bestFilters;
-        int[] bestFluorophores;
-
-        public BestResult(int n) {
-            avgSNR = 0;
-            bestSignal = new InfDouble(InfDoubleMode.add);
-            bestFilters = new int[n];
-            bestFluorophores = new int[n];
+        SNR bestSNR;
+        List<SelectionInfo> bestSelection;
+        
+        public BestResult() {
+            bestSelection = new ArrayList<>();
         }
 
     }

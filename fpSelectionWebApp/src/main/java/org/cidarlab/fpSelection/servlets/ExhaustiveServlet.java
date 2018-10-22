@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -101,7 +102,7 @@ public class ExhaustiveServlet extends HttpServlet {
         ////////////////////////////////////////////
         ExhaustiveSelectionMultiThreaded algo = new ExhaustiveSelectionMultiThreaded();
         
-        ArrayList<SelectionInfo> selected = new ArrayList<>();
+        List<SelectionInfo> selected = new ArrayList<>();
         try {
             selected = algo.run(n, spectralMaps, cytoSettings, 8);
         } catch (InterruptedException ex) {

@@ -36,8 +36,16 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     @Setter
     private boolean noiseZero = false;
     
+    @Getter
+    @Setter
     public Laser selectedLaser;
+    
+    @Getter
+    @Setter
     public Detector selectedDetector;
+    
+    @Getter
+    @Setter
     public Fluorophore selectedFluorophore;
 
     //For use in algorithms
@@ -50,6 +58,16 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     public TreeMap<Double, Double> noise;
     public Cytometer myFPCytometer;
 
+    @Override
+    public String toString(){
+        String str = "";
+        str += "Fluorophore: " + this.selectedFluorophore.name + " :: ";
+        str += "Laser: " + this.selectedLaser.getName() + " :: ";
+        str += "Detector: " + this.selectedDetector.identifier + ".";
+        return str;
+    }
+    
+    
     public SelectionInfo(){
         
     }
@@ -81,7 +99,7 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     
     
     //Utility functions
-    public PointDataSet makeDataSet()
+    public PointDataSet makeNoiseDataSet()
     {
         PointDataSet dataSet = new PointDataSet();
 

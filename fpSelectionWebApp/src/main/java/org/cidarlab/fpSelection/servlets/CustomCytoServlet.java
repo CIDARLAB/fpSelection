@@ -60,7 +60,7 @@ public class CustomCytoServlet extends HttpServlet {
                 String propName = nameValue.getString("name");
                 switch (propName) {
                     case "laser":
-                        lase.name = nameValue.getString("value");
+                        lase.setName(nameValue.getString("value"));
                         break;
                     case "laserWavelength":
                         lase.wavelength = nameValue.getInt("value");
@@ -100,9 +100,9 @@ public class CustomCytoServlet extends HttpServlet {
             
             //out is the format of the 1st line
             if (each.detectors.size() == 1) {
-                out = each.name + ",Custom," + each.wavelength + ",100,Custom," + it.identifier + "," + it.channel + ",," + it.filterMidpoint + "/" + it.filterWidth + " BP,,,," + setup.indexOf(each);
+                out = each.getName() + ",Custom," + each.wavelength + ",100,Custom," + it.identifier + "," + it.channel + ",," + it.filterMidpoint + "/" + it.filterWidth + " BP,,,," + setup.indexOf(each);
             } else {
-                out = each.name + ",Custom," + each.wavelength + ",100,Custom," + it.identifier + "," + it.channel + ",100 LP," + it.filterMidpoint + "/" + it.filterWidth + " BP,,,," + setup.indexOf(each);
+                out = each.getName() + ",Custom," + each.wavelength + ",100,Custom," + it.identifier + "," + it.channel + ",100 LP," + it.filterMidpoint + "/" + it.filterWidth + " BP,,,," + setup.indexOf(each);
             }
             writer.println(out);
 

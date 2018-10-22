@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelectionImproved;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
@@ -31,19 +32,18 @@ public class ExhaustiveSelectionImprovedTest {
         //Get fluorophore set
         //File input = new File("src/main/resources/fp_spectra.csv");
         //HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
-        File input = new File("src/main/resources/Fluorophores.org/");
-        Map<String, Fluorophore> spectralMaps = fpSpectraParse.parse(input);
-
+        Map<String, Fluorophore> spectralMaps = fpSpectraParse.parse(ParserTest.fpSpectrafp);
+        System.out.println(spectralMaps.keySet());
         //Get cytometer settings
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer cytometer = fpFortessaParse.parse(cyto, false);
+        //File cyto = new File("src/main/resources/ex_fortessa.csv");
+        Cytometer cytometer = fpFortessaParse.parse(ParserTest.fortessafp, false);
 
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         //int n = Integer.parseInt(numString);
         int bigN = 2;
         
-        ArrayList<SelectionInfo> selected = ExhaustiveSelectionImproved.run(bigN, spectralMaps, cytometer);
+        List<SelectionInfo> selected = ExhaustiveSelectionImproved.run(bigN, spectralMaps, cytometer);
         
         ProteinSelector.plotSelection(selected);
     }

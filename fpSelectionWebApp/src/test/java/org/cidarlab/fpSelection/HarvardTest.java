@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
@@ -152,7 +153,7 @@ public class HarvardTest {
         }
         for(int i=1;i<=10;i++){
             ExhaustiveSelectionMultiThreaded multithreaded = new ExhaustiveSelectionMultiThreaded();
-            ArrayList<SelectionInfo> result = multithreaded.run(i, finalFPList, c,10);
+            List<SelectionInfo> result = multithreaded.run(i, finalFPList, c,10);
             System.out.println("RESULT " + i + " === FPs ===");
             for(SelectionInfo si : result){
                 

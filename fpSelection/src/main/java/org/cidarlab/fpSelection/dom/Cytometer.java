@@ -6,6 +6,8 @@
 package org.cidarlab.fpSelection.dom;
 
 import java.util.LinkedList;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
@@ -13,11 +15,17 @@ import java.util.LinkedList;
  */
 public class Cytometer {
     
-    public int sheathPressure;
+    @Getter
+    @Setter
+    private int sheathPressure;
     
-    public int nozzleSize;
+    @Getter
+    @Setter
+    private int nozzleSize;
     
-    public int windowExt;
+    @Getter
+    @Setter
+    private int windowExt;
     
     public LinkedList<Laser> lasers;
     

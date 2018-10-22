@@ -24,7 +24,7 @@ public int filterMidpoint;
     
 public int filterWidth;
 
-public String name;
+public String parameter;
     
     public Detector()
     {

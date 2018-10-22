@@ -9,7 +9,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.LinkedList;
 import org.cidarlab.fpSelection.algorithms.SemiExhaustiveSelection;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
@@ -29,12 +28,11 @@ public class SemiExhaustiveSelectionTest {
         //Get fluorophore set
         //File input = new File("src/main/resources/fp_spectra.csv");
         //HashMap<String, Fluorophore> spectralMaps = uploadFluorescenceSpectrums(input);
-        File input = new File("src/main/resources/Fluorophores.org/");
+        File input = new File("resources/Fluorophores.org/");
         HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
 
         //Get cytometer settings
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer cytometer = fpFortessaParse.parse(cyto, false);
+        Cytometer cytometer = fpFortessaParse.parse(ParserTest.fortessafp, false);
 
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");

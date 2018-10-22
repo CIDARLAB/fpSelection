@@ -244,7 +244,7 @@ public class LaserSelector {
             }
 
             each.wavelength = bestWave;
-            each.name = Integer.toString(bestWave) + " nm Laser";
+            each.setName(Integer.toString(bestWave) + " nm Laser");
         }
 
         /////////////////////////////////////////////////////////////////////

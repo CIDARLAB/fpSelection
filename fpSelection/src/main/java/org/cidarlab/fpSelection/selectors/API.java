@@ -9,6 +9,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelection;
 import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
@@ -49,7 +50,7 @@ public class API {
         return returnCyto;
     }
     
-    public static ArrayList<SelectionInfo> exhaustiveSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
+    public static List<SelectionInfo> exhaustiveSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
     {
         return ExhaustiveSelection.run(n, fps, cyto);
     }
@@ -57,16 +58,16 @@ public class API {
     {
         return SemiExhaustiveSelection.run(n, fps, cyto, width);
     }
-    public static ArrayList<SelectionInfo> hillClimbSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
+    public static List<SelectionInfo> hillClimbSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
     {
         return HillClimbingSelection.run(n, fps, cyto);
     }
-    public static ArrayList<SelectionInfo> simulatedAnnealSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
+    public static List<SelectionInfo> simulatedAnnealSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
     {
         return SimulatedAnnealing.run(n, fps, cyto);
     }
     //For validating existing setups, provide a Hashmap of fluorophores chosen and your full cytometer data.
-    public static ArrayList<SelectionInfo> validator(HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
+    public static List<SelectionInfo> validator(HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
     {
         //By running it like this, it'll just suggest the strongest expressing filter-fp matchups, 
         //and the hill climbing portion will be skipped since we aren't clipping any fp's

@@ -6,31 +6,20 @@
 package org.cidarlab.fpSelection.servlets;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.JOptionPane;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
 import org.cidarlab.fpSelection.algorithms.SimulatedAnnealing;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
@@ -39,7 +28,6 @@ import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
-import org.cidarlab.fpSelection.selectors.RestrictedAnneal;
 import org.json.JSONObject;
 
 /**
@@ -109,7 +97,7 @@ public class SimulatedAnnealingServlet extends HttpServlet {
         //LET THE MAGIC OCCUR.
         
         //ArrayList<SelectionInfo> solution = RestrictedAnneal.AnnealMeBaby(spectralMaps, cytoSettings, n);
-        ArrayList<SelectionInfo> solution = SimulatedAnnealing.run(n, spectralMaps, cytoSettings);
+        List<SelectionInfo> solution = SimulatedAnnealing.run(n, spectralMaps, cytoSettings);
 
         ProteinSelector.generateNoise(solution);
         LinkedList<String> info = PlotAdaptor.webPlot(solution);

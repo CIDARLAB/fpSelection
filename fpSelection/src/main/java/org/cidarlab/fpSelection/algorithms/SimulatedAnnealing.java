@@ -15,7 +15,7 @@ import java.util.logging.Logger;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.InfDouble;
+import org.cidarlab.fpSelection.dom.SNR;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
@@ -30,12 +30,12 @@ public class SimulatedAnnealing {
     private static double coolingRate = 0.003;
     private static int numberOfThreads = 100;
 
-    public static ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
+    public static List<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
         
-        ArrayList<SelectionInfo> result = null;
+        List<SelectionInfo> result = null;
         SimulatedAnnealing sa = new SimulatedAnnealing();
         List<Fluorophore> fps = new ArrayList<Fluorophore>();
-        Map<Integer,Laser> lasers = new HashMap<Integer,Laser>();
+        Map<Detector,Laser> detectorMap = new HashMap<Detector,Laser>();
         List<Detector> detectors = new ArrayList<Detector>();
         
         for(String name:masterList.keySet()){
@@ -46,7 +46,7 @@ public class SimulatedAnnealing {
         for(Laser l:cyto.lasers){
             for(Detector d:l.detectors){
                 detectors.add(d);
-                lasers.put(count, l);
+                detectorMap.put(d, l);
                 count++;
             }
         }
@@ -56,32 +56,27 @@ public class SimulatedAnnealing {
             List<SimulatedAnnealingThread> threads = new ArrayList<SimulatedAnnealingThread>();
             for (int i = 0; i < numberOfThreads; i++) {
 
-                SimulatedAnnealingThread t = new SimulatedAnnealingThread(temperature, coolingRate, i, latch, n, fps, lasers, detectors);
+                SimulatedAnnealingThread t = new SimulatedAnnealingThread(temperature, coolingRate, i, latch, n, fps, detectors, detectorMap);
                 t.start();
                 threads.add(t);
             }
             latch.await();
             
             int index = 0;
-            InfDouble maxSNR = threads.get(0).selectionSNR;
+            SNR maxSNR = threads.get(0).getSelectionSNR();
             for(int i=0;i<threads.size();i++){
-//                System.out.println("From Thread " + t.threadID());
-//                for(SelectionInfo si:t.getSelection()){
-//                    System.out.println(si.getFP().name + "; " + si.selectedLaser.name + "; " + si.selectedDetector.identifier);
-//                }
                 SimulatedAnnealingThread t = threads.get(i);
-                if(t.selectionSNR.compare(maxSNR) > 0){
+                if(t.getSelectionSNR().greaterThan(maxSNR)){
+                    maxSNR = t.getSelectionSNR();
                     index = i;
-                }
-                
+                }                
             }
             
             result = threads.get(index).getSelection();
-            ProteinSelector.calcSumSigNoise(result);
+            ProteinSelector.generateNoise(result);
             for(SelectionInfo si:result){
                 System.out.println(si.getFP().name);
-                System.out.println("SNR      :: " + si.SNR);
-                System.out.println("Laser    :: " + si.selectedLaser.name);
+                System.out.println("Laser    :: " + si.selectedLaser.getName());
                 System.out.println("Detector :: " + si.selectedDetector.identifier);
                 System.out.println("--------------------------------------");
             }

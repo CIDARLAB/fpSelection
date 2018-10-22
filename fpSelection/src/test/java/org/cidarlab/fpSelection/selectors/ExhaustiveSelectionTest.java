@@ -5,16 +5,14 @@
  */
 package org.cidarlab.fpSelection.selectors;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelection;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.selectors.ProteinSelector;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import static org.cidarlab.fpSelection.parsers.fpSpectraParse.parse;
 
@@ -27,23 +25,22 @@ public class ExhaustiveSelectionTest {
     public static void main(String[] args) throws IOException {
         
         //Get fluorophore set
-        File input = new File("src/main/resources/fp_spectra.csv");
-        Map<String, Fluorophore> spectralMaps = parse(input);
+        
+        Map<String, Fluorophore> spectralMaps = parse(ParserTest.fpSpectrafp);
         //File input = new File("src/main/resources/Fluorophores.org/");
         //HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
 
         //Get cytometer settings
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer cytometer = fpFortessaParse.parse(cyto, false);
+        Cytometer cytometer = fpFortessaParse.parse(ParserTest.fortessafp, false);
 
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         //int n = Integer.parseInt(numString);
 
-        int n = 5;
+        int n = 1;
         final long startTime = System.currentTimeMillis();
 
-        ArrayList<SelectionInfo> selected = ExhaustiveSelection.run(n,spectralMaps,cytometer);
+        List<SelectionInfo> selected = ExhaustiveSelection.run(n,spectralMaps,cytometer);
         System.out.println("time: " + (System.currentTimeMillis() - startTime) + " ms");
         
         ProteinSelector.plotSelection(selected);

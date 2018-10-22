@@ -5,7 +5,8 @@
  */
 package org.cidarlab.fpSelection;
 
-import au.com.bytecode.opencsv.CSVReader;
+
+import com.opencsv.CSVReader;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
@@ -13,10 +14,13 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -26,6 +30,14 @@ import java.util.logging.Logger;
  */
 public class Utilities {
     
+    
+    public static int getRandom(int min, int max) {
+        if (min == max) {
+            return min;
+        }
+        int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
+        return randomNum;
+    }
     
     public static void printDebugStatement(String message){
         System.out.println("#########################################");
@@ -137,10 +149,15 @@ public class Utilities {
     
     public static String getResourcesFilepath(){
         String filepath = getFilepath();
-        filepath += getSeparater() + "src" + getSeparater() + "main" + getSeparater() + "resources" + getSeparater();
+        filepath += getSeparater() + "resources" + getSeparater();
         return filepath;
     }
     
+    public static String getCaseStudyFilepath(){
+        String filepath = getFilepath();
+        filepath += getSeparater() + "caseStudies" + getSeparater();
+        return filepath;
+    }
     
     
     //</editor-fold>
@@ -184,6 +201,47 @@ public class Utilities {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
         return filecontent;
+    }
+    
+    
+    
+    public static List<String[]> getCSVFileContentAsList(InputStream is){
+        List<String[]> listPieces = new ArrayList<>();
+        try {
+            CSVReader reader = new CSVReader(new BufferedReader(new InputStreamReader(is, "utf8")));
+            String[] nextline;
+            while( (nextline = reader.readNext()) != null ){
+                listPieces.add(nextline);
+            }
+        }  catch (IOException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+//        List<String> stringList = getFileContentAsStringList(filepath);
+//        for(String line:stringList){
+//            listPieces.add(line.split(","));
+//        }
+        return listPieces;
+    }
+    
+    
+    public static List<String[]> getCSVFileContentAsList(File f){
+        List<String[]> listPieces = new ArrayList<String[]>();
+        try {
+            CSVReader reader = new CSVReader(new FileReader(f));
+            String[] nextline;
+            while( (nextline = reader.readNext()) != null ){
+                listPieces.add(nextline);
+            }
+        } catch (FileNotFoundException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (IOException ex) {
+            Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
+        }
+//        List<String> stringList = getFileContentAsStringList(filepath);
+//        for(String line:stringList){
+//            listPieces.add(line.split(","));
+//        }
+        return listPieces;
     }
     
     

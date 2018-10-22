@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
@@ -114,7 +115,7 @@ public class FilterSelection extends HttpServlet {
         // Parse the rest of the request variables//
         ////////////////////////////////////////////
 
-        ArrayList<SelectionInfo> solution = FilterSelector.run(n, spectralMaps, cytoSettings);
+        List<SelectionInfo> solution = FilterSelector.run(n, spectralMaps, cytoSettings);
 
         LinkedList<String> info = PlotAdaptor.webPlot(solution);
 

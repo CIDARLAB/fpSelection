@@ -134,7 +134,7 @@ public class HarvardTest {
             
             //SimulatedAnnealing
             SimulatedAnnealing anneal = new SimulatedAnnealing();
-            ArrayList<SelectionInfo> result = anneal.run(i, finalFPList,c);
+            List<SelectionInfo> result = anneal.run(i, finalFPList,c);
             
             //System.out.println("RESULT " + i + " === FPs ===");
             long end = System.nanoTime();
@@ -145,7 +145,7 @@ public class HarvardTest {
 
                 lines.add(si.getFP().name);
                 lines.add("SNR      :: " + si.SNR);
-                lines.add("Laser    :: " + si.selectedLaser.name);
+                lines.add("Laser    :: " + si.selectedLaser.getName());
                 lines.add("Detector :: " + si.selectedDetector.identifier);
                 lines.add("--------------------------------------");
             }

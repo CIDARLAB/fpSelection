@@ -69,8 +69,8 @@ public class FilterSelector {
 //    }
 
 
-    public static ArrayList<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
-        ArrayList<SelectionInfo> pls = LFPtoFilter(masterList, cyto.lasers, n);
+    public static List<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
+        List<SelectionInfo> pls = LFPtoFilter(masterList, cyto.lasers, n);
 
         ProteinSelector.calcSumSigNoise(pls);
         ProteinSelector.generateNoise(pls);
@@ -78,29 +78,29 @@ public class FilterSelector {
     }
 
     //*** Algorithm ***//
-    public static ArrayList<SelectionInfo> LFPtoFilter(Map<String, Fluorophore> FPList, List<Laser> lasers, int nDetectors) {
+    public static List<SelectionInfo> LFPtoFilter(Map<String, Fluorophore> FPList, List<Laser> lasers, int nDetectors) {
         ArrayList<RankedInfo> skeleton = new ArrayList();
         
         // Temp solution while fortessa parse is broken
         lasers = new ArrayList<>();
         Laser violet = new Laser();
-        violet.name = "Violet";
+        violet.setName("Violet");
         violet.wavelength = 405;
         lasers.add(violet);
         Laser blue = new Laser();
-        blue.name = "Blue";
+        blue.setName("Blue");
         blue.wavelength = 488;
         lasers.add(blue);
         Laser bluegreen = new Laser();
-        bluegreen.name = "Blue-Green";
+        bluegreen.setName("Blue-Green");
         bluegreen.wavelength = 514;
         lasers.add(bluegreen);
         Laser yelgreen = new Laser();
-        yelgreen.name = "Yellow-Green";
+        yelgreen.setName("Yellow-Green");
         yelgreen.wavelength = 561;
         lasers.add(yelgreen);
         Laser red = new Laser();
-        red.name = "Red";
+        red.setName("Red");
         red.wavelength = 637;
         lasers.add(red);
 
@@ -166,7 +166,7 @@ public class FilterSelector {
         //////////////////////////////
         // Create a new list to be displayed on the graph
         ////////////////////////////
-        ArrayList<SelectionInfo> all = new ArrayList<>();
+        List<SelectionInfo> all = new ArrayList<>();
 
         for (RankedInfo laser : skeleton) {
 

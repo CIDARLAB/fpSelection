@@ -10,6 +10,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import javax.swing.JOptionPane;
 import org.cidarlab.fpSelection.algorithms.SimulatedAnnealing;
@@ -35,13 +36,13 @@ public class SimulatedAnnealTest {
     //Produces results worse than the existing.
     
     public static void main(String[] args) throws IOException {
-        File input = new File("src/main/resources/fp_spectra.csv");
-        Map<String, Fluorophore> spectralMaps = fpSpectraParse.parse(input);
+        
+        Map<String, Fluorophore> spectralMaps = fpSpectraParse.parse(ParserTest.fpSpectrafp);
 
 //        File input = new File("src/main/resources/Fluorophores.org/");
 //        HashMap<String, Fluorophore> spectralMaps = parse(input);
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parse(cyto, false);
+        
+        Cytometer testCyto = fpFortessaParse.parse(ParserTest.fortessafp, false);
 
         String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         if (numString.isEmpty()) {
@@ -49,8 +50,7 @@ public class SimulatedAnnealTest {
         }
         int n = Integer.parseInt(numString);
 
-        //Anneal that shit
-        ArrayList<SelectionInfo> selected = SimulatedAnnealing.run(n,spectralMaps, testCyto);
+        List<SelectionInfo> selected = SimulatedAnnealing.run(n,spectralMaps, testCyto);
         
 //        System.out.println("Return didn't break me");
         

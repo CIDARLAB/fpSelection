@@ -60,47 +60,6 @@ public class FluorophoreTest {
         assertEquals(expResult, result, 0.0);
     }
 
-    /**
-     * Test of leakageCalc method, of class Fluorophore.
-     */
-    @Test
-    public void testLeakageCalc() {
-        System.out.println("leakageCalc");
-        Detector theDetector = null;
-        Fluorophore instance = new Fluorophore();
-        double expResult = 0.0;
-        double result = instance.leakageCalc(theDetector);
-        assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of EXPeak method, of class Fluorophore.
-     */
-    @Test
-    public void testEXPeak() {
-        System.out.println("EXPeak");
-        Fluorophore instance = new Fluorophore();
-        double expResult = 0.0;
-        double result = instance.EXPeak();
-        assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
-
-    /**
-     * Test of EMPeak method, of class Fluorophore.
-     */
-    @Test
-    public void testEMPeak() {
-        System.out.println("EMPeak");
-        Fluorophore instance = new Fluorophore();
-        double expResult = 0.0;
-        double result = instance.EMPeak();
-        assertEquals(expResult, result, 0.0);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
+    
     
 }

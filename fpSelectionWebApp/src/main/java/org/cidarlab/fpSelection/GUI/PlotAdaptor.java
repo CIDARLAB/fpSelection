@@ -20,6 +20,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import javax.imageio.ImageIO;
 import org.cidarlab.fpSelection.dom.Cytometer;
@@ -34,7 +35,7 @@ import org.cidarlab.fpSelection.dom.SelectionInfo;
  */
 public class PlotAdaptor {
 
-    public static LinkedList<String> webPlot(ArrayList<SelectionInfo> info) throws IOException {
+    public static LinkedList<String> webPlot(List<SelectionInfo> info) throws IOException {
         //sort selection info so that filters with same lasers are plotted on same graph
         Collections.sort(info);
 
@@ -100,7 +101,7 @@ public class PlotAdaptor {
                 }
                 if(first)
                 {
-                    newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + laser.name);
+                    newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + laser.getName());
                     newPlot.getAxis("x").setBoundaries(300, 900);
                     newPlot.getAxis("y").setLabel("Intensity (%)");
                     newPlot.getAxis("y").setBoundaries(0, 125);
@@ -108,7 +109,7 @@ public class PlotAdaptor {
                 }
                 else
                 {                 
-                    g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + laser.name);
+                    g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + laser.getName());
                     g.getAxis("x").setBoundaries(300, 900);
                     g.getAxis("y").setLabel("Intensity (%)");
                     g.getAxis("y").setBoundaries(0, 125);
@@ -123,14 +124,14 @@ public class PlotAdaptor {
                     usedLasers.add(entry.selectedLaser);
 
                     //add noise plot
-                    PointDataSet noiseDataSet = (entry.makeDataSet());
+                    PointDataSet noiseDataSet = (entry.makeNoiseDataSet());
                     AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
-                    noisePlot.setTitle("Noise in " + entry.selectedLaser.name);
+                    noisePlot.setTitle("Noise in " + entry.selectedLaser.getName());
                     noisePlot.set("fs", "transparent solid 0.2 noborder");
 
                     //add emission plot
                     Fluorophore fp = entry.selectedFluorophore;
-                    SNR += fp.name + " Detector: " + entry.selectedDetector.identifier + " Laser: " + entry.selectedLaser.name + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
+                    SNR += fp.name + " Detector: " + entry.selectedDetector.identifier + " Laser: " + entry.selectedLaser.getName() + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
                     totalSNR += entry.SNR;
                     snrCount++;
 
@@ -150,7 +151,7 @@ public class PlotAdaptor {
                         newPlot.addPlot(noisePlot);
                         newPlot.addPlot(emPlot);
                         newPlot.addPlot(boundsPlot);
-                        newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + entry.selectedLaser.name);
+                        newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + entry.selectedLaser.getName());
                         newPlot.getAxis("x").setBoundaries(300, 900);
                         newPlot.getAxis("y").setLabel("Intensity (%)");
                         newPlot.getAxis("y").setBoundaries(0, 125);
@@ -162,7 +163,7 @@ public class PlotAdaptor {
                         g.addPlot(noisePlot);
                         g.addPlot(emPlot);
                         g.addPlot(boundsPlot);
-                        g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + entry.selectedLaser.name);
+                        g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + entry.selectedLaser.getName());
                         g.getAxis("x").setBoundaries(300, 900);
                         g.getAxis("y").setLabel("Intensity (%)");
                         g.getAxis("y").setBoundaries(0, 125);
@@ -174,7 +175,7 @@ public class PlotAdaptor {
 
                     //add emission plot
                     Fluorophore fp = entry.selectedFluorophore;
-                    SNR += fp.name + " Detector: " + entry.selectedDetector.identifier + " Laser: " + entry.selectedLaser.name + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
+                    SNR += fp.name + " Detector: " + entry.selectedDetector.identifier + " Laser: " + entry.selectedLaser.getName() + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
                     totalSNR += entry.SNR;
                     snrCount++;
                     PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));

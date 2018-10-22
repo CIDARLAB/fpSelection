@@ -14,6 +14,7 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
@@ -119,7 +120,7 @@ public class MyFP extends HttpServlet {
         int n = spectralMaps.size();
         ExhaustiveSelectionMultiThreaded algo = new ExhaustiveSelectionMultiThreaded();
         
-        ArrayList<SelectionInfo> optimal = new ArrayList<>();
+        List<SelectionInfo> optimal = new ArrayList<>();
         ArrayList<SelectionInfo> everything = new ArrayList<>();
         try {
             optimal = algo.run(n, spectralMaps, cytoSettings, 8);
@@ -142,7 +143,7 @@ public class MyFP extends HttpServlet {
         String optimalInfo = "Optimal Selection:\r\n";
         for (SelectionInfo si : optimal)
         {
-            optimalInfo += si.selectedFluorophore.name + " Detector: " + si.selectedDetector.identifier + " Laser: " + si.selectedLaser.name + " SNR : " + String.format("%.3f", si.SNR) + "\r\n";;
+            optimalInfo += si.selectedFluorophore.name + " Detector: " + si.selectedDetector.identifier + " Laser: " + si.selectedLaser.getName() + " SNR : " + String.format("%.3f", si.SNR) + "\r\n";;
         }
 
         result.put("img", info.get(0));
