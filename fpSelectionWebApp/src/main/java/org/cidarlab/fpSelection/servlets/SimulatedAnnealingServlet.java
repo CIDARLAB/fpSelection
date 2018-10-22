@@ -6,38 +6,28 @@
 package org.cidarlab.fpSelection.servlets;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.swing.JOptionPane;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.fileupload.FileItemFactory;
-import org.apache.commons.fileupload.FileUploadException;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
+import org.cidarlab.fpSelection.algorithms.SimulatedAnnealing;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.fpSpectraParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
-import org.cidarlab.fpSelection.selectors.RestrictedAnneal;
 import org.json.JSONObject;
 
 /**
@@ -79,7 +69,7 @@ public class SimulatedAnnealingServlet extends HttpServlet {
         /////////////////////
         // Parse the files //
         /////////////////////
-        HashMap<String, Fluorophore> spectralMaps = null;
+        Map<String, Fluorophore> spectralMaps = null;
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);
@@ -105,7 +95,9 @@ public class SimulatedAnnealingServlet extends HttpServlet {
         // Parse the rest of the request variables//
         ////////////////////////////////////////////
         //LET THE MAGIC OCCUR.
-        ArrayList<SelectionInfo> solution = RestrictedAnneal.AnnealMeBaby(spectralMaps, cytoSettings, n);
+        
+        //ArrayList<SelectionInfo> solution = RestrictedAnneal.AnnealMeBaby(spectralMaps, cytoSettings, n);
+        List<SelectionInfo> solution = SimulatedAnnealing.run(n, spectralMaps, cytoSettings);
 
         ProteinSelector.generateNoise(solution);
         LinkedList<String> info = PlotAdaptor.webPlot(solution);

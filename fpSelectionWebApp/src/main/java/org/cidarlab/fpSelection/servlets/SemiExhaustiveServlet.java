@@ -31,10 +31,10 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.cidarlab.fpSelection.Algorithms.SemiExhaustiveSelection;
+import org.cidarlab.fpSelection.algorithms.SemiExhaustiveSelection;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.fpSpectraParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
@@ -86,7 +86,7 @@ public class SemiExhaustiveServlet extends HttpServlet {
         /////////////////////
         // Parse the files //
         /////////////////////
-        HashMap<String, Fluorophore> spectralMaps = null;
+        Map<String, Fluorophore> spectralMaps = null;
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);

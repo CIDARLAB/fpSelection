@@ -96,7 +96,7 @@ public class ProteinComparator implements Comparator<Fluorophore> {
     }
 
     //Compares FPs based solely on how they affect their own laser.
-    public static boolean dupeCompare(SelectionInfo o1, SelectionInfo o2, compareTypes enumType, boolean absolute) {
+    public static boolean dupeCompare(RankedInfo o1, RankedInfo o2, compareTypes enumType, boolean absolute) { //Used in Hill Climbing.
         //All comparison variables have been normalized to a (0-100) range
         //Comparison in terms of brightness in desired filter.
 

@@ -17,6 +17,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -29,10 +31,10 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
-import org.cidarlab.fpSelection.Algorithms.HillClimbingSelection;
+import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.fpSpectraParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
@@ -81,7 +83,7 @@ public class HillClimbingServlet extends HttpServlet {
         /////////////////////
         // Parse the files //
         /////////////////////
-        HashMap<String, Fluorophore> spectralMaps = null;
+        Map<String, Fluorophore> spectralMaps = null;
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);
@@ -105,7 +107,7 @@ public class HillClimbingServlet extends HttpServlet {
         // Parse the rest of the request variables//
         ////////////////////////////////////////////
 
-        ArrayList<SelectionInfo> solution = HillClimbingSelection.run(n, spectralMaps, cytoSettings);
+        List<SelectionInfo> solution = HillClimbingSelection.run(n, spectralMaps, cytoSettings);
 
         LinkedList<String> info = PlotAdaptor.webPlot(solution);
 

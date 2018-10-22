@@ -12,17 +12,17 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import org.cidarlab.fpSelection.adaptors.ScrapedCSVParse;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
+import org.cidarlab.fpSelection.Utilities;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.EXPeakComparator;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.ListHelper;
+import org.cidarlab.fpSelection.dom.RankedInfo;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
-import static org.cidarlab.fpSelection.selectors.LaserSelector.FilterFPtoLasers;
+import org.cidarlab.fpSelection.parsers.ScrapedCSVParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 
 /**
  *
@@ -30,37 +30,6 @@ import static org.cidarlab.fpSelection.selectors.LaserSelector.FilterFPtoLasers;
  */
 public class LaserSelecTwoR {
 
-    /////////////////////////////////
-    // Incomplete, wanted to redo as a side project
-    /////////////////////////////////
-    
-     public static void main(String[] args) throws IOException {
-        File input = new File("src/main/resources/Fluorophores.org/");
-        HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
-
-//        File input = new File("src/main/resources/fp_spectra.csv");
-//        HashMap<String, Fluorophore> spectralMaps = fpSpectraParse.parse(input);
-
-        HashMap<String, Fluorophore> choose = new HashMap<>();
-        Random next = new Random();
-
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parse(cyto, true);
-
-        ArrayList<Detector> detect = new ArrayList();
-
-        for (int i = 0; i < 5; i++) {
-            Laser get = testCyto.lasers.get(next.nextInt(testCyto.lasers.size()));
-            detect.add(get.detectors.get(next.nextInt(get.detectors.size())));
-        }
-
-        ArrayList<SelectionInfo> pls = FilterFPtoLasers(spectralMaps, detect, 3);
-
-        ProteinSelector.calcSumSigNoise(pls);
-        ProteinSelector.generateNoise(pls);
-        ProteinSelector.plotSelection(pls);
-
-    }
     ///////////////////////////////////
     ///         OLD PROCESS         ///
     ///////////////////////////////////
@@ -198,11 +167,11 @@ public class LaserSelecTwoR {
             //keep going until you go through all ups and downs and your std deviation only increases.
         } while (nextAvgDev < avgStdDev);
 
-        ArrayList<SelectionInfo> selections = new ArrayList<>();
+        ArrayList<RankedInfo> selections = new ArrayList<>();
         //Create lasers based on avg wavelengths of each group.
         for(int i = 0; i < nLasers; i++)
         {
-            SelectionInfo info = new SelectionInfo();
+            RankedInfo info = new RankedInfo();
             info.selectedLaser = new Laser();
             info.selectedLaser.detectors = new LinkedList<>();
             info.selectedLaser.wavelength = (int) ((double)groups.avgWavelengths.get(i));

@@ -14,6 +14,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
@@ -22,11 +24,11 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.fpSpectraParse;
 import org.cidarlab.fpSelection.selectors.FilterSelector;
 import org.cidarlab.fpSelection.selectors.LaserSelector;
 import org.json.JSONObject;
@@ -90,7 +92,7 @@ public class FilterSelection extends HttpServlet {
         /////////////////////
         // Parse the files //
         /////////////////////
-        HashMap<String, Fluorophore> spectralMaps = null;
+        Map<String, Fluorophore> spectralMaps = null;
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);
@@ -113,7 +115,7 @@ public class FilterSelection extends HttpServlet {
         // Parse the rest of the request variables//
         ////////////////////////////////////////////
 
-        ArrayList<SelectionInfo> solution = FilterSelector.run(n, spectralMaps, cytoSettings);
+        List<SelectionInfo> solution = FilterSelector.run(n, spectralMaps, cytoSettings);
 
         LinkedList<String> info = PlotAdaptor.webPlot(solution);
 

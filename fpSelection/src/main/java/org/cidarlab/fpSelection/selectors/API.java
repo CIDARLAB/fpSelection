@@ -9,19 +9,17 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import javafx.util.Pair;
-import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelection;
-import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelectionImproved;
-import org.cidarlab.fpSelection.Algorithms.HillClimbingSelection;
-import org.cidarlab.fpSelection.Algorithms.SemiExhaustiveSelection;
-import org.cidarlab.fpSelection.adaptors.ScrapedCSVParse;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
-import static org.cidarlab.fpSelection.adaptors.fpSpectraParse.parse;
+import org.cidarlab.fpSelection.algorithms.ExhaustiveSelection;
+import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
+import org.cidarlab.fpSelection.algorithms.SemiExhaustiveSelection;
+import org.cidarlab.fpSelection.algorithms.SimulatedAnnealing;
+import org.cidarlab.fpSelection.parsers.ScrapedCSVParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
+import static org.cidarlab.fpSelection.parsers.fpSpectraParse.parse;
 import org.cidarlab.fpSelection.dom.Cytometer;
-import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.Laser;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 
 /**
@@ -32,10 +30,10 @@ public class API {
     
     //Not really necessary, but it's nice to have a centralized location for calling our functions.
     
-    public static HashMap<String, Fluorophore> parseMasterList(File fpList) throws IOException
+    public static Map<String, Fluorophore> parseMasterList(File fpList) throws IOException
     {
         //to do
-        HashMap<String, Fluorophore> returnList = parse(fpList);
+        Map<String, Fluorophore> returnList = parse(fpList);
         return returnList;
     }
     
@@ -52,7 +50,7 @@ public class API {
         return returnCyto;
     }
     
-    public static ArrayList<SelectionInfo> exhaustiveSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
+    public static List<SelectionInfo> exhaustiveSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
     {
         return ExhaustiveSelection.run(n, fps, cyto);
     }
@@ -60,16 +58,16 @@ public class API {
     {
         return SemiExhaustiveSelection.run(n, fps, cyto, width);
     }
-    public static ArrayList<SelectionInfo> hillClimbSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
+    public static List<SelectionInfo> hillClimbSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
     {
         return HillClimbingSelection.run(n, fps, cyto);
     }
-    public static ArrayList<SelectionInfo> simulatedAnnealSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
+    public static List<SelectionInfo> simulatedAnnealSearch(int n, HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
     {
-        return SimulatedAnneal.simulateAnnealing(fps, cyto, n);
+        return SimulatedAnnealing.run(n, fps, cyto);
     }
     //For validating existing setups, provide a Hashmap of fluorophores chosen and your full cytometer data.
-    public static ArrayList<SelectionInfo> validator(HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
+    public static List<SelectionInfo> validator(HashMap<String, Fluorophore> fps, Cytometer cyto) throws IOException
     {
         //By running it like this, it'll just suggest the strongest expressing filter-fp matchups, 
         //and the hill climbing portion will be skipped since we aren't clipping any fp's

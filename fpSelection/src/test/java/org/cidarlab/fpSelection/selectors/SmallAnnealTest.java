@@ -11,8 +11,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import javax.swing.JOptionPane;
-import org.cidarlab.fpSelection.adaptors.ScrapedCSVParse;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.ScrapedCSVParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 
@@ -26,10 +26,9 @@ public class SmallAnnealTest {
 //        File input = new File("src/main/resources/fp_spectra.csv");
 //        HashMap<String, Fluorophore> spectralMaps = parse(input);
 
-        File input = new File("src/main/resources/Fluorophores.org/");
+        File input = new File("resources/Fluorophores.org/");
         HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parse(cyto, false);
+        Cytometer testCyto = fpFortessaParse.parse(ParserTest.fortessafp, false);
 
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Give an integer n for the number of you would like: ");

@@ -14,6 +14,8 @@ import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -22,13 +24,13 @@ import javax.servlet.annotation.MultipartConfig;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.cidarlab.fpSelection.adaptors.fpSpectraParse;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.fpSpectraParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.selectors.ProteinSelector;
-import org.cidarlab.fpSelection.Algorithms.ExhaustiveSelectionMultiThreaded;
+import org.cidarlab.fpSelection.algorithms.ExhaustiveSelectionMultiThreaded;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
 import org.json.JSONObject;
 
@@ -75,7 +77,7 @@ public class ExhaustiveServlet extends HttpServlet {
         /////////////////////
         // Parse the files //
         /////////////////////
-        HashMap<String, Fluorophore> spectralMaps = null;
+        Map<String, Fluorophore> spectralMaps = null;
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);
@@ -100,7 +102,7 @@ public class ExhaustiveServlet extends HttpServlet {
         ////////////////////////////////////////////
         ExhaustiveSelectionMultiThreaded algo = new ExhaustiveSelectionMultiThreaded();
         
-        ArrayList<SelectionInfo> selected = new ArrayList<>();
+        List<SelectionInfo> selected = new ArrayList<>();
         try {
             selected = algo.run(n, spectralMaps, cytoSettings, 8);
         } catch (InterruptedException ex) {

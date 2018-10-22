@@ -12,17 +12,17 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.TreeMap;
-import javax.swing.JOptionPane;
-import org.cidarlab.fpSelection.Algorithms.HillClimbingSelection;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
+import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.Laser;
+import org.cidarlab.fpSelection.dom.RankedInfo;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
-import static org.cidarlab.fpSelection.selectors.LaserSelector.FilterFPtoLasers;
-import static org.cidarlab.fpSelection.adaptors.fpSpectraParse.parse;
+import static org.cidarlab.fpSelection.parsers.fpSpectraParse.parse;
 
 /**
  *
@@ -47,28 +47,30 @@ public class FilterSelector {
     //:D
     private static int[] filterWidths = {15, 20, 25, 30, 40, 45, 50};
 
-    public static void main(String[] args) throws IOException {
-        File input = new File("src/main/resources/fp_spectra.csv");
-        HashMap<String, Fluorophore> spectralMaps = parse(input);
 
-//        File input = new File("src/main/resources/Fluorophores.org/");
-//        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
-        File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer testCyto = fpFortessaParse.parse(cyto, true);
+//    public static void main(String[] args) throws IOException {
+//        File input = new File("src/main/resources/fp_spectra.csv");
+//        HashMap<String, Fluorophore> spectralMaps = parse(input);
+//
+////        File input = new File("src/main/resources/Fluorophores.org/");
+////        HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
+//        File cyto = new File("src/main/resources/ex_fortessa.csv");
+//        Cytometer testCyto = fpFortessaParse.parse(cyto);
+//
+////        Scanner scanner = new Scanner(System.in);
+////        System.out.println("Give an integer n for the number of you would like: ");
+////        int n = scanner.nextInt();
+//        ArrayList<SelectionInfo> pls = LFPtoFilter(spectralMaps, testCyto.lasers, 7);
+//
+//        ProteinSelector.calcSumSigNoise(pls);
+//        ProteinSelector.generateNoise(pls);
+//        ProteinSelector.plotSelection(pls);
+//
+//    }
 
-//        Scanner scanner = new Scanner(System.in);
-//        System.out.println("Give an integer n for the number of you would like: ");
-//        int n = scanner.nextInt();
-        ArrayList<SelectionInfo> pls = LFPtoFilter(spectralMaps, testCyto.lasers, 7);
 
-        ProteinSelector.calcSumSigNoise(pls);
-        ProteinSelector.generateNoise(pls);
-        ProteinSelector.plotSelection(pls);
-
-    }
-
-    public static ArrayList<SelectionInfo> run(int n, HashMap<String, Fluorophore> masterList, Cytometer cyto) {
-        ArrayList<SelectionInfo> pls = LFPtoFilter(masterList, cyto.lasers, n);
+    public static List<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
+        List<SelectionInfo> pls = LFPtoFilter(masterList, cyto.lasers, n);
 
         ProteinSelector.calcSumSigNoise(pls);
         ProteinSelector.generateNoise(pls);
@@ -76,29 +78,29 @@ public class FilterSelector {
     }
 
     //*** Algorithm ***//
-    public static ArrayList<SelectionInfo> LFPtoFilter(HashMap<String, Fluorophore> FPList, List<Laser> lasers, int nDetectors) {
-        ArrayList<SelectionInfo> skeleton = new ArrayList();
+    public static List<SelectionInfo> LFPtoFilter(Map<String, Fluorophore> FPList, List<Laser> lasers, int nDetectors) {
+        ArrayList<RankedInfo> skeleton = new ArrayList();
         
         // Temp solution while fortessa parse is broken
         lasers = new ArrayList<>();
         Laser violet = new Laser();
-        violet.name = "Violet";
+        violet.setName("Violet");
         violet.wavelength = 405;
         lasers.add(violet);
         Laser blue = new Laser();
-        blue.name = "Blue";
+        blue.setName("Blue");
         blue.wavelength = 488;
         lasers.add(blue);
         Laser bluegreen = new Laser();
-        bluegreen.name = "Blue-Green";
+        bluegreen.setName("Blue-Green");
         bluegreen.wavelength = 514;
         lasers.add(bluegreen);
         Laser yelgreen = new Laser();
-        yelgreen.name = "Yellow-Green";
+        yelgreen.setName("Yellow-Green");
         yelgreen.wavelength = 561;
         lasers.add(yelgreen);
         Laser red = new Laser();
-        red.name = "Red";
+        red.setName("Red");
         red.wavelength = 637;
         lasers.add(red);
 
@@ -107,7 +109,7 @@ public class FilterSelector {
         //////////////////////////////////////////
         for (Laser each : lasers) {
             System.out.println(each.wavelength);
-            SelectionInfo newInfo = new SelectionInfo();
+            RankedInfo newInfo = new RankedInfo();
             newInfo.noise = new TreeMap<>();
             newInfo.rankedFluorophores = new ArrayList();
             newInfo.selectedIndex = 0;
@@ -116,12 +118,12 @@ public class FilterSelector {
         }
 
         for (Fluorophore fp : FPList.values()) {
-            SelectionInfo mostExcite = null;
+            RankedInfo mostExcite = null;
             double howExcite = 0;
             int exciteIndex = -1;
 
             int index = 0;
-            for (SelectionInfo each : skeleton) {
+            for (RankedInfo each : skeleton) {
                 if (mostExcite == null) {
                     mostExcite = each;
                     exciteIndex = 0;
@@ -150,7 +152,7 @@ public class FilterSelector {
         /////////////////////////////////////////////
         // Shrink/Push filter bounds apart from eachother //
         /////////////////////////////////////////////
-        for (SelectionInfo laser : skeleton) {
+        for (RankedInfo laser : skeleton) {
             fixOverlaps(laser);
         }
 
@@ -164,19 +166,17 @@ public class FilterSelector {
         //////////////////////////////
         // Create a new list to be displayed on the graph
         ////////////////////////////
-        ArrayList<SelectionInfo> all = new ArrayList<>();
+        List<SelectionInfo> all = new ArrayList<>();
 
-        for (SelectionInfo laser : skeleton) {
+        for (RankedInfo laser : skeleton) {
 
             Iterator<Detector> iter = laser.selectedLaser.detectors.listIterator();
             for (int i = 0; i < laser.selectedLaser.detectors.size(); i++) {
                 SelectionInfo info = new SelectionInfo();
                 info.selectedLaser = laser.selectedLaser;
-                info.selectedIndex = 0;
                 info.selectedDetector = iter.next();
-                info.rankedFluorophores = new ArrayList();
-                info.rankedFluorophores.add(laser.rankedFluorophores.get(i));
-                System.out.println(info.selectedLaser.wavelength + " : " + info.selectedDetector.filterMidpoint + "/" + info.selectedDetector.filterWidth + " LP, FP: " + info.rankedFluorophores.get(0).name);
+                info.selectedFluorophore = laser.rankedFluorophores.get(i);
+                System.out.println(info.selectedLaser.wavelength + " : " + info.selectedDetector.filterMidpoint + "/" + info.selectedDetector.filterWidth + " LP, FP: " + info.selectedFluorophore.name);
                 all.add(info);
             }
         }
@@ -188,7 +188,7 @@ public class FilterSelector {
         Cytometer cyto = new Cytometer();
         cyto.lasers = new LinkedList<>();
         
-        for(SelectionInfo each : skeleton)
+        for(RankedInfo each : skeleton)
         {
             cyto.lasers.add(each.selectedLaser);
         }
@@ -198,7 +198,7 @@ public class FilterSelector {
         return all;
     }
 
-    static void fixOverlaps(SelectionInfo laserSetup) {
+    static void fixOverlaps(RankedInfo laserSetup) {
 
         //I need the ability to randomly access
         ArrayList<Detector> sortList = new ArrayList<>(laserSetup.selectedLaser.detectors);

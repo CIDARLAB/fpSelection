@@ -32,8 +32,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.cidarlab.fpSelection.GUI.PlotAdaptor;
-import org.cidarlab.fpSelection.adaptors.ScrapedCSVParse;
-import org.cidarlab.fpSelection.adaptors.fpFortessaParse;
+import org.cidarlab.fpSelection.parsers.ScrapedCSVParse;
+import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
@@ -165,9 +165,7 @@ public class MainServlet extends HttpServlet {
         ArrayList<SelectionInfo> selected = new ArrayList<>();
         for (int i = 0; i < n; i++) {
             SelectionInfo si = new SelectionInfo();
-            si.rankedFluorophores = new ArrayList<>();
-            si.rankedFluorophores.add(ranked[bestFilters[i]][bestFluorophores[i]].fluorophore);
-            si.selectedIndex = 0;
+            si.selectedFluorophore = ranked[bestFilters[i]][bestFluorophores[i]].fluorophore;
             si.selectedDetector = ranked[bestFilters[i]][bestFluorophores[i]].detector;
             si.selectedLaser = ranked[bestFilters[i]][bestFluorophores[i]].laser;
             selected.add(si);
