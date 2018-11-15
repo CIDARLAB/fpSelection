@@ -14,7 +14,7 @@ import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Fluorophore;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
-import static org.cidarlab.fpSelection.parsers.fpSpectraParse.parse;
+import org.cidarlab.fpSelection.parsers.fpSpectraParse;
 
 /**
  *
@@ -26,13 +26,13 @@ public class ExhaustiveSelectionTest {
         
         //Get fluorophore set
         
-        Map<String, Fluorophore> spectralMaps = parse(ParserTest.fpSpectrafp);
+        Map<String, Fluorophore> spectralMaps = fpSpectraParse.parse(ParserTest.fpSpectrafp);
         //File input = new File("src/main/resources/Fluorophores.org/");
         //HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
 
         //Get cytometer settings
-        Cytometer cytometer = fpFortessaParse.parse(ParserTest.fortessafp, false);
-
+        Cytometer cytometer = fpFortessaParse.parse(ParserTest.BUfortessafp, false);
+        
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         //int n = Integer.parseInt(numString);

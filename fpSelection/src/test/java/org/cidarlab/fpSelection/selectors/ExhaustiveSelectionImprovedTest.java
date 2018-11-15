@@ -36,7 +36,7 @@ public class ExhaustiveSelectionImprovedTest {
         System.out.println(spectralMaps.keySet());
         //Get cytometer settings
         //File cyto = new File("src/main/resources/ex_fortessa.csv");
-        Cytometer cytometer = fpFortessaParse.parse(ParserTest.fortessafp, false);
+        Cytometer cytometer = fpFortessaParse.parse(ParserTest.BUfortessafp, false);
 
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");

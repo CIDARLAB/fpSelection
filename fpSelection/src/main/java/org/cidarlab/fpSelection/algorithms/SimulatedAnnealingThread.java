@@ -175,17 +175,39 @@ public class SimulatedAnnealingThread extends Thread {
     public static double acceptanceProbability(SNR current, SNR next, double temp) {
 
         if (next.greaterThan(current)) {
-            System.out.println("Next SNR Greater. Acceptance Probability = 1");
+            //System.out.println("Next SNR Greater. Acceptance Probability = 1");
             return 1;
         }
-        if(current.getSnr() == next.getSnr()){
-            System.out.println("Next SNR = Current SNR. Acceptance Probability = 0.5");
-            return 0.5;
+        double currentSignal = 0;
+        double currentNoise = 0;
+        double nextSignal = 0;
+        double nextNoise = 0;
+        int size = current.getSignalNoiseList().size();
+        for(int i=0;i<size;i++){
+            currentSignal += current.getSignalNoiseList().get(i).getKey();
+            currentNoise += current.getSignalNoiseList().get(i).getValue();
+            nextSignal += next.getSignalNoiseList().get(i).getKey();
+            nextNoise += next.getSignalNoiseList().get(i).getValue();
         }
-        double deltaE = next.getSnr() - current.getSnr();
+        
+        if(currentSignal == nextSignal){
+            if(nextSignal == nextNoise){
+                return 0.5;
+            }
+        } 
+        
+        double deltaE = 0;
+        if(currentSignal != nextSignal){
+            deltaE = nextSignal - currentSignal;
+        } else {
+            deltaE = currentNoise - nextNoise;
+        }
+        
+        
+        //double deltaE = next.getSnr() - current.getSnr();
         double exp = (-deltaE) / (temp);
         double prob = 1.0 / (1.0 + (Math.pow(Math.E, exp)));
-        System.out.println("Next SNR = " + next.getSnr() + ":: Current SNR = " + current.getSnr() + ":: Acceptance Probability = " + prob);
+        //System.out.println("Next SNR = " + next.getSnr() + ":: Current SNR = " + current.getSnr() + ":: Acceptance Probability = " + prob);
         return prob;
     }
 

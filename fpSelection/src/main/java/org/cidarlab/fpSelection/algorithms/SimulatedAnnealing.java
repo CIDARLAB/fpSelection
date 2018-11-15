@@ -28,7 +28,7 @@ public class SimulatedAnnealing {
 
     private static double temperature = 1000;
     private static double coolingRate = 0.003;
-    private static int numberOfThreads = 100;
+    private static int numberOfThreads = 50;
 
     public static List<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
         
@@ -74,6 +74,7 @@ public class SimulatedAnnealing {
             
             result = threads.get(index).getSelection();
             ProteinSelector.generateNoise(result);
+            /*
             for(SelectionInfo si:result){
                 System.out.println(si.getFP().name);
                 System.out.println("Laser    :: " + si.selectedLaser.getName());
@@ -82,7 +83,7 @@ public class SimulatedAnnealing {
             }
             System.out.println("=====================================");
             System.out.println("Done");
-
+            */
         } catch (InterruptedException ex) {
             Logger.getLogger(SimulatedAnnealing.class.getName()).log(Level.SEVERE, null, ex);
         }

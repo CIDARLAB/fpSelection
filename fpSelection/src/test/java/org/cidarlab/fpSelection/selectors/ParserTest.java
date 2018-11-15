@@ -27,7 +27,8 @@ import org.junit.Test;
  */
 public class ParserTest {
     
-    public static String fortessafp = Utilities.getResourcesFilepath() + "ex_fortessa.csv";
+    public static String BUfortessafp = Utilities.getResourcesFilepath() + "BUfortessa.csv";
+    public static String Harvardfortessafp = Utilities.getResourcesFilepath() + "HarvardFortessa.csv";
     public static String fluorophoreMetafp = Utilities.getResourcesFilepath() + "fluorophore_meta_data.csv";
     public static String fpSpectrafp = Utilities.getResourcesFilepath() + "test_spectra.csv";
     
@@ -63,7 +64,7 @@ public class ParserTest {
         
 
         Cytometer shinyCytometer;
-        shinyCytometer = fpFortessaParse.parse(ParserTest.fortessafp, false);
+        shinyCytometer = fpFortessaParse.parse(ParserTest.BUfortessafp, false);
 
         System.out.println("Sheath Pressure: " + shinyCytometer.getSheathPressure()); 
         System.out.println("Nozzle Size: " + shinyCytometer.getNozzleSize());

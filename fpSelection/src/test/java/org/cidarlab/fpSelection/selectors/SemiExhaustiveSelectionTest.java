@@ -32,7 +32,7 @@ public class SemiExhaustiveSelectionTest {
         HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
 
         //Get cytometer settings
-        Cytometer cytometer = fpFortessaParse.parse(ParserTest.fortessafp, false);
+        Cytometer cytometer = fpFortessaParse.parse(ParserTest.BUfortessafp, false);
 
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");

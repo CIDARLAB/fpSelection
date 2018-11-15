@@ -64,11 +64,11 @@ public class ProteinSelector {
         int width = screenSize.width;
         int height = screenSize.height;
 
-        newPlot.set("terminal", "png transparent truecolor nocrop enhanced size " + Integer.toString(width) + "," + Integer.toString(height - 150) + "font 'arial,7'");
+        newPlot.set("terminal", "png transparent truecolor nocrop enhanced size " + Integer.toString(width) + "," + Integer.toString(height - 150) + "font 'arial,12'");
         newPlot.set("style fill", "transparent solid 0.3");
         newPlot.set("style data", "lines");
         newPlot.set("style data filledcurves", "x1");
-        newPlot.set("key", "font ',8'");
+        newPlot.set("key", "font ',12'");
 
         //if first plot to be added
         boolean first = true;
@@ -87,7 +87,6 @@ public class ProteinSelector {
 
                 //add emission plot
                 Fluorophore fp = entry.selectedFluorophore;
-                System.out.println(fp.name + " SNR : " + String.format("%.3f", entry.SNR));
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
                 emPlot.setTitle(fp.name);

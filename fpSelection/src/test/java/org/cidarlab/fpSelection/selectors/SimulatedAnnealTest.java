@@ -42,7 +42,7 @@ public class SimulatedAnnealTest {
 //        File input = new File("src/main/resources/Fluorophores.org/");
 //        HashMap<String, Fluorophore> spectralMaps = parse(input);
         
-        Cytometer testCyto = fpFortessaParse.parse(ParserTest.fortessafp, false);
+        Cytometer testCyto = fpFortessaParse.parse(ParserTest.BUfortessafp, false);
 
         String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");
         if (numString.isEmpty()) {
@@ -56,6 +56,7 @@ public class SimulatedAnnealTest {
         
         ProteinSelector.generateNoise(selected);
         
+        SelectionInfo.printSelection(selected);
 //        System.out.println("Noise didn't break me");
 
         //SimulatedAnneal.plotSelection(selected);

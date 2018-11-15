@@ -209,7 +209,7 @@ public class DataAnalytics {
         for(String fp: aplot.keySet()){
             String fpName = aplot.get(fp).getFpname();
             AnalyticsPlot adjustedPlot = new AnalyticsPlot();
-            double brightness = (metadata.get(getFPMetaDataMap().get(fpName)).brightness);
+            double brightness = (metadata.get(getFPMetaDataMap().get(fpName)).getBrightness());
             double excitation = spectradata.get(getFPSpectraMap().get(fpName)).EXspectrum.get((double) aplot.get(fp).getLaserWavelength());
             
             

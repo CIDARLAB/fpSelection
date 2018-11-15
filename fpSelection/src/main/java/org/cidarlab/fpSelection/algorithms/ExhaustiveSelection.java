@@ -50,8 +50,6 @@ public class ExhaustiveSelection {
             numFilters += laser.detectors.size();
         }
         
-        //preprocess data structures
-        
         //fluorophore index --> fluorophore object
         Fluorophore[] fluorophores = new Fluorophore[numFluorophores];      
         int fpi = 0;
@@ -61,11 +59,7 @@ public class ExhaustiveSelection {
             fpi++;
         }
         
-        //filter index --> fluorophore index --> riemann sun
-        double[][] filterSignal = new double[numFilters][numFluorophores];       
-        //filter index --> laser
-        Laser[] lasers = new Laser[numFilters]; //Check
-        //filter index --> detector
+        Laser[] lasers = new Laser[numFilters]; 
         Detector[] detectors = new Detector[numFilters];
         int filterIndex = 0;
         for (Laser laser : cytometer.lasers) {
@@ -88,15 +82,12 @@ public class ExhaustiveSelection {
         getPermutations(tempData, numFluorophores, n);
         
         //iterate through all possible combinations of filters/fluorophores
-        double bestSignal = 0;
-        int[] bestFilters = new int[n];
-        int[] bestFluorophores = new int[n];
         long totalComputations = filterCombinations.size() * fluorophorePermutations.size();
         System.out.println("Filter Combinations :: " + filterCombinations.size());
         System.out.println("FP Permutations     :: " + fluorophorePermutations.size());
         System.out.println("Total Computations : " + totalComputations);
         long onePercent = (long)(totalComputations * .01);
-        int computationIndex = 0;
+        long computationIndex = 0;
         int percent = 0;
         
         List<SelectionInfo> bestSelection = getSelection(n,fluorophorePermutations.get(0),filterCombinations.get(0),fluorophores,lasers,detectors);
@@ -105,8 +96,8 @@ public class ExhaustiveSelection {
         {
             for (int[] fluorophorePerm : fluorophorePermutations)
             {
-                //if(++computationIndex % onePercent == 0) 
-                //    System.out.println(++percent + " percent");
+                if(++computationIndex % onePercent == 0) 
+                    System.out.println(++percent + " percent");
                 double signal = 0;
                 List<SelectionInfo> currentSelection = getSelection(n,fluorophorePerm,filterCombo,fluorophores,lasers,detectors);
                 SNR snr = new SNR(currentSelection);
@@ -122,7 +113,7 @@ public class ExhaustiveSelection {
         return bestSelection;
     }
     
-    static void getCombinations(int data[], int start, int n, int index, int k) {
+    public static void getCombinations(int data[], int start, int n, int index, int k) {
         if (index == k) {
             filterCombinations.add(data.clone());
             return;
@@ -132,7 +123,7 @@ public class ExhaustiveSelection {
             getCombinations(data, i + 1, n, index + 1, k);
         }
     }
-    static void getPermutations(int data[], int n, int k) {
+    public static void getPermutations(int data[], int n, int k) {
         if (k == 0) {
             fluorophorePermutations.add(data.clone());
             return;

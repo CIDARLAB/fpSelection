@@ -45,58 +45,73 @@ public class HillClimbingSelection {
         }
         List<Fluorophore> selectedFluorophores = getRandomFluorophores(n,fluorophores);
         List<Detector> selectedDetectors = getRandomDetectors(n,detectors);
-        List<SelectionInfo> bestSelection = getSelection(selectedFluorophores,selectedDetectors,detectorMap);
+        List<SelectionInfo> bestSelection = getSelection(selectedFluorophores, selectedDetectors, detectorMap);
+        SNR currentSNR = new SNR(bestSelection);    
         SNR bestSNR = new SNR(bestSelection);
         
-        for(int i=0;i<iterations;i++){
+       for(int i=0;i<iterations;i++){
             int index = Utilities.getRandom(0, n-1);
+            List<Fluorophore> nextFluorophores = new ArrayList<>(selectedFluorophores);
+            List<Detector> nextDetectors = new ArrayList<>(selectedDetectors);
+            
             if(Utilities.getRandom(0, 1) == 0){
                 //Heads: Swap a Fluorophore
-                swapFluorophore(index,selectedFluorophores,fluorophores);
+                nextFluorophores = swapFluorophore(index,selectedFluorophores,fluorophores);
             } else {
                 //Tails: Swap a Detector
-                swapDetector(index,selectedDetectors,detectors);
+                nextDetectors = swapDetector(index,selectedDetectors,detectors);
             }
-            List<SelectionInfo> currentSelection = getSelection(selectedFluorophores, selectedDetectors, detectorMap);
-            SNR currentSNR = new SNR(currentSelection);
-            if(currentSNR.greaterThan(bestSNR)){
-                bestSNR = currentSNR;
-                bestSelection = new ArrayList<>(currentSelection);
+            List<SelectionInfo> nextSelection = getSelection(nextFluorophores, nextDetectors, detectorMap);
+            SNR nextSNR = new SNR(nextSelection);
+            if(nextSNR.greaterThan(bestSNR)){
+                bestSNR = nextSNR;
+                bestSelection = new ArrayList<>(nextSelection);
             }
+            
+            if(nextSNR.greaterThan(currentSNR)){
+                selectedFluorophores = new ArrayList<>(nextFluorophores);
+                selectedDetectors = new ArrayList<>(nextDetectors);
+                currentSNR = nextSNR;
+            }
+            
         }
         
         ProteinSelector.generateNoise(bestSelection);
         return bestSelection;
     }
     
-    private static void swapFluorophore(int index, List<Fluorophore> selected, List<Fluorophore> all){
+    private static List<Fluorophore> swapFluorophore(int index, List<Fluorophore> selected, List<Fluorophore> all){
+        List<Fluorophore> next = new ArrayList<>(selected);
         Fluorophore newFP = all.get(Utilities.getRandom(0, all.size()-1));
         if(selected.contains(newFP)){
             int swapIndex = selected.indexOf(newFP);
             Fluorophore indexFP = selected.get(index);
-            selected.set(index, newFP);
-            selected.set(swapIndex, indexFP);
+            next.set(index, newFP);
+            next.set(swapIndex, indexFP);
             if(selected.get(index) == selected.get(swapIndex)){
                 System.out.println("ERROR!! Something is very wrong here");
             }
         } else {
-            selected.set(index, newFP);
+            next.set(index, newFP);
         }
+        return next;
     }
     
-    private static void swapDetector(int index, List<Detector> selected, List<Detector> all){
+    private static List<Detector> swapDetector(int index, List<Detector> selected, List<Detector> all){
+        List<Detector> next = new ArrayList<>(selected);
         Detector newD = all.get(Utilities.getRandom(0, all.size()-1));
         if(selected.contains(newD)){
             int swapIndex = selected.indexOf(newD);
             Detector indexD = selected.get(index);
-            selected.set(index, newD);
-            selected.set(swapIndex, indexD);
+            next.set(index, newD);
+            next.set(swapIndex, indexD);
             if(selected.get(index) == selected.get(swapIndex)){
                 System.out.println("ERROR!! Something is very wrong here");
             }
         } else {
-            selected.set(index, newD);
+            next.set(index, newD);
         }
+        return next;
     }
     
     public static List<SelectionInfo> getSelection(List<Fluorophore> fluorophores, List<Detector> detectors, Map<Detector,Laser> detectorMap){

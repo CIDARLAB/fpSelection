@@ -7,9 +7,12 @@ package org.cidarlab.fpSelection;
 
 
 import com.opencsv.CSVReader;
+import com.panayotis.gnuplot.JavaPlot;
+import com.panayotis.gnuplot.terminal.ImageTerminal;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -23,6 +26,7 @@ import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.imageio.ImageIO;
 
 /**
  *
@@ -277,6 +281,32 @@ public class Utilities {
             Logger.getLogger(Utilities.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
+    
+    public static void plotToFile(JavaPlot plot, String filepath){
+        
+        ImageTerminal png = new ImageTerminal();
+        File file = new File(filepath);
+        
+        try {
+            file.createNewFile();
+            png.processOutput(new FileInputStream(file));
+        } catch (FileNotFoundException ex) {
+            System.err.print("File " + filepath + " not found.\n");
+            System.err.print(ex);
+        } catch (IOException ex) {
+            System.err.print(ex);
+        }
+        
+        plot.setPersist(false);
+        plot.setTerminal(png);
+        plot.plot();
+        
+        try {
+            ImageIO.write(png.getImage(), "png", file);
+        } catch (IOException ex) {
+            System.err.print(ex);
+        }
+    } 
     
     public static void writeToFile(String filepath, List<String> lines){
         File file = new File(filepath);

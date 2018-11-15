@@ -28,7 +28,7 @@ public class SmallAnnealTest {
 
         File input = new File("resources/Fluorophores.org/");
         HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
-        Cytometer testCyto = fpFortessaParse.parse(ParserTest.fortessafp, false);
+        Cytometer testCyto = fpFortessaParse.parse(ParserTest.BUfortessafp, false);
 
 //        Scanner scanner = new Scanner(System.in);
 //        System.out.println("Give an integer n for the number of you would like: ");

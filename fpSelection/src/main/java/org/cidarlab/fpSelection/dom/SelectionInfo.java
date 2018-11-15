@@ -8,6 +8,7 @@ package org.cidarlab.fpSelection.dom;
 import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import lombok.Getter;
@@ -67,6 +68,12 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
         return str;
     }
     
+    
+    public static void printSelection(List<SelectionInfo> selection){
+        for(SelectionInfo si:selection){
+            System.out.println(si.toString());
+        }
+    }
     
     public SelectionInfo(){
         

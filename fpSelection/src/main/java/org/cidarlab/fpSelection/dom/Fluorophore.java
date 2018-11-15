@@ -9,6 +9,8 @@ import com.panayotis.gnuplot.dataset.Point;
 import com.panayotis.gnuplot.dataset.PointDataSet;
 import java.util.Map;
 import java.util.TreeMap;
+import lombok.Getter;
+import lombok.Setter;
 
 /**
  *
@@ -25,7 +27,13 @@ public class Fluorophore {
 
     public int oligomerization = 0;
     
-    public double brightness;
+    @Setter
+    @Getter
+    private double brightness;
+    
+    @Setter
+    @Getter
+    private String brightnessNormalizedTo;
     
     //Emission or Excitation 
     public TreeMap<Double, Double> EMspectrum;
@@ -69,7 +77,11 @@ public class Fluorophore {
         if (!EXspectrum.containsKey((double) theLaser.wavelength)) {
             return 0;
         }
-        double multiplier = EXspectrum.get((double) theLaser.wavelength) / 100; //This is where laser power and brightness go
+        
+        double multiplier = (EXspectrum.get((double) theLaser.wavelength) / 100); //This is where laser power and brightness go
+        if(this.brightnessNormalizedTo != null){
+            multiplier = (EXspectrum.get((double) theLaser.wavelength) / 100) * this.brightness; //This is where laser power and brightness go
+        }
         double sum = 0;
         double min = theDetector.filterMidpoint - theDetector.filterWidth / 2;
         double max = min + theDetector.filterWidth;

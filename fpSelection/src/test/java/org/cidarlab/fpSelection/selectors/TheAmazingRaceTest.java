@@ -34,7 +34,7 @@ public class TheAmazingRaceTest {
         File input = new File("resources/Fluorophores.org/");
         HashMap<String, Fluorophore> spectralMaps = ScrapedCSVParse.parse(input);
 
-        Cytometer testCyto = fpFortessaParse.parse(ParserTest.fortessafp, false);
+        Cytometer testCyto = fpFortessaParse.parse(ParserTest.BUfortessafp, false);
 
         for (int n = 5; n < 9; n++) {
             System.out.println();

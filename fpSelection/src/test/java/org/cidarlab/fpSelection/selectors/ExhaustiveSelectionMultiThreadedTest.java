@@ -33,7 +33,7 @@ public class ExhaustiveSelectionMultiThreadedTest {
         //HashMap<String, Fluorophore> spectralMaps = generateFPs(input);
 
         //Get cytometer settings
-        Cytometer cytometer = fpFortessaParse.parse(ParserTest.fortessafp, false);
+        Cytometer cytometer = fpFortessaParse.parse(ParserTest.BUfortessafp, false);
 
         //User input number of FPs
         //String numString = JOptionPane.showInputDialog("Input an integer n for the number of FPs you'd like");

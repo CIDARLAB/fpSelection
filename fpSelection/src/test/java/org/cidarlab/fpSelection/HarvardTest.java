@@ -106,15 +106,14 @@ public class HarvardTest {
         for(String fp:list){
             if(metadata.containsKey(fp)){
                 if(fps.containsKey(fp)){
-                    if(metadata.get(fp).brightness > 0){
+                    if(metadata.get(fp).getBrightness() > 0){
                         //System.out.println(fp);
                         //System.out.println("brightness :: " + metadata.get(fp).brightness);
                         Fluorophore finalfp = fps.get(fp);
-                        finalfp.rewriteEMBrightness(metadata.get(fp).brightness);
+                        finalfp.rewriteEMBrightness(metadata.get(fp).getBrightness());
                         finalFPList.put(fp, finalfp);
                     }
                 }
-                
             }
         }
         String resultFilepath = Utilities.getResourcesFilepath() + "HarvardTestResult.txt";
