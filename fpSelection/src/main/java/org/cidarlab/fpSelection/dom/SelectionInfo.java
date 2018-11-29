@@ -33,9 +33,14 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     @Setter
     private boolean SNRlessThanOne = false;
     
-    @Getter
+//    @Getter
     @Setter
     private boolean noiseZero = false;
+    
+    //TODO: Remove, @djtran ran into lombok issues and needed the getter.
+    public boolean getNoiseZero() {
+        return noiseZero;
+    }
     
     @Getter
     @Setter

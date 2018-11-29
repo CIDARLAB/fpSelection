@@ -59,7 +59,7 @@ public class PlotAdaptor {
         boolean first = true;
         boolean later = false;
 
-        String SNR = "";
+        String selectionSummary = "";
         LinkedList<String> result = new LinkedList<>();
         double totalSNR = 0;
         int snrCount = 0;
@@ -131,8 +131,9 @@ public class PlotAdaptor {
 
                     //add emission plot
                     Fluorophore fp = entry.selectedFluorophore;
-                    SNR += fp.name + " Detector: " + entry.selectedDetector.identifier + " Laser: " + entry.selectedLaser.getName() + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
-                    totalSNR += entry.SNR;
+                    // FP ; Laser ; Filter ; Signal
+                    double signal = fp.express(entry.selectedLaser, entry.selectedDetector);
+                    selectionSummary += entry.toString() + " :: Signal: " + String.format("%.3f", signal) + "\r\n";
                     snrCount++;
 
                     PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
@@ -175,7 +176,9 @@ public class PlotAdaptor {
 
                     //add emission plot
                     Fluorophore fp = entry.selectedFluorophore;
-                    SNR += fp.name + " Detector: " + entry.selectedDetector.identifier + " Laser: " + entry.selectedLaser.getName() + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
+                    // FP ; Laser ; Filter ; Signal ; Bleedthrough
+                    double signal = fp.express(entry.selectedLaser, entry.selectedDetector);
+                    selectionSummary += entry.toString() + " :: Signal: " + String.format("%.3f", signal) + "\r\n";
                     totalSNR += entry.SNR;
                     snrCount++;
                     PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
@@ -190,13 +193,16 @@ public class PlotAdaptor {
                     boundsPlot.setTitle("");
 
                     //in case the second graph shares the same laser as the first, it must be added to the javaplot
-                    if (later) {
-                        newPlot.addPlot(emPlot);
-                        newPlot.addPlot(boundsPlot);
-                    } else {
-                        g.addPlot(emPlot);
-                        g.addPlot(boundsPlot);
-                    }
+//                    if (later) {
+//                        newPlot.addPlot(emPlot);
+//                        newPlot.addPlot(boundsPlot);
+//                    } else {
+//                        g.addPlot(emPlot);
+//                        g.addPlot(boundsPlot);
+//                    }
+
+                    g.addPlot(emPlot);
+                    g.addPlot(boundsPlot);
                 }
             }
         }
@@ -210,9 +216,8 @@ public class PlotAdaptor {
         byte[] img = baos.toByteArray();
         baos.close();
         String baseString = "data:image/jpeg;base64, " + Base64.getEncoder().encodeToString(img);
-        SNR += "Average SNR: " + Double.toString(totalSNR / snrCount) + "\r\n";
         result.add(baseString);
-        result.add(SNR);
+        result.add(selectionSummary);
 
         return result;
     }
