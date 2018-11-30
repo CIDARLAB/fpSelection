@@ -122,6 +122,40 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
         return dataSet;
     }
     
+    public double expressNoise(Detector detector) {
+        double sum = 0;
+        double min = detector.filterMidpoint - detector.filterWidth / 2;
+        double max = min + detector.filterWidth;
+        
+        //Get the least entry that has a key >= the parameter key or null if none exists.
+        Map.Entry<Double, Double> previousEntry = noise.ceilingEntry(min);
+        if (previousEntry == null) {
+            //nothing to iterate through.
+            return 0;
+        }
+        //Get the least entry that has a key > the parameter key or null if none exists.
+        Map.Entry<Double, Double> startEntry = noise.higherEntry(previousEntry.getKey());
+        if (startEntry == null) {
+            //nothing to iterate through
+            return 0;
+        }
+        
+        for (Map.Entry<Double, Double> thisEntry : noise.tailMap(startEntry.getKey()).entrySet()) {
+            double width = thisEntry.getKey() - previousEntry.getKey();
+            double height = previousEntry.getValue();
+            previousEntry = thisEntry;
+
+            sum += width * height;
+
+            if (thisEntry.getKey() >= max) {
+                break;
+            }
+        }
+
+        //Average it to 0-100 by dividing by range
+        return sum / (detector.filterWidth);
+    }
+    
     public Fluorophore getFP()
     {
         return selectedFluorophore;

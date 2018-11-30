@@ -131,9 +131,10 @@ public class PlotAdaptor {
 
                 //add emission plot
                 Fluorophore fp = entry.selectedFluorophore;
-                // FP ; Laser ; Filter ; Signal
+                // FP ; Laser ; Filter ; Signal ; Bleedthrough
                 double signal = fp.express(entry.selectedLaser, entry.selectedDetector);
-                selectionSummary += entry.toString() + " :: Signal: " + String.format("%.3f", signal) + "\r\n";
+                double bleedthrough = entry.expressNoise(entry.selectedDetector);
+                selectionSummary += entry.toString() + " :: Signal: " + String.format("%.3f", signal) + " :: Bleedthrough: " + String.format("%.3f", bleedthrough) + "\r\n";
                 snrCount++;
 
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
