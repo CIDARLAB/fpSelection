@@ -153,7 +153,7 @@ public class PlotAdaptor {
                     newPlot.addPlot(noisePlot);
                     newPlot.addPlot(emPlot);
                     newPlot.addPlot(boundsPlot);
-                    newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + entry.getFP().name);
+                    newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + String.format("%s; %s; %s", entry.selectedFluorophore.name, entry.selectedLaser.getName(), entry.selectedDetector.identifier));
                     newPlot.getAxis("x").setBoundaries(300, 900);
                     newPlot.getAxis("y").setLabel("Intensity (%)");
                     newPlot.getAxis("y").setBoundaries(0, 125);
@@ -165,7 +165,7 @@ public class PlotAdaptor {
                     g.addPlot(noisePlot);
                     g.addPlot(emPlot);
                     g.addPlot(boundsPlot);
-                    g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + entry.getFP().name);
+                    g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + String.format("%s; %s; %s", entry.selectedFluorophore.name, entry.selectedLaser.getName(), entry.selectedDetector.identifier));
                     g.getAxis("x").setBoundaries(300, 900);
                     g.getAxis("y").setLabel("Intensity (%)");
                     g.getAxis("y").setBoundaries(0, 125);
