@@ -29,6 +29,8 @@ public class ParserTest {
     
     public static String BUfortessafp = Utilities.getResourcesFilepath() + "BUfortessa.csv";
     public static String Harvardfortessafp = Utilities.getResourcesFilepath() + "HarvardFortessa.csv";
+    public static String HarvardSonyfp = Utilities.getResourcesFilepath() + "HarvardSony.csv";
+    public static String HarvardMasquantfp = Utilities.getResourcesFilepath() + "HarvardMasquant.csv";
     public static String fluorophoreMetafp = Utilities.getResourcesFilepath() + "fluorophore_meta_data.csv";
     public static String fpSpectrafp = Utilities.getResourcesFilepath() + "test_spectra.csv";
     

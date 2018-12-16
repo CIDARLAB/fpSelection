@@ -101,7 +101,9 @@ public class fpFortessaParse {
         laser.setName(header[laserNameIndex].trim());
         laser.type = header[laserTypeIndex].trim();
         laser.wavelength = Integer.valueOf(header[wavelengthIndex].trim());
-        laser.power = Integer.valueOf(header[powerIndex].trim());
+        if(!header[powerIndex].isEmpty()){
+            laser.power = Integer.valueOf(header[powerIndex].trim());
+        }
         laser.detectorArray = header[detectorArrayIndex].trim();
         laser.position = Integer.valueOf(header[positionIndex].trim());
         

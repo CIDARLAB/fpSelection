@@ -6,12 +6,9 @@
 package org.cidarlab.fpSelection.algorithms;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ThreadLocalRandom;
 import lombok.Getter;
 import org.cidarlab.fpSelection.Utilities;
 import org.cidarlab.fpSelection.dom.Detector;
