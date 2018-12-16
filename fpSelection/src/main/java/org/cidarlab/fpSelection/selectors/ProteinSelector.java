@@ -418,7 +418,7 @@ public class ProteinSelector {
             }
 
             for (SelectionInfo otherInfo : selected) {
-                if (info.selectedLaser == otherInfo.selectedLaser) {
+                if (info == otherInfo) {
                     continue;
                 }
 
@@ -458,7 +458,7 @@ public class ProteinSelector {
             }
 
             for (RankedInfo otherInfo : selected) {
-                if (info.selectedLaser == otherInfo.selectedLaser) {
+                if (info == otherInfo) {
                     continue;
                 }
 

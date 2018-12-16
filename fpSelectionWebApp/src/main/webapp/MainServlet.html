@@ -1,7 +1,5 @@
 <ul class="nav nav-tabs" style="margin-top: 100px;">
     <li class="tooltipNav active" title="Choose fluorophores based on cytometer/laser settings"><a href="/MainServlet">FP Selection</a></li>
-    <li class="tooltipNav" title="Choose laser settings based on fluorophore/cytometer settings"><a href="/LaserSelection">Laser Selection</a></li>
-    <li class="tooltipNav" title="Choose filter settings based on fluorophore/laser settings"><a href="/FilterSelection">Filter Selection</a></li>
     <li class="tooltipNav" title="Test the SNR of your own custom fluorophore/cytometer/laser settings"><a href="/MyFP">"My" FP</a></li>
 </ul>
 <br>
@@ -43,8 +41,6 @@
             </div>
             <div class="form-group rightDiv" title="Choose your algorithm. Exhaustive will yield the optimal solution every time but is considerably slower than the other algorithms. The faster the algorithm, the less optimal its results.">
                 <select id="algo" class="form-control input-sm">
-                    <option value="ExhaustiveServlet">Exhaustive (Slow)</option>                       
-                    <option value="SomewhatExhaustiveServlet">Beam Width Search (Medium)</option>
                     <option value="HillClimbingServlet">Hill Climbing (Fast)</option>
                 </select>
             </div>

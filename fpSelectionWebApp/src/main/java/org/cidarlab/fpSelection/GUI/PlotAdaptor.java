@@ -44,7 +44,7 @@ public class PlotAdaptor {
 
         //create the plot and initialize style/axes
         JavaPlot newPlot = new JavaPlot();
-        Graph g = new Graph();
+        Graph g;
 
         int width = 1200;
         int height = 800;
@@ -59,7 +59,7 @@ public class PlotAdaptor {
         boolean first = true;
         boolean later = false;
 
-        String SNR = "";
+        String selectionSummary = "";
         LinkedList<String> result = new LinkedList<>();
         double totalSNR = 0;
         int snrCount = 0;
@@ -120,83 +120,57 @@ public class PlotAdaptor {
         //oterwise, for normal operation iterate through laser/filter/protein combos
         else {
             for (SelectionInfo entry : info) {
-                if (!usedLasers.contains(entry.selectedLaser)) {
-                    usedLasers.add(entry.selectedLaser);
+                    
+                g = new Graph();
 
-                    //add noise plot
-                    PointDataSet noiseDataSet = (entry.makeNoiseDataSet());
-                    AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
-                    noisePlot.setTitle("Noise in " + entry.selectedLaser.getName());
-                    noisePlot.set("fs", "transparent solid 0.2 noborder");
+                //add noise plot
+                PointDataSet noiseDataSet = (entry.makeNoiseDataSet());
+                AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
+                noisePlot.setTitle("Bleedthrough in " + entry.selectedLaser.getName());
+                noisePlot.set("fs", "transparent solid 0.2 noborder");
 
-                    //add emission plot
-                    Fluorophore fp = entry.selectedFluorophore;
-                    SNR += fp.name + " Detector: " + entry.selectedDetector.identifier + " Laser: " + entry.selectedLaser.getName() + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
-                    totalSNR += entry.SNR;
-                    snrCount++;
+                //add emission plot
+                Fluorophore fp = entry.selectedFluorophore;
+                // FP ; Laser ; Filter ; Signal ; Bleedthrough
+                double signal = fp.express(entry.selectedLaser, entry.selectedDetector);
+                double bleedthrough = entry.expressNoise(entry.selectedDetector);
+                selectionSummary += entry.toString() + " :: Signal: " + String.format("%.3f", signal) + " :: Bleedthrough: " + String.format("%.3f", bleedthrough) + "\r\n";
+                snrCount++;
 
-                    PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
-                    AbstractPlot emPlot = new DataSetPlot(EMDataSet);
-                    emPlot.setTitle(fp.name);
+                PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
+                AbstractPlot emPlot = new DataSetPlot(EMDataSet);
+                emPlot.setTitle(fp.name);
 
-                    //add filter bounds plot
-                    PlotStyle ps = new PlotStyle(Style.LINES);
-                    PointDataSet bounds = entry.selectedDetector.drawBounds();
-                    AbstractPlot boundsPlot = new DataSetPlot(bounds);
-                    boundsPlot.setPlotStyle(ps);
-                    boundsPlot.setTitle("");
+                //add filter bounds plot
+                PlotStyle ps = new PlotStyle(Style.LINES);
+                PointDataSet bounds = entry.selectedDetector.drawBounds();
+                AbstractPlot boundsPlot = new DataSetPlot(bounds);
+                boundsPlot.setPlotStyle(ps);
+                boundsPlot.setTitle("");
 
-                    //first round add to javaplot (otherwise extra plot is added)
-                    if (first) {
-                        newPlot.addPlot(noisePlot);
-                        newPlot.addPlot(emPlot);
-                        newPlot.addPlot(boundsPlot);
-                        newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + entry.selectedLaser.getName());
-                        newPlot.getAxis("x").setBoundaries(300, 900);
-                        newPlot.getAxis("y").setLabel("Intensity (%)");
-                        newPlot.getAxis("y").setBoundaries(0, 125);
-                        first = false;
-                        later = true;
-                    } //otherwise add to graph object that is added to javaplot
-                    else {
-                        g = new Graph();
-                        g.addPlot(noisePlot);
-                        g.addPlot(emPlot);
-                        g.addPlot(boundsPlot);
-                        g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + entry.selectedLaser.getName());
-                        g.getAxis("x").setBoundaries(300, 900);
-                        g.getAxis("y").setLabel("Intensity (%)");
-                        g.getAxis("y").setBoundaries(0, 125);
-                        newPlot.addGraph(g);
-                        later = false;
-                    }
-
-                } else {
-
-                    //add emission plot
-                    Fluorophore fp = entry.selectedFluorophore;
-                    SNR += fp.name + " Detector: " + entry.selectedDetector.identifier + " Laser: " + entry.selectedLaser.getName() + " SNR : " + String.format("%.3f", entry.SNR) + "\r\n";
-                    totalSNR += entry.SNR;
-                    snrCount++;
-                    PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
-                    AbstractPlot emPlot = new DataSetPlot(EMDataSet);
-                    emPlot.setTitle(fp.name);
-
-                    //add filter bounds plot
-                    PlotStyle ps = new PlotStyle(Style.LINES);
-                    PointDataSet bounds = entry.selectedDetector.drawBounds();
-                    AbstractPlot boundsPlot = new DataSetPlot(bounds);
-                    boundsPlot.setPlotStyle(ps);
-                    boundsPlot.setTitle("");
-
-                    //in case the second graph shares the same laser as the first, it must be added to the javaplot
-                    if (later) {
-                        newPlot.addPlot(emPlot);
-                        newPlot.addPlot(boundsPlot);
-                    } else {
-                        g.addPlot(emPlot);
-                        g.addPlot(boundsPlot);
-                    }
+                //first round add to javaplot (otherwise extra plot is added)
+                if (first) {
+                    newPlot.addPlot(noisePlot);
+                    newPlot.addPlot(emPlot);
+                    newPlot.addPlot(boundsPlot);
+                    newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + String.format("%s; %s; %s", entry.selectedFluorophore.name, entry.selectedLaser.getName(), entry.selectedDetector.identifier));
+                    newPlot.getAxis("x").setBoundaries(300, 900);
+                    newPlot.getAxis("y").setLabel("Intensity (%)");
+                    newPlot.getAxis("y").setBoundaries(0, 125);
+                    first = false;
+                    later = true;
+                } //otherwise add to graph object that is added to javaplot
+                else {
+                    g = new Graph();
+                    g.addPlot(noisePlot);
+                    g.addPlot(emPlot);
+                    g.addPlot(boundsPlot);
+                    g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + String.format("%s; %s; %s", entry.selectedFluorophore.name, entry.selectedLaser.getName(), entry.selectedDetector.identifier));
+                    g.getAxis("x").setBoundaries(300, 900);
+                    g.getAxis("y").setLabel("Intensity (%)");
+                    g.getAxis("y").setBoundaries(0, 125);
+                    newPlot.addGraph(g);
+                    later = false;
                 }
             }
         }
@@ -210,9 +184,8 @@ public class PlotAdaptor {
         byte[] img = baos.toByteArray();
         baos.close();
         String baseString = "data:image/jpeg;base64, " + Base64.getEncoder().encodeToString(img);
-        SNR += "Average SNR: " + Double.toString(totalSNR / snrCount) + "\r\n";
         result.add(baseString);
-        result.add(SNR);
+        result.add(selectionSummary);
 
         return result;
     }
