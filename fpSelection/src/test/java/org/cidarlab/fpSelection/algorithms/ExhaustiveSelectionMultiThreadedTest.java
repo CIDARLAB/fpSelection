@@ -5,13 +5,7 @@
  */
 package org.cidarlab.fpSelection.algorithms;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedList;
-import org.cidarlab.fpSelection.algorithms.ExhaustiveSelectionMultiThreaded;
-import org.cidarlab.fpSelection.dom.Cytometer;
-import org.cidarlab.fpSelection.dom.Fluorophore;
-import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

@@ -47,65 +47,56 @@ public class CaseStudyTest {
     private static String harvardFortessafp = basefp + "inputFiles" + Utilities.getSeparater() + "HarvardFortessa.csv";
     private static String harvardSonyfp = basefp + "inputFiles" + Utilities.getSeparater() + "HarvardSony.csv";
     private static String harvardMacsquantfp = basefp + "inputFiles" + Utilities.getSeparater() + "HarvardMacsquant.csv";
+    private static String figure1Sonyfp = basefp + "inputFiles" + Utilities.getSeparater() + "figure1Sony.csv";
 
     private static String largerSpectrafp = basefp + "inputFiles" + Utilities.getSeparater() + "largerSpectra.csv";
     private static String largerBrightnessfp = basefp + "inputFiles" + Utilities.getSeparater() + "largerBrightness.csv";
     private static String smallerSpectrafp = basefp + "inputFiles" + Utilities.getSeparater() + "smallerSpectra.csv";
     private static String smallerBrightnessfp = basefp + "inputFiles" + Utilities.getSeparater() + "smallerBrightness.csv";
+    
+    private static String caseSpectrafp = basefp + "inputFiles" + Utilities.getSeparater() + "caseStudySpectra.csv";
+    private static String caseBrightnessfp = basefp + "inputFiles" + Utilities.getSeparater() + "caseStudyBrightness.csv";
+    
 
+    private static String figure1Spectrafp = basefp + "inputFiles" + Utilities.getSeparater() + "figure1Spectra.csv";
+    private static String figure1Brightnessfp = basefp + "inputFiles" + Utilities.getSeparater() + "figure1Brightness.csv";
+    
     
     @Test
     public void testCaseStudy() throws IOException, InterruptedException {
-
+        
         Cytometer harvardFortessa = fpFortessaParse.parse(harvardFortessafp, false);
         Cytometer harvardSony = fpFortessaParse.parse(harvardSonyfp, false);
         Cytometer harvardMacsquant = fpFortessaParse.parse(harvardMacsquantfp, false);
 
-        Map<String, Fluorophore> smallerSpectralMap = fpSpectraParse.parse(smallerSpectrafp);
-        fpSpectraParse.addBrightness(new File(smallerBrightnessfp), smallerSpectralMap);
+        //Map<String, Fluorophore> smallerSpectralMap = fpSpectraParse.parse(smallerSpectrafp);
+        //fpSpectraParse.addBrightness(new File(smallerBrightnessfp), smallerSpectralMap);
 
-        Map<String, Fluorophore> largerSpectralMap = fpSpectraParse.parse(largerSpectrafp);
-        fpSpectraParse.addBrightness(new File(largerBrightnessfp), largerSpectralMap);
-
+        //Map<String, Fluorophore> largerSpectralMap = fpSpectraParse.parse(largerSpectrafp);
+        //fpSpectraParse.addBrightness(new File(largerBrightnessfp), largerSpectralMap);
+        
+        Map<String, Fluorophore> caseStudySpectralMap = fpSpectraParse.parse(caseSpectrafp);
+        fpSpectraParse.addBrightness(new File(caseBrightnessfp), caseStudySpectralMap);
+        
+        
         //First do Exhaustive for all cytometers...
-        
         System.out.println("==================Fortessa===================");
-        exhaustiveTests(smallerSpectralMap, harvardFortessa, "EX_HarvFort");
+        exhaustiveTests(caseStudySpectralMap, harvardFortessa, "EX_HarvFort");
         System.out.println("==================Sony=======================");
-        exhaustiveTests(smallerSpectralMap, harvardSony, "EX_HarvSony");
+        exhaustiveTests(caseStudySpectralMap, harvardSony, "EX_HarvSony");
         System.out.println("==================Macsquant==================");
-        exhaustiveTests(smallerSpectralMap, harvardMacsquant, "EX_HarvMacs");
-        
-        /*    
+        exhaustiveTests(caseStudySpectralMap, harvardMacsquant, "EX_HarvMacs");
+
         System.out.println("Stochastic Test - Fortessa===================");
-        stochasticTests(smallerSpectralMap,harvardFortessa, "HarvFort");
-        stochasticTest(1,smallerSpectralMap,harvardFortessa, "HarvFort");
-        stochasticTest(2,smallerSpectralMap,harvardFortessa, "HarvFort");
-        stochasticTest(3,smallerSpectralMap,harvardFortessa, "HarvFort");
-        stochasticTest(4,smallerSpectralMap,harvardFortessa, "HarvFort");
-        stochasticTest(5,smallerSpectralMap,harvardFortessa, "HarvFort");
-        stochasticTest(6,smallerSpectralMap,harvardFortessa, "HarvFort");
-        stochasticTest(7,smallerSpectralMap,harvardFortessa, "HarvFort");
-        stochasticTest(8,smallerSpectralMap,harvardFortessa, "HarvFort");
+        stochasticTests(caseStudySpectralMap,harvardFortessa, "HarvFort");
         
         System.out.println("Stochastic Test - Sony=======================");
-        stochasticTest(1,smallerSpectralMap, harvardSony, "HarvSony");
-        stochasticTest(2,smallerSpectralMap, harvardSony, "HarvSony");
-        stochasticTest(3,smallerSpectralMap, harvardSony, "HarvSony");
-        stochasticTest(4,smallerSpectralMap, harvardSony, "HarvSony");
-        stochasticTest(5,smallerSpectralMap, harvardSony, "HarvSony");
-        stochasticTest(6,smallerSpectralMap, harvardSony, "HarvSony");
+        stochasticTests(caseStudySpectralMap,harvardSony, "HarvSony");
         
         System.out.println("Stochastic Test - Macsquant==================");
-        stochasticTest(1,smallerSpectralMap, harvardMacsquant, "HarvMacs");
-        stochasticTest(2,smallerSpectralMap, harvardMacsquant, "HarvMacs");
-        stochasticTest(3,smallerSpectralMap, harvardMacsquant, "HarvMacs");
-        stochasticTest(4,smallerSpectralMap, harvardMacsquant, "HarvMacs");
-        stochasticTest(5,smallerSpectralMap, harvardMacsquant, "HarvMacs");
-        stochasticTest(6,smallerSpectralMap, harvardMacsquant, "HarvMacs");
-        stochasticTest(7,smallerSpectralMap, harvardMacsquant, "HarvMacs");
-        */
+        stochasticTests(caseStudySpectralMap,harvardMacsquant, "HarvMacs");
         
+       
         //Round 1-3
         /*
          String smallerSpectraList = basefp + "smallerSpectra.csv";
@@ -132,7 +123,130 @@ public class CaseStudyTest {
          higherHillClimbingTests(spectralMaps, harvardcytometer, "Harvard");
          */
     }
+    
+    //@Test
+    public void testFigure1() throws IOException, InterruptedException{
+        Cytometer figure1cytometer = fpFortessaParse.parse(figure1Sonyfp, false);
+        //Cytometer figure1cytometer = fpFortessaParse.parse(harvardFortessafp, false);
+        Map<String, Fluorophore> spectralMap = fpSpectraParse.parse(figure1Spectrafp);
+        fpSpectraParse.addBrightness(new File(figure1Brightnessfp), spectralMap);
+        exhaustiveRun(2,spectralMap,figure1cytometer);   
+        
 
+    }
+    
+    private static List<String> getFigure1PlotScript(Map<Double,Double> signal, Map<Double,Double> noise, Detector d, String filename){
+        //250-900
+        
+        List<String> lines = new ArrayList<>();
+        lines.add("import matplotlib\n" +
+            "import math\n" +
+            "import numpy\n" +
+            "from math import e\n" +
+            "import seaborn as sns\n" +
+            "matplotlib.use('agg',warn=False, force=True)\n" +
+            "from matplotlib import pyplot as plt\n" +
+            "from matplotlib import patches as patches\n");
+        
+        
+        lines.add("fig = plt.figure()\n" +
+            "sns.set(font_scale=1)\n" +
+            "sns.set_style(\"white\")\n" +
+            "sns.despine()");
+        
+        
+        
+        double filtLeft = d.filterMidpoint - (d.filterWidth/2);
+        double filtRight = d.filterMidpoint + (d.filterWidth/2);
+        
+        String xfilt = "xfilt = [" + filtLeft +","+ filtLeft +","+ filtRight +","+ filtRight + "]";
+        String yfilt = "yfilt = [" + 0.0      +","+ 100.0    +","+ 100.0     +","+ 0.0 + "]";
+        
+        lines.add(xfilt);
+        lines.add(yfilt);
+        
+        lines.add("plt.plot(xfilt,yfilt, color='black', linewidth=1.5)");
+        lines.add("plt.fill(xfilt,yfilt, facecolor=\"none\", hatch=\"/\", edgecolor=\"black\", linewidth=0.0)");
+        
+        
+        
+        String xsig = "xsig = [";
+        String ysig = "ysig = [";
+        String xnoi = "xnoi = [";
+        String ynoi = "ynoi = [";
+        
+        List<Double> xsigval = new ArrayList<>();
+        List<Double> ysigval = new ArrayList<>();
+        List<Double> xnoival = new ArrayList<>();
+        List<Double> ynoival = new ArrayList<>();
+        
+        for(int i = 250;i<=900;i+=1){
+            double wl = (double)i;
+            if(signal.containsKey(wl)){
+                xsigval.add(wl);
+                ysigval.add(signal.get(wl));
+            } else {
+                xsigval.add(wl);
+                ysigval.add(0.0);
+            
+            }
+            
+            if(noise.containsKey(wl)){
+                xnoival.add(wl);
+                ynoival.add(noise.get(wl));
+            } else {
+                xnoival.add(wl);
+                ynoival.add(0.0);
+            }
+            
+        }
+        
+        xsig += xsigval.get(0);
+        ysig += ysigval.get(0);
+        xnoi += xnoival.get(0);
+        ynoi += ynoival.get(0);
+        
+        for(int i=1;i<xsigval.size();i++){
+            xsig += "," + xsigval.get(i);
+        }
+        for(int i=1;i<ysigval.size();i++){
+            ysig += "," + ysigval.get(i);
+        }
+        for(int i=1;i<xnoival.size();i++){
+            xnoi += "," + xnoival.get(i);
+        }
+        for(int i=1;i<ynoival.size();i++){
+            ynoi += "," + ynoival.get(i);
+        }
+        
+        xsig += "]";
+        ysig += "]";
+        xnoi += "]";
+        ynoi += "]";
+        
+        lines.add(xsig);
+        lines.add(ysig);
+        lines.add(xnoi);
+        lines.add(ynoi);
+        
+        
+        
+        lines.add("plt.fill(xsig,ysig,facecolor='g',alpha=0.6)");
+        lines.add("plt.fill(xnoi,ynoi,facecolor='r',alpha=0.6)");
+        
+        
+        lines.add("plt.xlabel(\"Wavelength\")\n" +
+            "plt.ylabel(\"Intensity\")\n" +
+            "plt.xlim(250,900)\n" +
+            "plt.ylim(0,100.1)\n" +
+            "plt.legend(frameon=False)\n" +
+            "plt.tight_layout()\n" +
+            "#plt.yscale('symlog')\n" +
+            "fig.savefig('" + filename +".png', dpi=900)");
+        
+        return lines;
+    }
+    
     
     public static void main(String[] args) throws IOException, InterruptedException {
 
@@ -140,19 +254,23 @@ public class CaseStudyTest {
         Cytometer harvardSony = fpFortessaParse.parse(harvardSonyfp, false);
         Cytometer harvardMacsquant = fpFortessaParse.parse(harvardMacsquantfp, false);
 
-        Map<String, Fluorophore> smallerSpectralMap = fpSpectraParse.parse(smallerSpectrafp);
-        fpSpectraParse.addBrightness(new File(smallerBrightnessfp), smallerSpectralMap);
+        //Map<String, Fluorophore> smallerSpectralMap = fpSpectraParse.parse(smallerSpectrafp);
+        //fpSpectraParse.addBrightness(new File(smallerBrightnessfp), smallerSpectralMap);
 
-        Map<String, Fluorophore> largerSpectralMap = fpSpectraParse.parse(largerSpectrafp);
-        fpSpectraParse.addBrightness(new File(largerBrightnessfp), largerSpectralMap);
-
+        //Map<String, Fluorophore> largerSpectralMap = fpSpectraParse.parse(largerSpectrafp);
+        //fpSpectraParse.addBrightness(new File(largerBrightnessfp), largerSpectralMap);
+        
+        Map<String, Fluorophore> caseStudySpectralMap = fpSpectraParse.parse(caseSpectrafp);
+        fpSpectraParse.addBrightness(new File(caseBrightnessfp), caseStudySpectralMap);
+        
+        
         //First do Exhaustive for all cytometers...
         System.out.println("==================Fortessa===================");
-        exhaustiveTests(smallerSpectralMap, harvardFortessa, "EX_HarvFort");
+        exhaustiveTests(caseStudySpectralMap, harvardFortessa, "EX_HarvFort");
         System.out.println("==================Sony=======================");
-        exhaustiveTests(smallerSpectralMap, harvardSony, "EX_HarvSony");
+        exhaustiveTests(caseStudySpectralMap, harvardSony, "EX_HarvSony");
         System.out.println("==================Macsquant==================");
-        exhaustiveTests(smallerSpectralMap, harvardMacsquant, "EX_HarvMacs");
+        exhaustiveTests(caseStudySpectralMap, harvardMacsquant, "EX_HarvMacs");
 
             
         //Round 1-3
@@ -183,12 +301,12 @@ public class CaseStudyTest {
     }
     
     private static void stochasticTests(Map<String, Fluorophore> spectralMaps, Cytometer cytometer, String prefix) throws IOException{
-        //stochasticTest(1,spectralMaps,cytometer,prefix);
-        //stochasticTest(2,spectralMaps,cytometer,prefix);
-        //stochasticTest(3,spectralMaps,cytometer,prefix);
-        //stochasticTest(4,spectralMaps,cytometer,prefix);
-        //stochasticTest(5,spectralMaps,cytometer,prefix);
-        //stochasticTest(6,spectralMaps,cytometer,prefix);
+        stochasticTest(1,spectralMaps,cytometer,prefix);
+        stochasticTest(2,spectralMaps,cytometer,prefix);
+        stochasticTest(3,spectralMaps,cytometer,prefix);
+        stochasticTest(4,spectralMaps,cytometer,prefix);
+        stochasticTest(5,spectralMaps,cytometer,prefix);
+        stochasticTest(6,spectralMaps,cytometer,prefix);
         //stochasticTest(7,spectralMaps,cytometer,prefix);
         //stochasticTest(8,spectralMaps,cytometer,prefix);
     }
@@ -291,7 +409,6 @@ public class CaseStudyTest {
         
     }
     
-    
     private static void exhaustiveTests(Map<String, Fluorophore> spectralMaps, Cytometer cytometer, String prefix) throws IOException, InterruptedException {
         long current = 0;
 
@@ -315,6 +432,143 @@ public class CaseStudyTest {
 
     }
 
+    
+    private static void exhaustiveRun(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer) throws IOException, InterruptedException {
+
+        int numFluorophores = spectralMaps.size();
+
+        //count filters
+        int numFilters = 0;
+        for (Laser laser : cytometer.lasers) {
+            numFilters += laser.detectors.size();
+        }
+
+        //fluorophore index --> fluorophore object
+        Fluorophore[] fluorophores = new Fluorophore[numFluorophores];
+        int fpi = 0;
+        for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
+            Fluorophore fluorophore = entry.getValue();
+            fluorophores[fpi] = fluorophore;
+            fpi++;
+        }
+
+        Laser[] lasers = new Laser[numFilters];
+        Detector[] detectors = new Detector[numFilters];
+        int filterIndex = 0;
+        for (Laser laser : cytometer.lasers) {
+            for (Detector detector : laser.detectors) {
+                lasers[filterIndex] = laser;
+                detectors[filterIndex] = detector;
+                filterIndex++;
+            }
+        }
+
+        //get all combinations of filters (order not important)
+        filterCombinations = new LinkedList<>();
+        int tempData[] = new int[n];
+        getCombinations(tempData, 0, numFilters - 1, 0, n);
+
+        //get all permutations of fluorophores to match to filters (order is important)
+        fluorophorePermutations = new LinkedList<>();
+        tempData = new int[n];
+        getPermutations(tempData, numFluorophores, n);
+
+        long totalComputations = filterCombinations.size() * fluorophorePermutations.size();
+        System.out.println("Filter Combinations :: " + filterCombinations.size());
+        System.out.println("FP Permutations     :: " + fluorophorePermutations.size());
+        System.out.println("Total Computations : " + totalComputations);
+
+        List<Map.Entry<List<SelectionInfo>, SNR>> results = new ArrayList<>();
+        int count = 0;
+        for (int[] filterCombo : filterCombinations) {
+            for (int[] fluorophorePerm : fluorophorePermutations) {
+                List<SelectionInfo> currentSelection = ExhaustiveSelection.getSelection(n, fluorophorePerm, filterCombo, fluorophores, lasers, detectors);
+                SNR snr = new SNR(currentSelection);
+                results.add(new AbstractMap.SimpleEntry<>(currentSelection, snr));
+
+                //ProteinSelector.generateNoise(currentSelection);
+                //JavaPlot plot = ProteinSelector.getJavaPlot(currentSelection);
+                //Utilities.plotToFile(plot, fp + count + ".png");
+                //count++;
+            }
+        }
+
+        Collections.sort(results, (Map.Entry<List<SelectionInfo>, SNR> o1, Map.Entry<List<SelectionInfo>, SNR> o2) -> {
+            SNR s1 = o1.getValue();
+            SNR s2 = o2.getValue();
+            return s1.compare(s2);
+        });
+        Collections.reverse(results);
+        
+        List<SelectionInfo> best = results.get(0).getKey();
+        List<SelectionInfo> worst = results.get(results.size()-1).getKey();
+        
+        getSignalPlots(best,"best");
+        getSignalPlots(worst,"worst");
+        
+        
+    }
+    
+    private static void getSignalPlots(List<SelectionInfo> selection, String prefix){
+        String scriptsfp = basefp + "figure1" + Utilities.getSeparater();
+        
+        SelectionInfo selection0 = selection.get(0);
+        SelectionInfo selection1 = selection.get(1);
+        
+        Fluorophore fp0 = selection0.getSelectedFluorophore();
+        Detector d0 = selection0.getSelectedDetector();
+        Laser l0 = selection0.getSelectedLaser();
+        
+        Fluorophore fp1 = selection1.getSelectedFluorophore();
+        Detector d1 = selection1.getSelectedDetector();
+        Laser l1 = selection1.getSelectedLaser();
+        
+        //First plot
+        double multfp0l0 = getMultiplier(fp0,l0);
+        double multfp1l0 = getMultiplier(fp1,l0);
+        
+        Map<Double,Double> sig0 = getEM(fp0.EMspectrum,multfp0l0);
+        Map<Double,Double> noi0 = getEM(fp1.EMspectrum,multfp1l0) ;
+        List<String> script0 = getFigure1PlotScript(sig0,noi0, d0, prefix + "plot0");
+        
+        Utilities.writeToFile(scriptsfp + prefix + "plot0.py", script0);
+        
+        //Second Plot
+        double multfp0l1 = getMultiplier(fp0,l1);
+        double multfp1l1 = getMultiplier(fp1,l1);
+        
+        Map<Double,Double> sig1 = getEM(fp1.EMspectrum,multfp1l1);
+        Map<Double,Double> noi1 = getEM(fp0.EMspectrum,multfp0l1) ;
+        List<String> script1 = getFigure1PlotScript(sig1,noi1, d1, prefix + "plot1");
+        
+        Utilities.writeToFile(scriptsfp + prefix + "plot1.py", script1);
+        
+        
+    }
+    
+    private static Map<Double,Double> getEM(Map<Double,Double> em, double mult){
+        Map<Double,Double> adjustedEm = new HashMap<>();
+        for(Double wl:em.keySet()){
+            double adjem = em.get(wl) * mult;
+            adjustedEm.put(wl, adjem);
+        }
+        
+        return adjustedEm;
+    }
+    
+    private static double getMultiplier(Fluorophore fp, Laser laser){
+        if (!fp.EXspectrum.containsKey((double) laser.wavelength)) {
+            return 0;
+        }
+        
+        double multiplier = (fp.EXspectrum.get((double) laser.wavelength) / 100); //This is where laser power and brightness go
+        if(fp.getBrightnessNormalizedTo() != null){
+            multiplier = (fp.EXspectrum.get((double) laser.wavelength) / 100) * fp.getBrightness(); //This is where laser power and brightness go
+        }
+        
+        return multiplier;
+    }    
+    
     private static void exhaustivePlots(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer, String prefix) throws IOException, InterruptedException {
 
         //String exhaustivefp = basefp + "exhaustivePlots" + Utilities.getSeparater();
@@ -430,7 +684,7 @@ public class CaseStudyTest {
         Utilities.writeToFile(basefp + prefix + "_" + n + "fp_bottom10.csv", bottom);
         
     }
-
+    
     private static String toString(int n, List<SelectionInfo> selection, SNR snr) {
         Map<String, Integer> maps = new HashMap<>();
 
