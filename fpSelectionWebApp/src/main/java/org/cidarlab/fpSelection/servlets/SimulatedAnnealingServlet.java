@@ -55,9 +55,13 @@ public class SimulatedAnnealingServlet extends HttpServlet {
         String errMsg = "";
         InputStream fpInput;
         InputStream cytoInput;
+        InputStream brightnessInput = null;
+        
         try {
             fpInput = request.getPart("FPMasterList").getInputStream();
             cytoInput = request.getPart("cytometer").getInputStream();
+            brightnessInput = request.getPart("FPBrightness").getInputStream();
+            
         } catch (Exception e) {
             errMsg += "Error downloading CSV's, using sample cytometer and fluorophores \n ";
             fileErr = true;
@@ -73,6 +77,8 @@ public class SimulatedAnnealingServlet extends HttpServlet {
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);
+            fpSpectraParse.addBrightness(brightnessInput, spectralMaps);
+            
         } catch (Exception x) {
             errMsg += "Fluorophore CSV formatted incorrectly or unreadable, using sample fluorophores \n ";
             fileErr = true;

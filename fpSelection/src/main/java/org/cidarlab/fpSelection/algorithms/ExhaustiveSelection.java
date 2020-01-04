@@ -83,8 +83,8 @@ public class ExhaustiveSelection {
         
         //iterate through all possible combinations of filters/fluorophores
         long totalComputations = filterCombinations.size() * fluorophorePermutations.size();
-        System.out.println("Filter Combinations :: " + filterCombinations.size());
-        System.out.println("FP Permutations     :: " + fluorophorePermutations.size());
+        //System.out.println("Filter Combinations :: " + filterCombinations.size());
+        //System.out.println("FP Permutations     :: " + fluorophorePermutations.size());
         System.out.println("Total Computations : " + totalComputations);
         long onePercent = (long)(totalComputations * .01);
         long computationIndex = 0;
@@ -96,8 +96,8 @@ public class ExhaustiveSelection {
         {
             for (int[] fluorophorePerm : fluorophorePermutations)
             {
-                if(++computationIndex % onePercent == 0) 
-                    System.out.println(++percent + " percent");
+                //if(++computationIndex % onePercent == 0) 
+                //    System.out.println(++percent + " percent");
                 double signal = 0;
                 List<SelectionInfo> currentSelection = getSelection(n,fluorophorePerm,filterCombo,fluorophores,lasers,detectors);
                 SNR snr = new SNR(currentSelection);

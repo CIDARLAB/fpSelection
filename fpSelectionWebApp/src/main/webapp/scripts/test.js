@@ -37,7 +37,7 @@ $(document).ready(function () {
         buttonName: 'btn-info',
         buttonText: 'Browse',
         size: 'sm',
-        placeholder: 'ex_fortessa.csv'
+        placeholder: 'cytometer.csv'
     });
     $('.myFPInput').filestyle({
         buttonName: 'btn-info',
@@ -49,8 +49,16 @@ $(document).ready(function () {
         buttonName: 'btn-info',
         buttonText: 'Browse',
         size: 'sm',
-        placeholder: 'fp_spectra.csv'
+        placeholder: 'fpSpectra.csv'
     });
+    $('#FPBrightness').filestyle({
+        buttonName: 'btn-info',
+        buttonText: 'Browse',
+        size: 'sm',
+        placeholder: 'fpBrightness.csv'
+    });
+    
+    
     $("#algo").change(function () {
         $("#topPercent").toggle($(this).val() == "SomewhatExhaustiveServlet");
     });

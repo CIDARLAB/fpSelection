@@ -52,9 +52,13 @@ public class HillClimbingServlet extends HttpServlet {
         String errMsg = "";
         InputStream fpInput;
         InputStream cytoInput;
+        InputStream brightnessInput;
+        
         try {
             fpInput = request.getPart("FPMasterList").getInputStream();
             cytoInput = request.getPart("cytometer").getInputStream();
+            brightnessInput = request.getPart("FPBrightness").getInputStream();
+            
         } catch (Exception e) {
             errMsg += "Error downloading CSV's: Error " + e.toString() + " \n ";
             PrintWriter writer = response.getWriter();
@@ -74,7 +78,10 @@ public class HillClimbingServlet extends HttpServlet {
         Cytometer cytoSettings = null;
         try {
             spectralMaps = fpSpectraParse.parse(fpInput);
+            fpSpectraParse.addBrightness(brightnessInput, spectralMaps);
+            
             cytoSettings = fpFortessaParse.parse(cytoInput, false);
+            
         } catch (Exception x) {
             errMsg += "CSVs formatted incorrectly or unreadable: Error " + x.toString() + " \n ";
             x.printStackTrace();          
@@ -93,7 +100,7 @@ public class HillClimbingServlet extends HttpServlet {
         ////////////////////////////////////////////
         // Parse the rest of the request variables//
         ////////////////////////////////////////////
-
+        
         List<SelectionInfo> solution = HillClimbingSelection.run(n, spectralMaps, cytoSettings);
 
         LinkedList<String> info = PlotAdaptor.webPlot(solution);

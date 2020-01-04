@@ -19,6 +19,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
@@ -333,6 +334,26 @@ public class Utilities {
     }
     
     //</editor-fold>
+    
+    
+    public static void runPythonScript(String filepath) throws InterruptedException, IOException {
+        StringBuilder commandBuilder = null;
+        if (Utilities.isLinux()) {
+            commandBuilder = new StringBuilder("/home/prash/anaconda2/bin/python " + filepath);
+        } else {
+            commandBuilder = new StringBuilder("python \"" + filepath + "\"");
+        }
+        String command = commandBuilder.toString();
+        Runtime runtime = Runtime.getRuntime();
+        Process proc = runtime.exec(command);
+        proc.waitFor();
+        InputStream is = proc.getInputStream();
+        InputStream es = proc.getErrorStream();
+        OutputStream os = proc.getOutputStream();
+        is.close();
+        es.close();
+        os.close();
+    }
     
     
 }

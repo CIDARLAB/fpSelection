@@ -324,20 +324,39 @@ public class SNR {
                     double otherSignalProd = 1;
                     double otherNoiseSum = 0;
                     
+                    int thisNonZero = 0;
+                    int otherNonZero = 0;
+                            
+                    
                     for (int i = 0; i < snr.signalNoiseList.size(); i++) {
                         //System.out.println("Compare :: " + compare + " for s1 = " + this.signalNoiseList.get(i).getKey() + "; n1 = " + this.signalNoiseList.get(i).getValue() + "; s2 = " + snr.getSignalNoiseList().get(i).getKey() + "; n2 = " + snr.getSignalNoiseList().get(i).getValue());
-                        thisSignalProd *= this.signalNoiseList.get(i).getKey();
+                        
+                        if(this.signalNoiseList.get(i).getKey() > 0){
+                            thisSignalProd *= this.signalNoiseList.get(i).getKey();
+                            thisNonZero++;
+                        }
+                        
+                        if(snr.signalNoiseList.get(i).getKey() > 0){                            
+                            otherSignalProd *= snr.signalNoiseList.get(i).getKey();
+                            otherNonZero++;
+                        }
+                        
+                        
                         thisNoiseSum += this.signalNoiseList.get(i).getValue();
                         
-                        otherSignalProd *= snr.signalNoiseList.get(i).getKey();
                         otherNoiseSum += snr.signalNoiseList.get(i).getValue();
                     }
                     
+                    if (thisNonZero != otherNonZero) {
+                        System.out.println("Both comparisons should have same non-zeros at this point. Something is wrong here.");
+                    }                    
+                    
                     int n = snr.signalNoiseList.size();
-                    double exp = (1.0)/n;
-                    double thisSignal = Math.pow(thisSignalProd, exp);
+                    double thisexp = (1.0)/n;
+                    double otherexp = (1.0)/n;
+                    double thisSignal = Math.pow(thisSignalProd, thisexp);
                     double thisNoise = (thisNoiseSum/n);
-                    double otherSignal = Math.pow(otherSignalProd, exp);
+                    double otherSignal = Math.pow(otherSignalProd, otherexp);
                     double otherNoise = (otherNoiseSum/n);
                     
                     if(thisSignal > otherSignal) {

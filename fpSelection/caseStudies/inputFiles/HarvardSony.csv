@@ -1,16 +1,1 @@
-Cytometer Configuration,,,,,,,,,,,,
-Software Version,Not Available,,,,,,,,,,,
-Export Time,Not Available,,,,,,,,,,,
-User,,,,,,,,,,,,
-Cytometer,Harvard Sony,,,,,,,,,,,
-Serial Number,Not Available,,,,,,,,,,,
-Configuration Name,Custom,,,,,,,,,,,
-Folder Name,None,,,,,,,,,,,
-Comments,,,,,,,,,,,,
-Laser Name,Type,Wavelength,Power,Detector Array,Detector,Channel,Mirror,Filter,Parameter,Fsc Channel,Reference,Position
-Violet,Custom,405,,Custom,A,1,,450/50 BP,,,,0
-Blue,Custom,488,,Custom,A,2,,525/50 BP,,,,1
-Yel/Grn,Custom,561,,Custom,A,3,,600/60 BP,,,,2
-,,,,,B,4,,665/30 BP,,,,
-Red,Custom,638,,Custom,A,5,,720/60 BP,,,,3
-,,,,,B,6,,785/60 BP,,,,
+Cytometer Configuration,,,,,,,,,,,,Software Version,Not Available,,,,,,,,,,,Export Time,Not Available,,,,,,,,,,,User,,,,,,,,,,,,Cytometer,Harvard Sony,,,,,,,,,,,Serial Number,Not Available,,,,,,,,,,,Configuration Name,Custom,,,,,,,,,,,Folder Name,None,,,,,,,,,,,Comments,,,,,,,,,,,,Laser Name,Type,Wavelength,Power,Detector Array,Detector,Channel,Mirror,Filter,Parameter,Fsc Channel,Reference,PositionViolet,Custom,405,,Custom,A,1,,450/50 BP,,,,0Blue,Custom,488,,Custom,A,2,,525/50 BP,,,,1Yel/Grn,Custom,561,,Custom,A,3,,600/60 BP,,,,2,,,,,B,4,,785/60 BP,,,,Red,Custom,638,,Custom,A,5,,720/60 BP,,,,3,,,,,B,6,,665/30 BP,,,,

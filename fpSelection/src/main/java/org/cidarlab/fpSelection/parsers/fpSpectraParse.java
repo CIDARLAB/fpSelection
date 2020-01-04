@@ -94,6 +94,15 @@ public class fpSpectraParse {
     
     public static void addBrightness(File brightness, Map<String, Fluorophore> fps){
         List<String[]> lines = Utilities.getCSVFileContentAsList(brightness);
+        addBrightness(lines,fps);
+    }
+    
+    public static void addBrightness(InputStream brightness, Map<String,Fluorophore> fps){
+        List<String[]> lines = Utilities.getCSVFileContentAsList(brightness);
+        addBrightness(lines,fps);
+    }
+    
+    private static void addBrightness(List<String[]> lines, Map<String,Fluorophore> fps){
         double maxBrightness = Double.valueOf(lines.get(0)[1]);
         String normalized = lines.get(0)[0];
         for(String[] line:lines){
@@ -111,9 +120,8 @@ public class fpSpectraParse {
             fps.get(fp).setBrightness(value);
             fps.get(fp).setBrightnessNormalizedTo(normalized);
         }
-        
-        
     }
+    
     
     public static Map<String, Fluorophore> parse(File input) throws FileNotFoundException, IOException {
 

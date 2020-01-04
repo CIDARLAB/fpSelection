@@ -30,7 +30,6 @@ import org.cidarlab.fpSelection.dom.SNR;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.parsers.fpSpectraParse;
-import org.cidarlab.fpSelection.selectors.ParserTest;
 import org.junit.Test;
 
 /**
@@ -47,6 +46,8 @@ public class CaseStudyTest {
     private static String harvardFortessafp = basefp + "inputFiles" + Utilities.getSeparater() + "HarvardFortessa.csv";
     private static String harvardSonyfp = basefp + "inputFiles" + Utilities.getSeparater() + "HarvardSony.csv";
     private static String harvardMacsquantfp = basefp + "inputFiles" + Utilities.getSeparater() + "HarvardMacsquant.csv";
+    private static String harvardCytoFlexfp = basefp + "inputFiles" + Utilities.getSeparater() + "HarvardCytoFlex.csv";
+    
     private static String figure1Sonyfp = basefp + "inputFiles" + Utilities.getSeparater() + "figure1Sony.csv";
 
     private static String largerSpectrafp = basefp + "inputFiles" + Utilities.getSeparater() + "largerSpectra.csv";
@@ -61,6 +62,9 @@ public class CaseStudyTest {
     private static String figure1Spectrafp = basefp + "inputFiles" + Utilities.getSeparater() + "figure1Spectra.csv";
     private static String figure1Brightnessfp = basefp + "inputFiles" + Utilities.getSeparater() + "figure1Brightness.csv";
     
+    private static String runExptfp = basefp + "comp" + Utilities.getSeparater();
+   
+    private static String plotfp = basefp + "plots" + Utilities.getSeparater();
     
     @Test
     public void testCaseStudy() throws IOException, InterruptedException {
@@ -68,24 +72,22 @@ public class CaseStudyTest {
         Cytometer harvardFortessa = fpFortessaParse.parse(harvardFortessafp, false);
         Cytometer harvardSony = fpFortessaParse.parse(harvardSonyfp, false);
         Cytometer harvardMacsquant = fpFortessaParse.parse(harvardMacsquantfp, false);
-
-        //Map<String, Fluorophore> smallerSpectralMap = fpSpectraParse.parse(smallerSpectrafp);
-        //fpSpectraParse.addBrightness(new File(smallerBrightnessfp), smallerSpectralMap);
-
-        //Map<String, Fluorophore> largerSpectralMap = fpSpectraParse.parse(largerSpectrafp);
-        //fpSpectraParse.addBrightness(new File(largerBrightnessfp), largerSpectralMap);
+        Cytometer harvardCytoflex = fpFortessaParse.parse(harvardCytoFlexfp, false);
         
         Map<String, Fluorophore> caseStudySpectralMap = fpSpectraParse.parse(caseSpectrafp);
         fpSpectraParse.addBrightness(new File(caseBrightnessfp), caseStudySpectralMap);
         
         
-        //First do Exhaustive for all cytometers...
+        //Run Analysis
+        
         System.out.println("==================Fortessa===================");
         exhaustiveTests(caseStudySpectralMap, harvardFortessa, "EX_HarvFort");
         System.out.println("==================Sony=======================");
         exhaustiveTests(caseStudySpectralMap, harvardSony, "EX_HarvSony");
         System.out.println("==================Macsquant==================");
         exhaustiveTests(caseStudySpectralMap, harvardMacsquant, "EX_HarvMacs");
+        System.out.println("==================CytoFlex===================");
+        exhaustiveTests(caseStudySpectralMap, harvardCytoflex, "EX_HarvFlex");
 
         System.out.println("Stochastic Test - Fortessa===================");
         stochasticTests(caseStudySpectralMap,harvardFortessa, "HarvFort");
@@ -96,32 +98,728 @@ public class CaseStudyTest {
         System.out.println("Stochastic Test - Macsquant==================");
         stochasticTests(caseStudySpectralMap,harvardMacsquant, "HarvMacs");
         
-       
-        //Round 1-3
-        /*
-         String smallerSpectraList = basefp + "smallerSpectra.csv";
-         String brightnessfp = basefp + "smallerBrightness.csv";
-         Map<String, Fluorophore> spectralMaps = fpSpectraParse.parse(smallerSpectraList);
-         fpSpectraParse.addBrightness(new File(brightnessfp), spectralMaps);
+        System.out.println("Stochastic Test - CytoFlex===================");
+        stochasticTests(caseStudySpectralMap,harvardCytoflex, "HarvFlex");
         
-         Cytometer bucytometer = fpFortessaParse.parse(ParserTest.BUfortessafp, false);
-         Cytometer harvardcytometer = fpFortessaParse.parse(ParserTest.Harvardfortessafp, false);
         
-         exhaustiveTests(spectralMaps, bucytometer, "BU");
-         exhaustiveTests(spectralMaps, harvardcytometer, "Harvard");
+    
         
-         simAnnealingTests(spectralMaps, bucytometer, "BU");
-         simAnnealingTests(spectralMaps, harvardcytometer, "Harvard");
+        Map<String,Cytometer> cytomap = new HashMap<String,Cytometer>();
+        cytomap.put("HarvFort", harvardFortessa);
+        cytomap.put("HarvMacs", harvardMacsquant);
+        cytomap.put("HarvSony", harvardSony);
+        cytomap.put("HarvFlex", harvardCytoflex);
         
-         higherSimAnnealingTests(spectralMaps, bucytometer, "BU");
-         higherSimAnnealingTests(spectralMaps, harvardcytometer, "Harvard");
         
-         hillClimbingTests(spectralMaps, bucytometer, "BU");
-         hillClimbingTests(spectralMaps, harvardcytometer, "Harvard");
+        //Normalize results to 1.                 
+        //String runfp = basefp + "fprun" + Utilities.getSeparater();
+        //analyseRuns(runfp,caseStudySpectralMap, cytomap);
         
-         higherHillClimbingTests(spectralMaps, bucytometer, "BU");
-         higherHillClimbingTests(spectralMaps, harvardcytometer, "Harvard");
-         */
+        
+        //plotExpComp();
+        
+        
+        //compareResults();
+        
+        //String methodsfp = basefp + "methods" + Utilities.getSeparater();
+        
+        //for(String s:caseStudySpectralMap.keySet()){
+            //createImage(methodsfp,true,caseStudySpectralMap.get(s),250,900,0,0,0);
+            //createImage(methodsfp,false,caseStudySpectralMap.get(s),250,900,0,0,0);
+        //}
+        
+
+        //"DsRed",250,900,561,590,630
+        //createEXImage(methodsfp,caseStudySpectralMap.get("DsRed"),250,900,561,590,630);
+        //"DsRed",250,900,488,650,720        
+        //createEXImage(methodsfp,caseStudySpectralMap.get("DsRed"),250,900,488,650,720);
+                
+    }
+    
+    
+    public static void createEXImage(String filepath, Fluorophore fp, double low, double high, double laserwl, double detectorlow, double detectorhigh) throws InterruptedException, IOException{
+        
+        String color = "g";
+        
+        String picname = "";
+        String pyname = "";
+        
+        picname = filepath + fp.name + "_laser"  + laserwl + "rsum.png";
+        pyname = filepath + fp.name + "_laser"  + laserwl + ".py";            
+        
+        List<String> lines = new ArrayList<String>();
+        lines.add("import matplotlib\n" +
+"import math\n" +
+"import numpy\n" +
+"from math import e\n" +
+"import seaborn as sns\n" +
+"matplotlib.use('agg',warn=False, force=True)\n" +
+"from matplotlib import pyplot as plt\n" +
+"from matplotlib import patches as patches\n" +
+"\n" +
+"fig = plt.figure()\n" +
+"sns.set(font_scale=1)\n" +
+"sns.set_style(\"white\")\n" +
+"sns.despine()\n");
+        
+        
+        double mult = fp.EXspectrum.get(laserwl)/100;
+        
+        String xsig = "xsig = [";
+        String ysig = "ysig = [";
+        
+        String xdetec = "xdet = [";
+        String ydetec = "ydet = [";
+        
+        
+        for(double i = detectorlow; i < detectorhigh;i+=5){
+            if (fp.EMspectrum.containsKey(i)) {
+                xdetec += i + ",";
+                double val = ((fp.EMspectrum.get(i) / 100)*mult);
+                ydetec += val + ",";
+                lines.add("plt.plot([" + i + "," + i + "," + (i+5) + "," + (i+5) + "],[0," + val + "," + val  + ",0],color='black', linewidth=1)" );
+                //plt.plot(xfilt,yfilt, color='black', linewidth=1.5)
+
+            }
+        }
+
+        
+        for (double i = low; i < high; i++) {
+            if (fp.EMspectrum.containsKey(i)) {
+                xsig += i + ",";
+                ysig += ((fp.EMspectrum.get(i) / 100)*mult) + ",";
+            }
+        }
+        if (fp.EMspectrum.containsKey(high)) {
+            xsig += high;
+            ysig += ((fp.EMspectrum.get(high) / 100)*mult);
+        }
+
+        if (xsig.endsWith(",")) {
+            xsig = xsig.substring(0, xsig.lastIndexOf(","));
+            ysig = ysig.substring(0, ysig.lastIndexOf(","));
+        }
+
+        
+        xdetec += detectorhigh + "," + detectorlow +"]";
+        ydetec += "0.0,0.0]";
+        
+        
+        xsig += "]";
+        ysig += "]";
+        
+        lines.add(xdetec);
+        lines.add(ydetec);
+        
+        
+        lines.add(xsig);
+        lines.add(ysig);
+        
+        lines.add("plt.fill_between(xsig,ysig,facecolor='" + color + "',alpha=0.6)");
+        lines.add("plt.plot(xsig,ysig,'-',color='" + color + "')");            
+        
+        
+        
+        lines.add("plt.xlabel(\"Wavelength\")");
+        lines.add("plt.ylabel(\"Intensity\")");
+        lines.add("plt.xlim(" + low + "," + high + ")");
+        lines.add("plt.ylim(0,1.001)");
+        lines.add("plt.legend(frameon=False)\n" +
+"plt.tight_layout()");
+        lines.add("fig.savefig('" + picname + "', dpi=900)");
+        Utilities.writeToFile(pyname, lines);
+        Utilities.runPythonScript(pyname);
+    }
+    
+    
+    public static void createImage(String filepath, boolean ex, Fluorophore fp, double low, double high, double laserwl, double detectorlow, double detectorhigh) throws InterruptedException, IOException{
+        
+        String color = "g";
+        
+        String picname = "";
+        String pyname = "";
+        
+        if(ex){
+            color = "b";
+            picname = filepath + fp.name + "_ex" + ".png";
+            pyname = filepath + fp.name + "_ex" + ".py";            
+        } else {
+            color = "g";
+            picname = filepath + fp.name + "_em" + ".png";
+            pyname = filepath + fp.name + "_em" + ".py";
+        }
+        
+        List<String> lines = new ArrayList<String>();
+        lines.add("import matplotlib\n" +
+"import math\n" +
+"import numpy\n" +
+"from math import e\n" +
+"import seaborn as sns\n" +
+"matplotlib.use('agg',warn=False, force=True)\n" +
+"from matplotlib import pyplot as plt\n" +
+"from matplotlib import patches as patches\n" +
+"\n" +
+"fig = plt.figure()\n" +
+"sns.set(font_scale=1)\n" +
+"sns.set_style(\"white\")\n" +
+"sns.despine()\n");
+        
+        
+        
+/*
+        plt.fill(xsig,ysig,facecolor='g',alpha=0.6)
+plt.fill(xnoi,ynoi,facecolor='r',alpha=0.6)
+        */        
+        
+        String xsig = "xsig = [";
+        String ysig = "ysig = [";
+        
+        
+        if(ex){
+            for (double i = low; i < high; i++) {
+                if (fp.EXspectrum.containsKey(i)) {
+                    xsig += i + ",";
+                    ysig += (fp.EXspectrum.get(i) / 100) + ",";
+                }
+            }
+            if (fp.EXspectrum.containsKey(high)) {
+                xsig += high;
+                ysig += (fp.EXspectrum.get(high) / 100);
+            }
+
+            if (xsig.endsWith(",")) {
+                xsig = xsig.substring(0, xsig.lastIndexOf(","));
+                ysig = ysig.substring(0, ysig.lastIndexOf(","));
+            }
+        } else {
+            for (double i = low; i < high; i++) {
+                if (fp.EMspectrum.containsKey(i)) {
+                    xsig += i + ",";
+                    ysig += (fp.EMspectrum.get(i) / 100) + ",";
+                }
+            }
+            if (fp.EMspectrum.containsKey(high)) {
+                xsig += high;
+                ysig += (fp.EMspectrum.get(high) / 100);
+            }
+
+            if (xsig.endsWith(",")) {
+                xsig = xsig.substring(0, xsig.lastIndexOf(","));
+                ysig = ysig.substring(0, ysig.lastIndexOf(","));
+            }
+        }
+        
+        
+        xsig += "]";
+        ysig += "]";
+        
+        lines.add(xsig);
+        lines.add(ysig);
+        
+        lines.add("plt.fill_between(xsig,ysig,facecolor='" + color + "',alpha=0.6)");
+        lines.add("plt.plot(xsig,ysig,'-',color='" + color + "')");            
+        
+        
+        
+        lines.add("plt.xlabel(\"Wavelength\")");
+        lines.add("plt.ylabel(\"Intensity\")");
+        lines.add("plt.xlim(" + low + "," + high + ")");
+        lines.add("plt.ylim(0,1.001)");
+        lines.add("plt.legend(frameon=False)\n" +
+"plt.tight_layout()");
+        lines.add("fig.savefig('" + picname + "', dpi=900)");
+        Utilities.writeToFile(pyname, lines);
+        Utilities.runPythonScript(pyname);
+    }
+    
+    public static boolean thresh(List<String[]> comp, List<String[]> exp){
+        
+        
+        return false;
+    }
+    
+    public static int matches(List<String[]> comp, List<String[]> exp){
+        
+        int n = 0;
+        for(int i=1; i<comp.size();i++){
+            double compval = Double.valueOf(comp.get(i)[i]);
+            double expval = Double.valueOf(exp.get(i)[i]);
+            if((compval == 1.00) && (expval == 1.00)){
+                n++;
+            } 
+            else if((compval != 1.00) && (expval != 1.00)){
+                n++;
+            }
+            else {
+                //return false;
+            }            
+        }
+        
+        return n;
+    }
+    
+    
+    public static void compareResults(){
+        String compfp = basefp + "run1" + Utilities.getSeparater();
+        String expfp = basefp + "expt1" + Utilities.getSeparater();
+        File[] folders = (new File(compfp)).listFiles();
+        
+        int fp2tot = 0;
+        int fp3tot = 0;
+        int fp4tot = 0;
+        int fp5tot = 0;
+        int fp6tot = 0;
+
+        int sonytot = 0;
+        int macstot = 0;
+        int forttot = 0;
+
+        int fp2match = 0;
+        int fp3match = 0;
+        int fp4match = 0;
+        int fp5match = 0;
+        int fp6match = 0;
+
+        int fp2thresh = 0;
+        int fp3thresh = 0;
+        int fp4thresh = 0;
+        int fp5thresh = 0;
+        int fp6thresh = 0;
+
+        int sonymatch = 0;
+        int macsmatch = 0;
+        int fortmatch = 0;
+
+        int sonythresh = 0;
+        int macsthresh = 0;
+        int fortthresh = 0;
+
+        for(File folder:folders){
+            if(!folder.getName().startsWith("Stoch_")){
+                continue;
+            }
+            File[] rowfiles = folder.listFiles();
+            for(File rowfile: rowfiles){
+                String compfilename = rowfile.getName();
+                String rowname = compfilename.substring(compfilename.lastIndexOf("_")+1,compfilename.lastIndexOf(".csv"));
+                String expfilename = expfp + folder.getName() + Utilities.getSeparater() + folder.getName() + "_spMEAN_" + rowname + ".csv";
+                File expfile = new File(expfilename);
+                
+                List<String[]> complines = Utilities.getCSVFileContentAsList(rowfile);
+                List<String[]> explines = Utilities.getCSVFileContentAsList(expfile);
+                int n = complines.size() -1;
+                
+                if(rowfile.getName().contains("2fp")){
+                    fp2tot++; 
+                } else if(rowfile.getName().contains("3fp")){
+                    fp3tot++; 
+                } else if(rowfile.getName().contains("4fp")){
+                    fp4tot++;
+                } else if(rowfile.getName().contains("5fp")){
+                    fp5tot++; 
+                } else if(rowfile.getName().contains("6fp")){
+                    fp6tot++; 
+                }
+                
+                if(rowfile.getName().contains("Fort")){
+                    forttot++;
+                } else if(rowfile.getName().contains("Sony")){
+                    sonytot++;
+                } else if(rowfile.getName().contains("Macs")){
+                    macstot++;
+                }
+                //System.out.println(rowfile.getName());
+                
+                if(matches(complines,explines) == n){
+                    if(rowfile.getName().contains("2fp")){
+                        fp2match++; 
+                    } else if(rowfile.getName().contains("3fp")){
+                        fp3match++; 
+                    } else if(rowfile.getName().contains("4fp")){
+                        fp4match++;
+                    } else if(rowfile.getName().contains("5fp")){
+                        fp5match++; 
+                    } else if(rowfile.getName().contains("6fp")){
+                        fp6match++; 
+                    }
+                
+                    if(rowfile.getName().contains("Fort")){
+                        fortmatch++;
+                    } else if(rowfile.getName().contains("Sony")){
+                        sonymatch++;
+                    } else if(rowfile.getName().contains("Macs")){
+                        macsmatch++;
+                    }
+                }
+                
+            }
+        }
+        
+        List<String> lines = new ArrayList<String>();
+        
+        lines.add("Category,Matches Count, Threshold Count,Total");
+        lines.add("2fp," + fp2match + "," + fp2thresh + "," + fp2tot);
+        lines.add("3fp," + fp3match + "," + fp3thresh + "," + fp3tot);
+        lines.add("4fp," + fp4match + "," + fp4thresh + "," + fp4tot);
+        lines.add("5fp," + fp5match + "," + fp5thresh + "," + fp5tot);
+        lines.add("6fp," + fp6match + "," + fp6thresh + "," + fp6tot);
+        lines.add("Fort," + fortmatch + "," + fortthresh + "," + forttot);
+        lines.add("Macs," + macsmatch + "," + macsthresh + "," + macstot);
+        lines.add("Sony," + sonymatch + "," + sonythresh + "," + sonytot);
+        
+        Utilities.writeToFile(basefp + "analysis.csv", lines);
+    }
+            
+            
+    public static void plotExpComp() throws InterruptedException, IOException{
+        String compfp = basefp + "comp" + Utilities.getSeparater();
+        String expfp = basefp + "expt" + Utilities.getSeparater();
+        File[] files = (new File(compfp)).listFiles();
+        for(File folderf:files){
+            if (folderf.getName().contains("HarvSony")) continue;
+            if (folderf.getName().contains("HC_HarvFlex_5fp")) continue;
+            
+            File[] rowfiles = folderf.listFiles();
+            for(File rowfile:rowfiles){
+                String filename = rowfile.getName();
+                filename = filename.substring(0,filename.lastIndexOf(".csv"));
+                String row = filename.substring(filename.lastIndexOf("_row"));
+                String prefix = filename.substring(0,filename.lastIndexOf("_row"));
+                
+                //String expMeanfile = prefix + "_spMEAN" + row;
+                //String expMeanfp = expfp + folderf.getName() + Utilities.getSeparater() + expMeanfile + ".csv";
+                String expMedianfile = prefix + "_spMEDIAN" + row;
+                String expMedianfp = expfp + folderf.getName() + Utilities.getSeparater() + expMedianfile + ".csv";
+                
+                
+                
+                //getAnalyzePlotLines(rowfile.getAbsolutePath(),expMeanfp,expMeanfile);
+                getAnalyzePlotLines(rowfile.getAbsolutePath(),expMedianfp,expMedianfile);
+                //System.out.println(filename + " : " + prefix + " : " + row);                
+            }
+        }
+        
+    }
+    
+    public static void getAnalyzePlotLines(String compfp, String expfp,String filename) throws InterruptedException, IOException{
+        List<String> lines = new ArrayList<String>();
+        
+        String pyfp = plotfp + filename + ".py";
+        String figfp = plotfp + filename + ".png";
+        
+        
+        List<String[]> complines = Utilities.getCSVFileContentAsList(compfp);
+        List<String[]> explines = Utilities.getCSVFileContentAsList(expfp);
+        
+        int n = complines.size()-1;
+        List<String> fps = new ArrayList<String>();
+        List<String> detectors = new ArrayList<String>();
+        for(int i=1;i<=n;i++){
+            detectors.add(complines.get(0)[i]);
+        }
+        
+        List<List<Double>> compvalues = new ArrayList<List<Double>>();
+        List<List<Double>> expvalues = new ArrayList<List<Double>>();
+        
+        for(int i=1;i<=n;i++){
+            List<Double> compconfig = new ArrayList<Double>();
+            List<Double> expconfig = new ArrayList<Double>();
+            fps.add(complines.get(i)[0]);
+            for(int j=1;j<=n;j++){                
+                compconfig.add(Double.valueOf(complines.get(i)[j]));
+                expconfig.add(Double.valueOf(explines.get(i)[j]));
+            }
+            compvalues.add(compconfig);
+            expvalues.add(expconfig);
+            
+        }
+        
+        //Headers and Lib imports
+        lines.add("import matplotlib\n" +
+"import seaborn as sns\n" +
+"import pandas as pd\n" +
+"matplotlib.use('agg',warn=False, force=True)\n" +
+"from matplotlib import pyplot as plt\n" +
+"from matplotlib import patches as patches\n\n");
+        
+        
+        //Plot details 
+        lines.add("fig = plt.figure()\n" +
+"sns.set(font_scale=1)\n" +
+"sns.set_style(\"white\")\n\n");
+        
+        
+        List<Integer> sigX = new ArrayList<Integer>();
+        List<Integer> btX = new ArrayList<Integer>();
+        
+        List<Double> sigExp = new ArrayList<Double>();
+        List<Double> sigComp = new ArrayList<Double>();
+        
+        List<Double> btExp = new ArrayList<Double>();
+        List<Double> btComp = new ArrayList<Double>();
+        
+        for(int i=0;i<n;i++){
+            for(int j=0;j<n;j++){
+                int index = ((n+2) * (i)) + j + 1;
+                
+                String color = "g";
+                if(i == j){
+                    //Sig
+                    sigX.add(index);
+                    sigExp.add(expvalues.get(i).get(j));
+                    sigComp.add(compvalues.get(i).get(j));
+                    color = "g";
+                    
+                } else {
+                    //bt
+                    btX.add(index);
+                    btExp.add(expvalues.get(i).get(j));
+                    btComp.add(compvalues.get(i).get(j));
+                    color = "r";
+                }
+                double lineval = expvalues.get(i).get(j);
+                if(compvalues.get(i).get(j) > lineval){
+                    lineval = compvalues.get(i).get(j);
+                }
+                lines.add("plt.plot([" + index +"," + index +"],[0, " + lineval + "],'-',c=\"" + color + "\",alpha=0.6)");
+                
+            }
+        }
+        
+        String sigXline = "sigX = [";
+        String btXline = "btX = [";
+        
+        String sigExpline = "sigExp = [";
+        String sigCompline = "sigComp = [";
+        
+        String btExpline = "btExp = [";
+        String btCompline = "btComp = [";
+        
+        for(int i=0;i< sigX.size(); i++){
+            sigXline += sigX.get(i);
+            sigExpline += sigExp.get(i);
+            sigCompline += sigComp.get(i);
+            
+            if(i < (sigX.size() -1)){
+                sigXline += ",";
+                sigExpline += ",";
+                sigCompline += ",";
+            }
+        }
+        
+        for(int i=0;i< btX.size(); i++){
+            btXline += btX.get(i);
+            btExpline += btExp.get(i);
+            btCompline += btComp.get(i);
+            
+            if(i < (btX.size() -1)){
+                btXline += ",";
+                btExpline += ",";
+                btCompline += ",";
+            }
+        }
+        
+        sigXline += "]";
+        btXline += "]";
+        
+        sigExpline += "]";
+        sigCompline += "]";
+        
+        btExpline += "]";
+        btCompline += "]";
+        
+        lines.add(sigXline);
+        lines.add(btXline);
+        lines.add(sigExpline);
+        lines.add(sigCompline);
+        
+        lines.add(btExpline);
+        lines.add(btCompline);
+        //Add Scatter plots
+        lines.add("plt.scatter(sigX, sigExp, marker='x', c=\"g\",alpha=0.6)\n" +
+"plt.scatter(sigX, sigComp, marker='o', c=\"g\",alpha=0.6)\n" +
+"\n" +
+"plt.scatter(btX, btExp, marker='x', c=\"r\",alpha=0.6)\n" +
+"plt.scatter(btX, btComp, marker='o', c=\"r\",alpha=0.6)\n\n");
+        
+        
+        String xticks = "";
+        String xtickVals = "";
+        for(int i=0;i<n;i++){
+            
+            String xtick = "";
+            String xtickVal = "";
+            for(int j=0;j<n;j++){
+                
+                xtickVal += ( "\"" +   fps.get(j) + "\"" ) ;
+                xtick +=  (((n+2)*i) + j + 1);
+                if(j<n-1){
+                    xtick += ",";
+                    xtickVal += ",";
+                }
+            }
+            
+            xticks += xtick;
+            xtickVals += xtickVal;
+            if(i<n-1){
+                xticks += ",";
+                xtickVals += ",";
+            }
+        }
+        
+        lines.add("plt.xticks([" + xticks +"],[" + xtickVals + "],rotation=90)");
+        
+        lines.add("ax1 = plt.subplot(111)");
+        
+        for(int i=0;i<detectors.size();i++){
+            float xpos = (((((n+2)*i) + 1) * 2) + (n-1))/2;
+            lines.add("ax1.annotate('" + detectors.get(i) +"', xy=(" + xpos +", 1.05), xytext=(" + xpos +", 1.05), ha='center')");
+        }
+        
+        int xlim = (n*n) + (2* (n-1)) + 1;
+        
+        lines.add("plt.xlim(0," + xlim + ")");
+        lines.add("plt.ylim(0,1.1)");
+        lines.add("plt.tight_layout()");
+        lines.add("fig.savefig('" + figfp + "', dpi=900)");
+        
+        Utilities.writeToFile(pyfp, lines);
+        Utilities.runPythonScript(pyfp);
+        
+        
+    }
+    
+    public static void analyseRuns(String runfp, Map<String, Fluorophore> fpmap, Map<String,Cytometer> cytomap) throws IOException{
+        File[] files = (new File(runfp)).listFiles();
+        for (File f : files) {
+            if(f.getName().contains("_1fp")) continue;
+            
+            get10Rows(f.getAbsolutePath(), fpmap, cytomap);
+        }
+
+    }
+    
+    public static Laser getLaser(Cytometer c, String lname){
+        for(Laser l:c.lasers){
+            if(l.getName().equals(lname)){
+                return l;
+            }
+        }
+        System.out.println("This shouldn't happen");
+        return null;
+    }
+    
+    public static Detector getDetector(Laser l, String dname){
+        for(Detector d:l.detectors){
+            if(d.identifier.equals(dname)){
+                return d;
+            }
+        }
+        System.out.println("This shouldn't happen");
+        return null;
+    }
+    
+    public static List<SelectionInfo> getConfiguration(String[] row, Map<String, Fluorophore> fpmap, Cytometer c){
+        int n = row.length / 5;
+        
+        List<SelectionInfo> config = new ArrayList<SelectionInfo>();
+        for(int i=0;i<row.length;i+=5){
+            Fluorophore fp = fpmap.get(row[i]);
+            Laser l = getLaser(c,row[i+1]);
+            Detector d = getDetector(l,row[i+2]);
+            SelectionInfo si = new SelectionInfo();
+            si.setSelectedFluorophore(fp);
+            si.setSelectedLaser(l);
+            si.setSelectedDetector(d);
+            config.add(si);
+        }
+        
+        return config;
+    }
+    
+    public static void get10Rows(String filepath, Map<String, Fluorophore> fpmap, Map<String,Cytometer> cytomap) throws IOException{
+        
+        
+        File f = new File(filepath);
+        
+        String foldername = f.getName();
+        foldername = foldername.substring(0, foldername.indexOf(".csv"));
+        System.out.println(foldername);
+        
+        String rootfolderfp = runExptfp + foldername + Utilities.getSeparater();
+        Utilities.makeDirectory(rootfolderfp);
+        
+        
+        
+        Cytometer c = null;
+        if(f.getName().contains("HarvFort")){
+            c = cytomap.get("HarvFort");
+        } else if(f.getName().contains("HarvMacs")){
+            c = cytomap.get("HarvMacs");
+        } else if(f.getName().contains("HarvSony")){
+            c = cytomap.get("HarvSony");
+        } else if(f.getName().contains("HarvFlex")){
+            c = cytomap.get("HarvFlex");
+        }
+        
+        List<String[]> rows = Utilities.getCSVFileContentAsList(filepath);
+        int lim = 11;
+        if(lim > rows.size()){
+            lim = rows.size();
+        }
+        
+        for(int i=1;i<lim;i++){
+            List<SelectionInfo> config = getConfiguration(rows.get(i),fpmap,c);
+            printConfig(config,rootfolderfp,foldername,i);
+        }        
+    }   
+    
+    public static void printConfig(List<SelectionInfo> config, String rootfp, String foldername, int row){
+        
+        List<String> lines = new ArrayList<String>();
+        
+        List<Fluorophore> fps = new ArrayList<Fluorophore>();
+        String header = "";
+        for(SelectionInfo si:config){
+            fps.add(si.getSelectedFluorophore());
+            header += ("," + si.getSelectedLaser().getName() + " (" + si.getSelectedDetector().identifier +")");
+        }
+        lines.add(header);
+        
+        for(int i=0;i<config.size();i++){
+            SelectionInfo si = config.get(i);
+            String configline = fps.get(i).name;
+            
+            List<Double> sigs = new ArrayList<Double>(); 
+            for(Fluorophore fp:fps){
+                sigs.add(fp.express(si.getSelectedLaser(), si.getSelectedDetector()));
+            }
+            for(Double d: normalize(sigs)){
+                configline += ("," + d);
+            }
+            lines.add(configline);
+        }
+        
+        String filefp = rootfp + foldername + "_row" + row + ".csv";
+        Utilities.writeToFile(filefp, lines);
+        
+    }    
+    
+    private static List<Double> normalize(List<Double> vals){
+        double max = vals.get(0);
+        for(Double d:vals){
+            if(d>max){
+                max = d;
+            }
+        }
+        List<Double> norm = new ArrayList<Double>();
+        for(Double d:vals){
+            if(max != 0)
+                norm.add(d/max);
+            else
+                norm.add(d);
+        }
+        return norm;
     }
     
     //@Test
@@ -263,41 +961,23 @@ public class CaseStudyTest {
         Map<String, Fluorophore> caseStudySpectralMap = fpSpectraParse.parse(caseSpectrafp);
         fpSpectraParse.addBrightness(new File(caseBrightnessfp), caseStudySpectralMap);
         
+        //Map<String, Fluorophore> smallerSpectralMap = fpSpectraParse.parse(smallerSpectrafp);
+        //fpSpectraParse.addBrightness(new File(smallerBrightnessfp), smallerSpectralMap);
+
+        //Map<String, Fluorophore> largerSpectralMap = fpSpectraParse.parse(largerSpectrafp);
+        //fpSpectraParse.addBrightness(new File(largerBrightnessfp), largerSpectralMap);
         
-        //First do Exhaustive for all cytometers...
-        System.out.println("==================Fortessa===================");
-        exhaustiveTests(caseStudySpectralMap, harvardFortessa, "EX_HarvFort");
-        System.out.println("==================Sony=======================");
-        exhaustiveTests(caseStudySpectralMap, harvardSony, "EX_HarvSony");
-        System.out.println("==================Macsquant==================");
-        exhaustiveTests(caseStudySpectralMap, harvardMacsquant, "EX_HarvMacs");
+        
+        
+        //System.out.println("==================Fortessa===================");
+        //exhaustiveTests(caseStudySpectralMap, harvardFortessa, "EX_HarvFort");
+        //System.out.println("==================Sony=======================");
+        //exhaustiveTests(caseStudySpectralMap, harvardSony, "EX_HarvSony");
+        //System.out.println("==================Macsquant==================");
+        //exhaustiveTests(caseStudySpectralMap, harvardMacsquant, "EX_HarvMacs");
 
             
-        //Round 1-3
-        /*
-         String smallerSpectraList = basefp + "smallerSpectra.csv";
-         String brightnessfp = basefp + "smallerBrightness.csv";
-         Map<String, Fluorophore> spectralMaps = fpSpectraParse.parse(smallerSpectraList);
-         fpSpectraParse.addBrightness(new File(brightnessfp), spectralMaps);
         
-         Cytometer bucytometer = fpFortessaParse.parse(ParserTest.BUfortessafp, false);
-         Cytometer harvardcytometer = fpFortessaParse.parse(ParserTest.Harvardfortessafp, false);
-        
-         exhaustiveTests(spectralMaps, bucytometer, "BU");
-         exhaustiveTests(spectralMaps, harvardcytometer, "Harvard");
-        
-         simAnnealingTests(spectralMaps, bucytometer, "BU");
-         simAnnealingTests(spectralMaps, harvardcytometer, "Harvard");
-        
-         higherSimAnnealingTests(spectralMaps, bucytometer, "BU");
-         higherSimAnnealingTests(spectralMaps, harvardcytometer, "Harvard");
-        
-         hillClimbingTests(spectralMaps, bucytometer, "BU");
-         hillClimbingTests(spectralMaps, harvardcytometer, "Harvard");
-        
-         higherHillClimbingTests(spectralMaps, bucytometer, "BU");
-         higherHillClimbingTests(spectralMaps, harvardcytometer, "Harvard");
-         */
     }
     
     private static void stochasticTests(Map<String, Fluorophore> spectralMaps, Cytometer cytometer, String prefix) throws IOException{
@@ -306,7 +986,9 @@ public class CaseStudyTest {
         stochasticTest(3,spectralMaps,cytometer,prefix);
         stochasticTest(4,spectralMaps,cytometer,prefix);
         stochasticTest(5,spectralMaps,cytometer,prefix);
-        stochasticTest(6,spectralMaps,cytometer,prefix);
+        if(!prefix.equals("HarvSony")){
+            stochasticTest(6,spectralMaps,cytometer,prefix);
+        }
         //stochasticTest(7,spectralMaps,cytometer,prefix);
         //stochasticTest(8,spectralMaps,cytometer,prefix);
     }
@@ -424,12 +1106,12 @@ public class CaseStudyTest {
         System.out.println("Time taken = " + ((System.currentTimeMillis() - current)) + " milliseconds.");
         System.out.println("------------------------------");
 
-        System.out.println("Starting Exhaustive with n = 3");
+        /*System.out.println("Starting Exhaustive with n = 3");
         current = System.currentTimeMillis();
         exhaustivePlots(3, spectralMaps, cytometer, prefix);
         System.out.println("Time taken = " + ((System.currentTimeMillis() - current) / 1000) + " seconds.");
-        System.out.println("------------------------------");
-
+        System.out.println("------------------------------");*/
+              
     }
 
     

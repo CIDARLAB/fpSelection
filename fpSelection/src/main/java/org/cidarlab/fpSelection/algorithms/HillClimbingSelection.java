@@ -89,7 +89,7 @@ public class HillClimbingSelection {
             next.set(index, newFP);
             next.set(swapIndex, indexFP);
             if(selected.get(index) == selected.get(swapIndex)){
-                System.out.println("ERROR!! Something is very wrong here");
+                //System.out.println("ERROR!! Something is very wrong here");
             }
         } else {
             next.set(index, newFP);
@@ -106,7 +106,7 @@ public class HillClimbingSelection {
             next.set(index, newD);
             next.set(swapIndex, indexD);
             if(selected.get(index) == selected.get(swapIndex)){
-                System.out.println("ERROR!! Something is very wrong here");
+                //System.out.println("ERROR!! Something is very wrong here");
             }
         } else {
             next.set(index, newD);
