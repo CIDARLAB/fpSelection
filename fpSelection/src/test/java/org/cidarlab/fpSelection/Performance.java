@@ -23,10 +23,17 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import static org.cidarlab.fpSelection.CaseStudyTest.filterCombinations;
 import org.cidarlab.fpSelection.algorithms.ExhaustiveSelection;
 import org.cidarlab.fpSelection.algorithms.HillClimbingSelection;
+import static org.cidarlab.fpSelection.algorithms.HillClimbingSelection.getRandomDetectors;
+import static org.cidarlab.fpSelection.algorithms.HillClimbingSelection.getRandomFluorophores;
+import static org.cidarlab.fpSelection.algorithms.HillClimbingSelection.getSelection;
 import org.cidarlab.fpSelection.algorithms.RandomWalk;
 import org.cidarlab.fpSelection.algorithms.SimulatedAnnealing;
+import static org.cidarlab.fpSelection.algorithms.SimulatedAnnealingThread.acceptanceProbability;
+import static org.cidarlab.fpSelection.algorithms.SimulatedAnnealingThread.swapDetector;
+import static org.cidarlab.fpSelection.algorithms.SimulatedAnnealingThread.swapFluorophore;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
@@ -35,6 +42,7 @@ import org.cidarlab.fpSelection.dom.SNR;
 import org.cidarlab.fpSelection.dom.SelectionInfo;
 import org.cidarlab.fpSelection.parsers.fpFortessaParse;
 import org.cidarlab.fpSelection.parsers.fpSpectraParse;
+import org.cidarlab.fpSelection.selectors.ProteinSelector;
 import org.junit.Test;
 
 /**
@@ -72,33 +80,9 @@ public class Performance {
     private static String plotfp = basefp + "plots" + Utilities.getSeparater();
     
     
-    public static void testExhaustivePerformance(int n, Map<String, Fluorophore> maps, Cytometer c) throws IOException{
-        long current = 0;
-        current = System.currentTimeMillis();
-        ExhaustiveSelection.run(n, maps, c);
-        System.out.println("Time taken for n = " + n +  " is: " + ((System.currentTimeMillis() - current)) + " milliseconds.");
-        
-    }
     
-    public static void testSimulatedAnnealing(int n, Map<String, Fluorophore> maps, Cytometer c) throws IOException{
-        long current = 0;
-        current = System.currentTimeMillis();
-        SimulatedAnnealing.run(n, maps, c);
-        System.out.println("Time taken for n = " + n +  " is: " + ((System.currentTimeMillis() - current)) + " milliseconds.");
-        
-    }
-    
-    public static void testHillClimbing(int n, Map<String, Fluorophore> maps, Cytometer c) throws IOException{
-        long current = 0;
-        current = System.currentTimeMillis();
-        HillClimbingSelection.run(n, maps, c);
-        System.out.println("Time taken for n = " + n +  " is: " + ((System.currentTimeMillis() - current)) + " milliseconds.");
-        
-    }
-    
-    @Test
-    public void testCaseStudy() throws IOException, InterruptedException {
-        
+    //@Test
+    public void testStochasticAlgorithms() throws IOException, InterruptedException {
         Cytometer harvardFortessa = fpFortessaParse.parse(harvardFortessafp, false);
         Cytometer harvardSony = fpFortessaParse.parse(harvardSonyfp, false);
         Cytometer harvardMacsquant = fpFortessaParse.parse(harvardMacsquantfp, false);
@@ -107,139 +91,551 @@ public class Performance {
         Map<String, Fluorophore> caseStudySpectralMap = fpSpectraParse.parse(caseSpectrafp);
         fpSpectraParse.addBrightness(new File(caseBrightnessfp), caseStudySpectralMap);
         
+        List<String> salines = new ArrayList<>();
+        List<String> hclines = new ArrayList<>();
+        List<String> rwlines = new ArrayList<>();
+        List<Map.Entry<List<SelectionInfo>, SNR>> results = exhaustiveRunList(3,caseStudySpectralMap,harvardCytoflex);
         
-        //Performance.....
-        //Exhaustive
+        List<Fluorophore> fluorophores = new ArrayList<Fluorophore>(caseStudySpectralMap.values());
+        List<Detector> detectors = new ArrayList<Detector>();
+        Map<Detector,Laser> detectorMap = new HashMap<>();
         
+        for(Laser l:harvardCytoflex.lasers){
+            for(Detector d:l.detectors){
+                detectors.add(d);
+                detectorMap.put(d, l);
+            }
+        }
+        System.out.println("Finished Exhaustive Search. Total Number of Solutions: " + results.size());
         
-
-        System.out.println("#################_Thow Away_################");        
-        testExhaustivePerformance(2,caseStudySpectralMap,harvardFortessa);
+        List<String> hashedresult = new ArrayList<String>();
+        for(Map.Entry<List<SelectionInfo>, SNR> entry:results){
+            hashedresult.add(selectionInfoToString(entry.getKey()));
+        }
         
+        System.out.println("Finished Creating a hash.");
         
+        for(int i=0;i<200;i++){
+            System.out.println("Start SA iteration - " + i);
+            String line = getSARankList(hashedresult,3,fluorophores,detectors,detectorMap);
+            salines.add(line);
+        }
         
-        System.out.println("#################_Exhasutive_################");        
-        System.out.println("==================Fortessa===================");
-        testExhaustivePerformance(2,caseStudySpectralMap,harvardFortessa);
-        testExhaustivePerformance(3,caseStudySpectralMap,harvardFortessa);
-        testExhaustivePerformance(4,caseStudySpectralMap,harvardFortessa);
-        testExhaustivePerformance(5,caseStudySpectralMap,harvardFortessa);
+        for(int i=0;i<200;i++){
+            System.out.println("Start HC iteration - " + i);
+            String line = getHCRankList(hashedresult,3,caseStudySpectralMap,harvardCytoflex);
+            hclines.add(line);
+        }
         
-        System.out.println("==================Sony=======================");
-        testExhaustivePerformance(2,caseStudySpectralMap,harvardSony);
-        testExhaustivePerformance(3,caseStudySpectralMap,harvardSony);
-        testExhaustivePerformance(4,caseStudySpectralMap,harvardSony);
-        testExhaustivePerformance(5,caseStudySpectralMap,harvardSony);
-        testExhaustivePerformance(6,caseStudySpectralMap,harvardSony);
-        
-        System.out.println("==================Macsquant==================");
-        testExhaustivePerformance(2,caseStudySpectralMap,harvardMacsquant);
-        testExhaustivePerformance(3,caseStudySpectralMap,harvardMacsquant);
-        testExhaustivePerformance(4,caseStudySpectralMap,harvardMacsquant);
-        testExhaustivePerformance(5,caseStudySpectralMap,harvardMacsquant);
-        testExhaustivePerformance(6,caseStudySpectralMap,harvardMacsquant);
-        
-        System.out.println("==================CytoFlex===================");
-        testExhaustivePerformance(2,caseStudySpectralMap,harvardCytoflex);
-        testExhaustivePerformance(3,caseStudySpectralMap,harvardCytoflex);
-        testExhaustivePerformance(4,caseStudySpectralMap,harvardCytoflex);
-        testExhaustivePerformance(5,caseStudySpectralMap,harvardCytoflex);
-        
-        
-        
-        System.out.println("###########_Simulated Annealing_#############");        
-        System.out.println("==================Fortessa===================");
-        testSimulatedAnnealing(2,caseStudySpectralMap,harvardFortessa);
-        testSimulatedAnnealing(3,caseStudySpectralMap,harvardFortessa);
-        testSimulatedAnnealing(4,caseStudySpectralMap,harvardFortessa);
-        testSimulatedAnnealing(5,caseStudySpectralMap,harvardFortessa);
-        testSimulatedAnnealing(6,caseStudySpectralMap,harvardFortessa);
-        
-        System.out.println("==================Sony=======================");
-        testSimulatedAnnealing(2,caseStudySpectralMap,harvardSony); 
-        testSimulatedAnnealing(3,caseStudySpectralMap,harvardSony);
-        testSimulatedAnnealing(4,caseStudySpectralMap,harvardSony);
-        testSimulatedAnnealing(5,caseStudySpectralMap,harvardSony);
-        testSimulatedAnnealing(6,caseStudySpectralMap,harvardSony);
-        
-        System.out.println("==================Macsquant==================");
-        testSimulatedAnnealing(2,caseStudySpectralMap,harvardMacsquant);
-        testSimulatedAnnealing(3,caseStudySpectralMap,harvardMacsquant);
-        testSimulatedAnnealing(4,caseStudySpectralMap,harvardMacsquant);
-        testSimulatedAnnealing(5,caseStudySpectralMap,harvardMacsquant);
-        testSimulatedAnnealing(6,caseStudySpectralMap,harvardMacsquant);
-        
-        System.out.println("==================CytoFlex===================");
-        testSimulatedAnnealing(2,caseStudySpectralMap,harvardCytoflex);
-        testSimulatedAnnealing(3,caseStudySpectralMap,harvardCytoflex);
-        testSimulatedAnnealing(4,caseStudySpectralMap,harvardCytoflex);
-        testSimulatedAnnealing(5,caseStudySpectralMap,harvardCytoflex);
-        testSimulatedAnnealing(6,caseStudySpectralMap,harvardCytoflex);
+        for(int i=0;i<200;i++){
+            System.out.println("Start RW iteration - " + i);
+            String line = getRWRankList(hashedresult,3,caseStudySpectralMap,harvardCytoflex);
+            rwlines.add(line);
+        }
         
         
+        String safilefp = basefp + "sarank.csv";
+        Utilities.writeToFile(safilefp, salines);
         
-        System.out.println("###########_Hill Climbing_###################");        
-        System.out.println("==================Fortessa===================");
-        testHillClimbing(2,caseStudySpectralMap,harvardFortessa);
-        testHillClimbing(3,caseStudySpectralMap,harvardFortessa);
-        testHillClimbing(4,caseStudySpectralMap,harvardFortessa);
-        testHillClimbing(5,caseStudySpectralMap,harvardFortessa);
-        testHillClimbing(6,caseStudySpectralMap,harvardFortessa);
+        String hcfilefp = basefp + "hcrank.csv";
+        Utilities.writeToFile(hcfilefp, hclines);
         
-        System.out.println("==================Sony=======================");
-        testHillClimbing(2,caseStudySpectralMap,harvardSony); 
-        testHillClimbing(3,caseStudySpectralMap,harvardSony);
-        testHillClimbing(4,caseStudySpectralMap,harvardSony);
-        testHillClimbing(5,caseStudySpectralMap,harvardSony);
-        testHillClimbing(6,caseStudySpectralMap,harvardSony);
-        
-        System.out.println("==================Macsquant==================");
-        testHillClimbing(2,caseStudySpectralMap,harvardMacsquant);
-        testHillClimbing(3,caseStudySpectralMap,harvardMacsquant);
-        testHillClimbing(4,caseStudySpectralMap,harvardMacsquant);
-        testHillClimbing(5,caseStudySpectralMap,harvardMacsquant);
-        testHillClimbing(6,caseStudySpectralMap,harvardMacsquant);
-        
-        System.out.println("==================CytoFlex===================");
-        testHillClimbing(2,caseStudySpectralMap,harvardCytoflex);
-        testHillClimbing(3,caseStudySpectralMap,harvardCytoflex);
-        testHillClimbing(4,caseStudySpectralMap,harvardCytoflex);
-        testHillClimbing(5,caseStudySpectralMap,harvardCytoflex);
-        testHillClimbing(6,caseStudySpectralMap,harvardCytoflex);
-        
-        
-        
-        
-        ///////////////////////////////////////////////////////////////////
-        ///////////////////////// Simulated Annealing /////////////////////
-        ///////////////////////////////////////////////////////////////////
-        
-        
-        /*
-        System.out.println("==================Fortessa===================");
-        exhaustiveTests(caseStudySpectralMap, harvardFortessa, "EX_HarvFort");
-        System.out.println("==================Sony=======================");
-        exhaustiveTests(caseStudySpectralMap, harvardSony, "EX_HarvSony");
-        System.out.println("==================Macsquant==================");
-        exhaustiveTests(caseStudySpectralMap, harvardMacsquant, "EX_HarvMacs");
-        System.out.println("==================CytoFlex===================");
-        exhaustiveTests(caseStudySpectralMap, harvardCytoflex, "EX_HarvFlex");
-
-        System.out.println("Stochastic Test - Fortessa===================");
-        stochasticTests(caseStudySpectralMap,harvardFortessa, "HarvFort");
-        
-        System.out.println("Stochastic Test - Sony=======================");
-        stochasticTests(caseStudySpectralMap,harvardSony, "HarvSony");
-        
-        System.out.println("Stochastic Test - Macsquant==================");
-        stochasticTests(caseStudySpectralMap,harvardMacsquant, "HarvMacs");
-        
-        System.out.println("Stochastic Test - CytoFlex===================");
-        stochasticTests(caseStudySpectralMap,harvardCytoflex, "HarvFlex");
-        */
+        String rwfilefp = basefp + "rwrank.csv";
+        Utilities.writeToFile(rwfilefp, rwlines);
         
     }
     
+    public static String selectionInfoToString(List<SelectionInfo> si){
+        List<String> sinfos = new ArrayList<String>();
+        
+        for(SelectionInfo s:si){
+            String line = s.selectedFluorophore.name + s.selectedLaser.getName() + s.selectedDetector.identifier;
+            sinfos.add(line);
+        }
+        Collections.sort(sinfos);
+        
+        String str = "";
+        for(String s:sinfos){
+            str += s;
+        }
+        
+        return str;
+        
+    }
+    
+    public static String getSARankList(List<String> results, int n, List<Fluorophore> fluorophores, List<Detector> detectors, Map<Detector, Laser> detectorMap) {
+        List<Fluorophore> currentFluorophores = HillClimbingSelection.getRandomFluorophores(n, fluorophores);
+        List<Detector> currentDetectors = HillClimbingSelection.getRandomDetectors(n, detectors);
+
+        List<SelectionInfo> current = HillClimbingSelection.getSelection(currentFluorophores, currentDetectors, detectorMap);
+        SNR bestSNR = new SNR(current);
+        
+        List<SelectionInfo> best = current;
+        SNR currentSNR = bestSNR;
+        double temp = 10000;
+        double rate = 0.001;
+        
+        
+        String line = "";
+        
+        while (temp > 1) {
+
+            int swapIndex = Utilities.getRandom(0, n - 1);
+
+            List<Fluorophore> nextFluorophores;
+            List<Detector> nextDetectors;
+
+            if (Utilities.getRandom(0, 1) == 0) {
+                //Heads Swap an FP
+                nextFluorophores = swapFluorophore(swapIndex, currentFluorophores, fluorophores);
+                nextDetectors = new ArrayList<>(currentDetectors);
+            } else {
+                //Tails Swap Detector
+                nextFluorophores = new ArrayList<>(currentFluorophores);
+                nextDetectors = swapDetector(swapIndex, currentDetectors, detectors);
+            }
+            List<SelectionInfo> next = HillClimbingSelection.getSelection(nextFluorophores, nextDetectors, detectorMap);
+            SNR nextSNR = new SNR(next);
+
+            if (nextSNR.greaterThan(bestSNR)) {
+                bestSNR = nextSNR;
+                best = new ArrayList<>(next);
+            }
+            
+            int rank = results.indexOf(selectionInfoToString(best));
+            //System.out.println("Current Best Rank" + rank);
+            line += (rank + ",");
+            double random = Math.random();
+            double ap = acceptanceProbability(currentSNR,nextSNR,temp);
+            if(random <= ap){
+                //SWAP!!!
+                current = new ArrayList<>(next);
+                currentSNR = nextSNR;
+                currentFluorophores = new ArrayList<>(nextFluorophores);
+                currentDetectors = new ArrayList<>(nextDetectors);
+                
+            }
+            //System.out.println("Thread " + id + " current temperature = " + temp);
+            temp *= (1 - rate);
+        }
+
+        return line;
+
+    }
+    
+    public static String getHCRankList(List<String> results, int n, Map<String, Fluorophore> masterList,Cytometer cyto){
+        
+        String line = "";
+        int iterations = 10000;
+        List<Fluorophore> fluorophores = new ArrayList<>(masterList.values());
+        Map<Detector,Laser> detectorMap = new HashMap<>();
+        List<Detector> detectors = new ArrayList<>();
+        for(Laser laser:cyto.lasers){
+            for(Detector detector:laser.detectors){
+                detectorMap.put(detector, laser);
+                detectors.add(detector);
+            }
+        }
+        List<Fluorophore> selectedFluorophores = getRandomFluorophores(n,fluorophores);
+        List<Detector> selectedDetectors = getRandomDetectors(n,detectors);
+        List<SelectionInfo> bestSelection = getSelection(selectedFluorophores, selectedDetectors, detectorMap);
+        SNR currentSNR = new SNR(bestSelection);    
+        SNR bestSNR = new SNR(bestSelection);
+        
+       for(int i=0;i<iterations;i++){
+            int index = Utilities.getRandom(0, n-1);
+            List<Fluorophore> nextFluorophores = new ArrayList<>(selectedFluorophores);
+            List<Detector> nextDetectors = new ArrayList<>(selectedDetectors);
+            
+            if(Utilities.getRandom(0, 1) == 0){
+                //Heads: Swap a Fluorophore
+                nextFluorophores = swapFluorophore(index,selectedFluorophores,fluorophores);
+            } else {
+                //Tails: Swap a Detector
+                nextDetectors = swapDetector(index,selectedDetectors,detectors);
+            }
+            List<SelectionInfo> nextSelection = getSelection(nextFluorophores, nextDetectors, detectorMap);
+            SNR nextSNR = new SNR(nextSelection);
+            if(nextSNR.greaterThan(bestSNR)){
+                bestSNR = nextSNR;
+                bestSelection = new ArrayList<>(nextSelection);
+            }
+            
+            
+            int rank = results.indexOf(selectionInfoToString(bestSelection));
+            //System.out.println("Current Best Rank" + rank);
+            line += (rank + ",");
+            
+            if(nextSNR.greaterThan(currentSNR)){
+                selectedFluorophores = new ArrayList<>(nextFluorophores);
+                selectedDetectors = new ArrayList<>(nextDetectors);
+                currentSNR = nextSNR;
+            }
+            
+        }
+        return line;
+
+    }
+    
+    public static String getRWRankList(List<String> results, int n, Map<String, Fluorophore> spectralMaps,Cytometer cytometer){
+        
+        String line = "";
+        List<Fluorophore> fluorophores = new ArrayList<Fluorophore>();
+        Map<Detector,Laser> detectorMap = new HashMap<Detector,Laser>();
+        List<Detector> detectors = new ArrayList<Detector>();
+        
+        for(String name:spectralMaps.keySet()){
+            fluorophores.add(spectralMaps.get(name));
+        }
+        
+        int count = 0;
+        for(Laser l:cytometer.lasers){
+            for(Detector d:l.detectors){
+                detectors.add(d);
+                detectorMap.put(d, l);
+                count++;
+            }
+        }
+        
+        List<Fluorophore> currentFluorophores = HillClimbingSelection.getRandomFluorophores(n, fluorophores);
+        List<Detector> currentDetectors = HillClimbingSelection.getRandomDetectors(n, detectors);
+
+        List<SelectionInfo> selection = HillClimbingSelection.getSelection(currentFluorophores, currentDetectors, detectorMap);
+        SNR snr = new SNR(selection);
+        
+        List<SelectionInfo> best = new ArrayList<>(selection);
+        SNR bestsnr = new SNR(best);
+        
+        for(int i=0;i<10000;i++){
+            currentFluorophores = HillClimbingSelection.getRandomFluorophores(n, fluorophores);
+            currentDetectors = HillClimbingSelection.getRandomDetectors(n, detectors);
+            selection = HillClimbingSelection.getSelection(currentFluorophores, currentDetectors, detectorMap);
+            snr = new SNR(selection);
+            
+            if(snr.greaterThan(bestsnr)){
+                best = new ArrayList<>(selection);
+                bestsnr = new SNR(best);
+            }
+            
+            int rank = results.indexOf(selectionInfoToString(best));
+            //System.out.println("Current Best Rank" + rank);
+            line += (rank + ",");
+            
+            
+        }
+        
+        return line;
+
+    }
+    
+    private static List<Map.Entry<List<SelectionInfo>, SNR>> exhaustiveRunList(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer) throws IOException, InterruptedException {
+
+        int numFluorophores = spectralMaps.size();
+
+        //count filters
+        int numFilters = 0;
+        for (Laser laser : cytometer.lasers) {
+            numFilters += laser.detectors.size();
+        }
+
+        //fluorophore index --> fluorophore object
+        Fluorophore[] fluorophores = new Fluorophore[numFluorophores];
+        int fpi = 0;
+        for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
+            Fluorophore fluorophore = entry.getValue();
+            fluorophores[fpi] = fluorophore;
+            fpi++;
+        }
+
+        Laser[] lasers = new Laser[numFilters];
+        Detector[] detectors = new Detector[numFilters];
+        int filterIndex = 0;
+        for (Laser laser : cytometer.lasers) {
+            for (Detector detector : laser.detectors) {
+                lasers[filterIndex] = laser;
+                detectors[filterIndex] = detector;
+                filterIndex++;
+            }
+        }
+
+        //get all combinations of filters (order not important)
+        filterCombinations = new LinkedList<>();
+        int tempData[] = new int[n];
+        getCombinations(tempData, 0, numFilters - 1, 0, n);
+
+        //get all permutations of fluorophores to match to filters (order is important)
+        fluorophorePermutations = new LinkedList<>();
+        tempData = new int[n];
+        getPermutations(tempData, numFluorophores, n);
+
+        long totalComputations = filterCombinations.size() * fluorophorePermutations.size();
+        System.out.println("Filter Combinations :: " + filterCombinations.size());
+        System.out.println("FP Permutations     :: " + fluorophorePermutations.size());
+        System.out.println("Total Computations : " + totalComputations);
+
+        List<Map.Entry<List<SelectionInfo>, SNR>> results = new ArrayList<>();
+        int count = 0;
+        for (int[] filterCombo : filterCombinations) {
+            for (int[] fluorophorePerm : fluorophorePermutations) {
+                List<SelectionInfo> currentSelection = ExhaustiveSelection.getSelection(n, fluorophorePerm, filterCombo, fluorophores, lasers, detectors);
+                SNR snr = new SNR(currentSelection);
+                results.add(new AbstractMap.SimpleEntry<>(currentSelection, snr));
+
+                //ProteinSelector.generateNoise(currentSelection);
+                //JavaPlot plot = ProteinSelector.getJavaPlot(currentSelection);
+                //Utilities.plotToFile(plot, fp + count + ".png");
+                //count++;
+            }
+        }
+
+        Collections.sort(results, (Map.Entry<List<SelectionInfo>, SNR> o1, Map.Entry<List<SelectionInfo>, SNR> o2) -> {
+            SNR s1 = o1.getValue();
+            SNR s2 = o2.getValue();
+            return s1.compare(s2);
+        });
+        Collections.reverse(results);
+        
+        return results;
+
+    }
+    
+    
+    @Test
+    public void getRuntimes() throws IOException, InterruptedException{
+        Cytometer harvardFortessa = fpFortessaParse.parse(harvardFortessafp, false);
+        Cytometer harvardMacsquant = fpFortessaParse.parse(harvardMacsquantfp, false);
+        Cytometer harvardCytoflex = fpFortessaParse.parse(harvardCytoFlexfp, false);
+        
+        Map<String, Fluorophore> caseStudySpectralMap = fpSpectraParse.parse(caseSpectrafp);
+        fpSpectraParse.addBrightness(new File(caseBrightnessfp), caseStudySpectralMap);
+        
+        List<String> lines = new ArrayList<>();
+        
+        String flexex = "Flex,EX,";
+        String flexsa = "Flex,SA,";
+        String flexhc = "Flex,HC,";
+        
+        String fortex = "Fort,EX,";
+        String fortsa = "Fort,SA,";
+        String forthc = "Fort,HC,";
+        
+        String macsex = "Macs,EX,";
+        String macssa = "Macs,SA,";
+        String macshc = "Macs,HC,";
+        
+        lines.add("Cyto,Algo,2,3,4,5,6,");
+        
+        for(int i=2;i<=6;i++){
+            System.out.println("Starting SA Runs for n = " + i);
+            long fortsatimes = 0;
+            long flexsatimes = 0;
+            long macssatimes = 0;
+            for(int j=0;j<200;j++){
+                flexsatimes += (testSAPerformance(i,caseStudySpectralMap,harvardCytoflex));
+                fortsatimes += (testSAPerformance(i,caseStudySpectralMap,harvardFortessa));
+                macssatimes += (testSAPerformance(i,caseStudySpectralMap,harvardMacsquant));
+            }
+            double flexsatime = flexsatimes/(200.0);
+            flexsa += (flexsatime + ",");
+            double fortsatime = fortsatimes/(200.0);
+            fortsa += (fortsatime + ",");
+            double macssatime = macssatimes/(200.0);
+            macssa += (macssatime + ",");
+        }
+        lines.add(flexsa);
+        lines.add(fortsa);
+        lines.add(macssa);
+        
+        
+        for(int i=2;i<=6;i++){
+            System.out.println("Starting HC Runs for n = " + i);
+            long flexhctimes = 0;
+            long forthctimes = 0;
+            long macshctimes = 0;
+            for(int j=0;j<200;j++){
+                flexhctimes += (testHCPerformance(i,caseStudySpectralMap,harvardCytoflex));
+                forthctimes += (testHCPerformance(i,caseStudySpectralMap,harvardFortessa));
+                macshctimes += (testHCPerformance(i,caseStudySpectralMap,harvardMacsquant));
+            }
+            double flexhctime = flexhctimes/(200.0);
+            flexhc += (flexhctime + ",");
+            double forthctime = forthctimes/(200.0);
+            forthc += (forthctime + ",");
+            double macshctime = macshctimes/(200.0);
+            macshc += (macshctime + ",");
+        }
+        lines.add(flexhc);
+        lines.add(forthc);
+        lines.add(macshc);
+        
+        
+        for(int i=2;i<=5;i++){
+            System.out.println("Starting EX Runs for n = " + i);
+            long flexextime = testExhaustivePerformance(i,caseStudySpectralMap,harvardCytoflex);
+            flexex += (flexextime + ",");
+            long fortextime = testExhaustivePerformance(i,caseStudySpectralMap,harvardFortessa);
+            fortex += (fortextime + ",");
+            long macsextime = testExhaustivePerformance(i,caseStudySpectralMap,harvardMacsquant);
+            macsex += (macsextime + ",");
+        }
+        
+        
+        flexex += ",";
+        fortex += ",";
+        long macsextime = testExhaustivePerformance(6,caseStudySpectralMap,harvardMacsquant);
+        macsex += (macsextime + ",");
+        
+        lines.add(flexex);
+        lines.add(fortex);
+        lines.add(macsex);
+        
+        String runtimesfp = basefp + "runtimes.csv";
+        Utilities.writeToFile(runtimesfp, lines);
+    }
+    
+    public static long testExhaustivePerformance(int n, Map<String, Fluorophore> maps, Cytometer c) throws IOException{
+        long current = 0;
+        current = System.currentTimeMillis();
+        ExhaustiveSelection.run(n, maps, c);
+        return ((System.currentTimeMillis() - current));
+    }
+    
+    public static long testSAPerformance(int n, Map<String, Fluorophore> maps, Cytometer c) {
+        
+        List<Fluorophore> fluorophores = new ArrayList<Fluorophore>(maps.values());
+        List<Detector> detectors = new ArrayList<Detector>();
+        Map<Detector,Laser> detectorMap = new HashMap<>();
+        
+        
+        for(Laser l:c.lasers){
+            for(Detector d:l.detectors){
+                detectors.add(d);
+                detectorMap.put(d, l);
+            }
+        }
+        
+        long currenttime = 0;
+        currenttime = System.currentTimeMillis();
+        
+        List<Fluorophore> currentFluorophores = HillClimbingSelection.getRandomFluorophores(n, fluorophores);
+        List<Detector> currentDetectors = HillClimbingSelection.getRandomDetectors(n, detectors);
+
+        List<SelectionInfo> current = HillClimbingSelection.getSelection(currentFluorophores, currentDetectors, detectorMap);
+        SNR bestSNR = new SNR(current);
+        
+        List<SelectionInfo> best = current;
+        SNR currentSNR = bestSNR;
+        double temp = 10000;
+        double rate = 0.001;
+        
+        while (temp > 1) {
+
+            int swapIndex = Utilities.getRandom(0, n - 1);
+
+            List<Fluorophore> nextFluorophores;
+            List<Detector> nextDetectors;
+
+            if (Utilities.getRandom(0, 1) == 0) {
+                //Heads Swap an FP
+                nextFluorophores = swapFluorophore(swapIndex, currentFluorophores, fluorophores);
+                nextDetectors = new ArrayList<>(currentDetectors);
+            } else {
+                //Tails Swap Detector
+                nextFluorophores = new ArrayList<>(currentFluorophores);
+                nextDetectors = swapDetector(swapIndex, currentDetectors, detectors);
+            }
+            List<SelectionInfo> next = HillClimbingSelection.getSelection(nextFluorophores, nextDetectors, detectorMap);
+            SNR nextSNR = new SNR(next);
+
+            if (nextSNR.greaterThan(bestSNR)) {
+                bestSNR = nextSNR;
+                best = new ArrayList<>(next);
+            }
+            
+            double random = Math.random();
+            double ap = acceptanceProbability(currentSNR,nextSNR,temp);
+            if(random <= ap){
+                //SWAP!!!
+                current = new ArrayList<>(next);
+                currentSNR = nextSNR;
+                currentFluorophores = new ArrayList<>(nextFluorophores);
+                currentDetectors = new ArrayList<>(nextDetectors);
+                
+            }
+            //System.out.println("Thread " + id + " current temperature = " + temp);
+            temp *= (1 - rate);
+        }
+
+        return ((System.currentTimeMillis() - currenttime));
+    }
+    
+    public static long testHCPerformance(int n, Map<String, Fluorophore> masterList,Cytometer cyto){
+        long currenttime = 0;
+        currenttime = System.currentTimeMillis();
+        
+        int iterations = 10000;
+        List<Fluorophore> fluorophores = new ArrayList<>(masterList.values());
+        Map<Detector,Laser> detectorMap = new HashMap<>();
+        List<Detector> detectors = new ArrayList<>();
+        for(Laser laser:cyto.lasers){
+            for(Detector detector:laser.detectors){
+                detectorMap.put(detector, laser);
+                detectors.add(detector);
+            }
+        }
+        List<Fluorophore> selectedFluorophores = getRandomFluorophores(n,fluorophores);
+        List<Detector> selectedDetectors = getRandomDetectors(n,detectors);
+        List<SelectionInfo> bestSelection = getSelection(selectedFluorophores, selectedDetectors, detectorMap);
+        SNR currentSNR = new SNR(bestSelection);    
+        SNR bestSNR = new SNR(bestSelection);
+        
+       for(int i=0;i<iterations;i++){
+            int index = Utilities.getRandom(0, n-1);
+            List<Fluorophore> nextFluorophores = new ArrayList<>(selectedFluorophores);
+            List<Detector> nextDetectors = new ArrayList<>(selectedDetectors);
+            
+            if(Utilities.getRandom(0, 1) == 0){
+                //Heads: Swap a Fluorophore
+                nextFluorophores = swapFluorophore(index,selectedFluorophores,fluorophores);
+            } else {
+                //Tails: Swap a Detector
+                nextDetectors = swapDetector(index,selectedDetectors,detectors);
+            }
+            List<SelectionInfo> nextSelection = getSelection(nextFluorophores, nextDetectors, detectorMap);
+            SNR nextSNR = new SNR(nextSelection);
+            if(nextSNR.greaterThan(bestSNR)){
+                bestSNR = nextSNR;
+                bestSelection = new ArrayList<>(nextSelection);
+            }
+            
+            
+            if(nextSNR.greaterThan(currentSNR)){
+                selectedFluorophores = new ArrayList<>(nextFluorophores);
+                selectedDetectors = new ArrayList<>(nextDetectors);
+                currentSNR = nextSNR;
+            }
+            
+        }
+        return ((System.currentTimeMillis() - currenttime));
+
+    }
+    
+    
+    
+    @Test
+    public void testNumberOfRunsSimmAnn(){
+        double temp = 10000;
+        double rate = 0.001;
+        int count = 0;
+        
+        while(temp > 1){       
+            count++;
+            temp *= (1 - rate);
+        }
+        
+        System.out.println("Number of iterations:: " + count);
+            
+    }   
     
     
     public static Laser getLaser(Cytometer c, String lname){

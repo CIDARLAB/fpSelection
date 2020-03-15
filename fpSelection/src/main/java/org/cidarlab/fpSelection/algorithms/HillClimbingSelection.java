@@ -30,7 +30,7 @@ import org.cidarlab.fpSelection.selectors.ProteinSelector;
  */
 public class HillClimbingSelection {
     
-    private static final int iterations = 2000;
+    private static final int iterations = 10000;
     
     public static List<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
         
@@ -132,7 +132,7 @@ public class HillClimbingSelection {
         int index;
         for(int i=0;i<n;i++){
             do{
-                index = Utilities.getRandom(0, n-1);
+                index = Utilities.getRandom(0, fluorophores.size() -1);
             } while(added.contains(index));
             added.add(index);
             selected.add(fluorophores.get(index));
@@ -147,7 +147,7 @@ public class HillClimbingSelection {
         int index;
         for(int i=0;i<n;i++){
             do{
-                index = Utilities.getRandom(0, n-1);
+                index = Utilities.getRandom(0, detectors.size() -1);
             } while(added.contains(index));
             added.add(index);
             selected.add(detectors.get(index));

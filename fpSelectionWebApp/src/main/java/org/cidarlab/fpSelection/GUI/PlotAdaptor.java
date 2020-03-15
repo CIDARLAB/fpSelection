@@ -34,7 +34,7 @@ import org.cidarlab.fpSelection.dom.SelectionInfo;
  * @author Alex
  */
 public class PlotAdaptor {
-
+    
     public static LinkedList<String> webPlot(List<SelectionInfo> info) throws IOException {
         //sort selection info so that filters with same lasers are plotted on same graph
         Collections.sort(info);

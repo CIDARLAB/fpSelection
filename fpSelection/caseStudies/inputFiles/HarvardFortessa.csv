@@ -14,8 +14,7 @@ Blue,Blue,488,100,Octagon,A,3,670 LP,685/35 BP,PerCP,0,Y,1
 ,,,,,C,1,495 LP,515/20 BP,GFP,,,
 Red,Red,640,40,Trigon,A,11,750 LP,780/60 BP,APC-Cy7,,,4
 ,,,,,B,10,,670/30 BP,APC,,,
-Violet,Custom,405,100,Octagon,A,17,690 LP,710/50 BP,,,,2
-,,,,,B,7,570 LP,582/15 BP,Pacific Orange,,,
+Violet,Custom,405,100,Octagon,B,7,570 LP,582/15 BP,Pacific Orange,,,2
 ,,,,,C,6,525 LP,525/50 BP,AmCyan,,,
 ,,,,,D,5,505 LP,515/20 BP,mCFP,,,
 ,,,,,E,4,,450/50 BP,Pacific Blue,,,

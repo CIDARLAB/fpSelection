@@ -115,7 +115,7 @@ public class SimulatedAnnealingThread extends Thread {
 
     }
 
-    private static List<Fluorophore> swapFluorophore(int index, List<Fluorophore> selected, List<Fluorophore> all) {
+    public static List<Fluorophore> swapFluorophore(int index, List<Fluorophore> selected, List<Fluorophore> all) {
         List<Fluorophore> newList = new ArrayList<>();
         Fluorophore newFP = all.get(Utilities.getRandom(0, all.size() - 1));
         if (selected.contains(newFP)) {
@@ -142,7 +142,7 @@ public class SimulatedAnnealingThread extends Thread {
         return newList;
     }
 
-    private static List<Detector> swapDetector(int index, List<Detector> selected, List<Detector> all) {
+    public static List<Detector> swapDetector(int index, List<Detector> selected, List<Detector> all) {
         List<Detector> newList = new ArrayList<>();
         Detector newD = all.get(Utilities.getRandom(0, all.size() - 1));
         if (selected.contains(newD)) {
