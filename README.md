@@ -6,10 +6,16 @@ Requires Java 8
 
 ### gnuplot
 
-Install gnuplot dependencies for image (png, jpeg, gif) support:
+Install gd for image (png, jpeg, gif) support:
 
+**apt package manager**
 ```
 sudo apt install libgd-dev
+```
+
+**yum package manager**
+```
+sudo yum install gd-devel
 ```
 
 Compile gnuplot from source to capture dependencies:
