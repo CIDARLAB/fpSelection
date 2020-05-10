@@ -41,8 +41,8 @@
         <servlet-class>org.cidarlab.fpSelection.servlets.Documentation</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>Extras</servlet-name>
-        <servlet-class>org.cidarlab.fpSelection.servlets.Extras</servlet-class>
+        <servlet-name>Tools</servlet-name>
+        <servlet-class>org.cidarlab.fpSelection.servlets.Tools</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>Attributions</servlet-name>
@@ -89,8 +89,8 @@
         <url-pattern>/Documentation</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>Extras</servlet-name>
-        <url-pattern>/Extras</url-pattern>
+        <servlet-name>Tools</servlet-name>
+        <url-pattern>/Tools</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Attributions</servlet-name>

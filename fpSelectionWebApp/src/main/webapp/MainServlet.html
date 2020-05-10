@@ -1,6 +1,6 @@
 <ul class="nav nav-tabs" style="margin-top: 100px;">
     <li class="tooltipNav active" title="Choose fluorophores based on cytometer/laser settings"><a href="/MainServlet">FP Selection</a></li>
-    <li class="tooltipNav" title="Test the SNR of your own custom fluorophore/cytometer/laser settings"><a href="/MyFP">"My" FP</a></li>
+    <li class="tooltipNav" title="Test the SNR of your own custom fluorophore/cytometer/laser settings"><a href="/MyFP">"My" FP</a></li>    
 </ul>
 <br>
 <fieldset>
@@ -50,9 +50,9 @@
                 <label class="padded">Algorithm: </label>
             </div>
             <!--<div class="form-group rightDiv" title="Choose your algorithm. Exhaustive will yield the optimal solution every time but is considerably slower than the other algorithms. Hill Climbing and Simulated Annealing yield decent results but are extremely quick. Hence you can run it multiple times till you obtain a satisfactory result.">-->
-            <div class="form-group rightDiv" title="Choose your algorithm. Hill Climbing and Simulated Annealing yield decent results but are extremely quick. You can run it multiple times till you obtain a satisfactory result. Exhaustive Search has been disabled but can be run via the command line tool or by forking the Github branch.">
+            <div class="form-group rightDiv" title="Choose your algorithm. Hill Climbing and Simulated Annealing yield decent results but are extremely quick. You can run it multiple times till you obtain a satisfactory result. Exhaustive Search and Hill Climbing have been disabled but can be run via the command line tool or by forking the Github branch.">
                 <select id="algo" class="form-control input-sm">
-                    <option value="HillClimbingServlet">Hill Climbing</option>
+                    <!--<option value="HillClimbingServlet">Hill Climbing</option>-->
                     <option value="SimulatedAnnealingServlet">Simulated Annealing</option>
                 </select>
             </div>

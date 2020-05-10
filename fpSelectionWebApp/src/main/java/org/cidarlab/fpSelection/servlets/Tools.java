@@ -21,7 +21,7 @@ import javax.servlet.http.HttpServletResponse;
  *
  * @author Alex
  */
-public class Extras extends HttpServlet {
+public class Tools extends HttpServlet {
 private ServletContext context;
 
     public void init(ServletConfig config) throws ServletException
