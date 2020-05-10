@@ -5,6 +5,7 @@
 /fpSelection/IPformbackup.odt
 /fpSelection/caseStudies/
 .idea
+*.iml
 fpSelection/nb-configuration.xml
 */.classpath
 */.factorypath

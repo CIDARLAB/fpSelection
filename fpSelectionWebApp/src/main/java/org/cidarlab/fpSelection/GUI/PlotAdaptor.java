@@ -13,16 +13,14 @@ import com.panayotis.gnuplot.plot.Graph;
 import com.panayotis.gnuplot.style.PlotStyle;
 import com.panayotis.gnuplot.style.Style;
 import com.panayotis.gnuplot.terminal.ImageTerminal;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+
+import java.io.*;
+import java.util.*;
+import java.util.stream.Collectors;
 import javax.imageio.ImageIO;
+
+import com.panayotis.gnuplot.terminal.SVGTerminal;
+import org.apache.commons.io.IOUtils;
 import org.cidarlab.fpSelection.dom.Cytometer;
 import org.cidarlab.fpSelection.dom.Detector;
 import org.cidarlab.fpSelection.dom.Fluorophore;
@@ -49,7 +47,7 @@ public class PlotAdaptor {
         int width = 1200;
         int height = 800;
 
-        newPlot.set("terminal", "png truecolor nocrop enhanced size 1200,600font 'arial,7'");
+        newPlot.set("terminal", "png truecolor enhanced size 1200,600font 'arial,7'");
         newPlot.set("style fill", "transparent solid 0.3");
         newPlot.set("style data", "lines");
         newPlot.set("style data filledcurves", "x1");
@@ -78,7 +76,7 @@ public class PlotAdaptor {
 //                    if(first)newPlot.addPlot(emPlot);
 //                    else g.addPlot(emPlot);
 //                }
-                
+
                 Fluorophore fp = entry.selectedFluorophore;
                 PointDataSet EMDataSet = (fp.makeEMDataSet(laser));
                 AbstractPlot emPlot = new DataSetPlot(EMDataSet);
@@ -108,7 +106,7 @@ public class PlotAdaptor {
                     first = false;
                 }
                 else
-                {                 
+                {
                     g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + laser.getName());
                     g.getAxis("x").setBoundaries(300, 900);
                     g.getAxis("y").setLabel("Intensity (%)");
@@ -116,7 +114,7 @@ public class PlotAdaptor {
                     newPlot.addGraph(g);
                 }
             }
-        } 
+        }
         //oterwise, for normal operation iterate through laser/filter/protein combos
         else {
             for (SelectionInfo entry : info) {
