@@ -43,6 +43,9 @@ public class CaseStudyTest {
 
     private static String basefp = Utilities.getCaseStudyFilepath();
 
+    private static String setfp = "Set13";
+    private static String set = "set13";
+
     private static String harvardFortessafp = basefp + "inputFiles" + Utilities.getSeparater() + "HarvardFortessa.csv";
     private static String harvardSonyfp = basefp + "inputFiles" + Utilities.getSeparater() + "HarvardSony.csv";
     private static String harvardMacsquantfp = basefp + "inputFiles" + Utilities.getSeparater() + "HarvardMacsquant.csv";
@@ -68,9 +71,9 @@ public class CaseStudyTest {
     private static String figure1Spectrafp = basefp + "inputFiles" + Utilities.getSeparater() + "figure1Spectra.csv";
     private static String figure1Brightnessfp = basefp + "inputFiles" + Utilities.getSeparater() + "figure1Brightness.csv";
     
-    private static String runExptfp = basefp + "comp" + Utilities.getSeparater();
+    private static String runExptfp = basefp + setfp + Utilities.getSeparater() + "comp" + Utilities.getSeparater();
    
-    private static String plotfp = basefp + "plots" + Utilities.getSeparater();
+    private static String plotfp = basefp + setfp + Utilities.getSeparater() + "plots" + Utilities.getSeparater();
     
     private static String fig1plots = basefp + "fig1plots" + Utilities.getSeparater();
     
@@ -84,24 +87,35 @@ public class CaseStudyTest {
     public void testCaseStudy() throws IOException, InterruptedException {
         
         Cytometer harvardFortessa = fpFortessaParse.parse(harvardFortessafp, false);
-        Cytometer harvardSony = fpFortessaParse.parse(harvardSonyfp, false);
         Cytometer harvardMacsquant = fpFortessaParse.parse(harvardMacsquantfp, false);
         Cytometer harvardCytoflex = fpFortessaParse.parse(harvardCytoFlexfp, false);
         
-        Map<String, Fluorophore> caseStudySpectralMap = fpSpectraParse.parse(caseSpectrafp);
-        fpSpectraParse.addBrightness(new File(caseBrightnessfp), caseStudySpectralMap);
+
+        
+
+        String spectrafp = basefp + "inputFiles" + Utilities.getSeparater() + set + Utilities.getSeparater() + "spectra.csv";
+        String brightnessfp = basefp + "inputFiles" + Utilities.getSeparater() + set + Utilities.getSeparater() + "brightness.csv";
+        
+
+        Map<String, Fluorophore> caseStudySpectralMap = fpSpectraParse.parse(spectrafp);
+        fpSpectraParse.addBrightness(new File(brightnessfp), caseStudySpectralMap);
+        
+
+        //Run Analysis        
         
         
-        //Run Analysis
-        //System.out.println("==================Fortessa===================");
-        //exhaustiveTests(caseStudySpectralMap, harvardFortessa, "EX_HarvFort");
         
-        //System.out.println("==================Macsquant==================");
-        //exhaustiveTests(caseStudySpectralMap, harvardMacsquant, "EX_HarvMacs");
+        /*
+        System.out.println("==================Fortessa===================");
+        exhaustiveTests(caseStudySpectralMap, harvardFortessa, "EX_HarvFort");
         
-        //System.out.println("==================CytoFlex===================");
-        //exhaustiveTests(caseStudySpectralMap, harvardCytoflex, "EX_HarvFlex");
         
+        System.out.println("==================Macsquant==================");
+        exhaustiveTests(caseStudySpectralMap, harvardMacsquant, "EX_HarvMacs");
+        
+        System.out.println("==================CytoFlex===================");
+        exhaustiveTests(caseStudySpectralMap, harvardCytoflex, "EX_HarvFlex");
+        */
         
         
         /*
@@ -121,20 +135,19 @@ public class CaseStudyTest {
         Map<String,Cytometer> cytomap = new HashMap<String,Cytometer>();
         cytomap.put("HarvFort", harvardFortessa);
         cytomap.put("HarvMacs", harvardMacsquant);
-        //cytomap.put("HarvSony", harvardSony);
         cytomap.put("HarvFlex", harvardCytoflex);
         
         
         
         //Normalize results to 1.                 
-        //String runfp = basefp + "fprun" + Utilities.getSeparater();
+        //String runfp = basefp + setfp + Utilities.getSeparater() +  "fprun" + Utilities.getSeparater();
         //analyseRuns(runfp,caseStudySpectralMap, cytomap);
         
         
         //plotExpComp();
         
         
-        analyzeResults(basefp + "run07032020" + Utilities.getSeparater());
+        analyzeResults(basefp + setfp + Utilities.getSeparater());
         
         
         
@@ -161,76 +174,189 @@ public class CaseStudyTest {
     
     
     public static void analyzeResults(String folderfp){
-        String exptfp = folderfp + "expt" + Utilities.getSeparater();
-        String compfp = folderfp + "comp" + Utilities.getSeparater();
         
-        int fort2 = 0;
-        int flex2 = 0;
-        int macs2 = 0;
+        List<String> cytometers = new ArrayList<>();
+        List<Integer> nfps = new ArrayList<>();
+
+        cytometers.add("HarvFlex");
+        cytometers.add("HarvFort");
+        cytometers.add("HarvMacs");
         
-        int fort3 = 0;
-        int flex3 = 0;
-        int macs3 = 0;
+        nfps.add(2);
+        nfps.add(3);
+        nfps.add(4);
+        nfps.add(5);
         
-        int fort4 = 0;
-        int flex4 = 0;
-        int macs4 = 0;
-        
-        int fort5 = 0;
-        int flex5 = 0;
-        int macs5 = 0;
-        
-        File[] folders = (new File(compfp)).listFiles();
-        
-        for(File folder:folders){
-            
-            String foldername = folder.getName();
-            if (foldername.contains("HarvFlex")){
-                if (foldername.endsWith("2fp")){
-                    
-                } else if (foldername.endsWith("3fp")){
-                    
-                } else if (foldername.endsWith("4fp")){
-                    
-                } else if (foldername.endsWith("5fp")){
-                    
-                }
-            } else if (foldername.contains("HarvFort")){
-                if (foldername.endsWith("2fp")){
-                    
-                } else if (foldername.endsWith("3fp")){
-                    
-                } else if (foldername.endsWith("4fp")){
-                    
-                } else if (foldername.endsWith("5fp")){
-                    
-                }
-            } else if (foldername.contains("HarvMacs")){
-                if (foldername.endsWith("2fp")){
-                    
-                } else if (foldername.endsWith("3fp")){
-                    
-                } else if (foldername.endsWith("4fp")){
-                    
-                } else if (foldername.endsWith("5fp")){
-                    
-                }
+        List<String> lines = new ArrayList<>();
+        lines.add("Cytometer,n,No NA,Panel matches,Percentage,All Panels match,Percentage,Within 5%,Percentage,All Within 5%,Percentage,Within 10%,Percentage,All Within 10%,Percentage,Within 20%,Percentage,All Within 20%,Percentage");
+        for(String cytometer:cytometers){
+            for(Integer nfp:nfps){
+                lines.add(analyzeSpecificConfig(folderfp,cytometer,nfp));
             }
-            
-            System.out.println(folder.getName());
-            System.out.println(folder.getAbsolutePath());
         }
+        Utilities.writeToFile(folderfp + "analysis.csv", lines);
         
     }
     
+    public static String analyzeSpecificConfig(String folderfp, String cytometer, Integer n){
+        String exptfp = folderfp + "expt" + Utilities.getSeparater();
+        String compfp = folderfp + "comp" + Utilities.getSeparater();
+        File[] folders = (new File(compfp)).listFiles();
+        
+        int signalsMatch = 0;
+        int allSignalsMatch = 0;
+        int nona = 0;         
+        int within05 = 0;
+        int within10 = 0;
+        int within20 = 0;
+               
+        int all05 = 0;
+        int all10 = 0;
+        int all20 = 0;
+        
+        String nfp = n + "fp";
+        for(File folder:folders){
+            
+            String foldername = folder.getName();
+            if (foldername.contains(cytometer)){
+                if (foldername.endsWith(nfp)){
+                    String compbasefp = folder.getAbsolutePath() + Utilities.getSeparater();
+                    String exptbasefp = exptfp + folder.getName() + Utilities.getSeparater();
+                    for(int i=1;i<=100;i++){
+                        boolean allSignalsMatchFlag = true;
+                    
+                        String compfilefp = compbasefp + folder.getName() + "_row" + i + ".csv";
+                        String exptfilefp = exptbasefp + folder.getName() + "_spMEDIAN_row" + i + ".csv";
+                        List<String[]> complines = Utilities.getCSVFileContentAsList(compfilefp);
+                        List<String[]> exptlines = Utilities.getCSVFileContentAsList(exptfilefp);
+                        boolean hasna = false;
+                        
+                        for(String[] exptline:exptlines){
+                            for(String strval:exptline){
+                                if(strval.equals("NA")){
+                                    hasna = true;
+                                    break;
+                                }
+                            }
+                            if(hasna){
+                                break;
+                            }
+                        }
+
+                        if(!hasna){
+                            for(int j=1;j<complines.size();j++){
+                            
+                                String[] compline = complines.get(j);
+                                String[] exptline = exptlines.get(j);
+                                int comp1index = 0;
+                                int expt1index = 0;
+                                
+                                int count05 = 0;
+                                int count10 = 0;
+                                int count20 = 0;
+                                
+
+                                for(int k=1;k<compline.length;k++){
+                                    double compvalue = Double.parseDouble(compline[k]);
+                                    double exptvalue = Double.parseDouble(exptline[k]);       
+                                    double diff = Math.abs(compvalue - exptvalue);
+        
+                                    if(diff < 0.05){
+                                        within05++;
+                                        count05++;
+                                    }  
+                                    if(diff < 0.1){
+                                        within10++;
+                                        count10++;
+                                    }  
+                                    if(diff < 0.2){
+                                        within20++;
+                                        count20++;
+                                    } 
+                                    
+                                    if(compvalue == 1.0){
+                                        comp1index = k;
+                                    }
+                                    if(exptvalue == 1.0){
+                                        expt1index = k;
+                                    }
+                                }
+                                
+                                if(count05 == n){
+                                    all05++;
+                                }
+                                if(count10 == n){
+                                    all10++;
+                                }
+                                if(count20 == n){
+                                    all20++;
+                                }
+                                if(comp1index == expt1index){
+                                    signalsMatch++;
+                                } else {
+                                    allSignalsMatchFlag = false;
+                                }    
+                            }
+                            nona++;                        
+                            if(allSignalsMatchFlag){
+                                allSignalsMatch++;
+                            }
+                            
+                        }
+
+                    }
+                } 
+            }             
+        }
+
+
+        String line = 
+            cytometer 
+            + "," + n 
+            + "," + nona 
+            + "," + signalsMatch
+            + "," + (signalsMatch/(n * (double)nona))
+            + "," + allSignalsMatch
+            + "," + (allSignalsMatch/((double)nona))
+            + "," + within05
+            + "," +  (within05/((double)nona * n * n))
+            + "," + all05
+            + "," +  (all05/((double)nona * n))
+            + "," + within10
+            + "," + (within10/((double)nona * n * n))
+            + "," + all10
+            + "," + (all10/((double)nona * n))
+            + "," + within20
+            + "," + (within20/((double)nona * n * n))
+            + "," + all20
+            + "," + (all20/((double)nona * n))
+            ; 
+        System.out.println("For " + cytometer + " with " + nfp + ":");
+        System.out.println("Number of configurations with no NA in expt: " + nona);    
+        System.out.println("Number of signals that matched for each configuration: " + signalsMatch + ". Percentage = " + (signalsMatch/(n * (double)nona)));
+        System.out.println("Number of signals that matched for all configurations: " + allSignalsMatch + ". Percentage = " + (allSignalsMatch/((double)nona)));
+        System.out.println("-------------------------------------------------------");
+        System.out.println("Total number within  5%: " + within05 + ". Percentage = " + (within05/((double)nona * n * n)));
+        System.out.println("Total configurations within  5%: " + all05 + ". Percentage = " + (all05/((double)nona * n)));
+        System.out.println("Total number within 10%: " + within10 + ". Percentage = " + (within10/((double)nona * n * n)));
+        System.out.println("Total configurations within 10%: " + all10 + ". Percentage = " + (all10/((double)nona * n)));
+        System.out.println("Total number within 20%: " + within20 + ". Percentage = " + (within20/((double)nona * n * n)));
+        System.out.println("Total configurations within 20%: " + all20 + ". Percentage = " + (all20/((double)nona * n)));
+        System.out.println("=======================================================");
+    
+        return line;
+    }
     
     public static void getFig1() throws IOException, InterruptedException  {
         Cytometer harvardCytoflex = fpFortessaParse.parse(harvardCytoFlexfp, false);
         Cytometer harvardFortessa = fpFortessaParse.parse(harvardFortessafp, false);
         Cytometer harvardMacsquant = fpFortessaParse.parse(harvardMacsquantfp, false);
         
-        Map<String, Fluorophore> caseStudySpectralMap = fpSpectraParse.parse(caseSpectraMScarletfig1fp);
-        fpSpectraParse.addBrightness(new File(caseBrightnessfig1fp), caseStudySpectralMap);
+        String spectrafp = basefp + "inputFiles" + Utilities.getSeparater() + set + Utilities.getSeparater() + "spectra.csv";
+        String brightnessfp = basefp + "inputFiles" + Utilities.getSeparater() + set + Utilities.getSeparater() + "brightness.csv";
+        
+        Map<String, Fluorophore> caseStudySpectralMap = fpSpectraParse.parse(spectrafp);
+        fpSpectraParse.addBrightness(new File(brightnessfp), caseStudySpectralMap);
         exhaustiveRun(4,caseStudySpectralMap,harvardFortessa);
         
     }   
@@ -808,8 +934,8 @@ plt.fill(xnoi,ynoi,facecolor='r',alpha=0.6)
     }
             
     public static void plotExpComp() throws InterruptedException, IOException{
-        String compfp = basefp + "comp" + Utilities.getSeparater();
-        String expfp = basefp + "expt" + Utilities.getSeparater();
+        String compfp = basefp + setfp + Utilities.getSeparater() + "comp" + Utilities.getSeparater();
+        String expfp = basefp + setfp + Utilities.getSeparater() + "expt" + Utilities.getSeparater();
         File[] files = (new File(compfp)).listFiles();
         for(File folderf:files){
             if (folderf.getName().contains("HarvSony")) continue;
@@ -1036,10 +1162,12 @@ plt.fill(xnoi,ynoi,facecolor='r',alpha=0.6)
         
         int xlim = (n*n) + (2* (n-1)) + 1;
         
+        String modifiedfp = figfp.replaceAll("\\\\", "/");
+
         lines.add("plt.xlim(0," + xlim + ")");
         lines.add("plt.ylim(0,1.1)");
         lines.add("plt.tight_layout()");
-        lines.add("fig.savefig('" + figfp + "', dpi=180)");
+        lines.add("fig.savefig('" + modifiedfp + "', dpi=120)");
         
         Utilities.writeToFile(pyfp, lines);
         Utilities.runPythonScript(pyfp);
@@ -1456,6 +1584,7 @@ plt.fill(xnoi,ynoi,facecolor='r',alpha=0.6)
             System.out.println("Starting Exhaustive with n = "+i);
             current = System.currentTimeMillis();
             exhaustivePlots(i,spectralMaps,cytometer,prefix);
+            //exhaustiveCount(i,spectralMaps,cytometer,prefix);
             System.out.println("Time taken = " + ((System.currentTimeMillis() - current)) + " milliseconds.");
             System.out.println("------------------------------");
         } 
@@ -1679,6 +1808,71 @@ plt.fill(xnoi,ynoi,facecolor='r',alpha=0.6)
         return true;
     }
     
+    
+    private static void exhaustiveCount(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer, String prefix) throws IOException, InterruptedException {
+
+        int numFluorophores = spectralMaps.size();
+
+        //count filters
+        int numFilters = 0;
+        for (Laser laser : cytometer.lasers) {
+            numFilters += laser.detectors.size();
+        }
+
+        //fluorophore index --> fluorophore object
+        Fluorophore[] fluorophores = new Fluorophore[numFluorophores];
+        int fpi = 0;
+        for (Map.Entry<String, Fluorophore> entry : spectralMaps.entrySet()) {
+            Fluorophore fluorophore = entry.getValue();
+            fluorophores[fpi] = fluorophore;
+            fpi++;
+        }
+
+        Laser[] lasers = new Laser[numFilters];
+        Detector[] detectors = new Detector[numFilters];
+        int filterIndex = 0;
+        for (Laser laser : cytometer.lasers) {
+            for (Detector detector : laser.detectors) {
+                lasers[filterIndex] = laser;
+                detectors[filterIndex] = detector;
+                filterIndex++;
+            }
+        }
+
+        //get all combinations of filters (order not important)
+        filterCombinations = new LinkedList<>();
+        int tempData[] = new int[n];
+        getCombinations(tempData, 0, numFilters - 1, 0, n);
+        
+        //get all permutations of fluorophores to match to filters (order is important)
+        fluorophorePermutations = new LinkedList<>();
+        tempData = new int[n];
+        getPermutations(tempData, numFluorophores, n);
+
+        long totalComputations = filterCombinations.size() * fluorophorePermutations.size();
+        System.out.println("Filter Combinations :: " + filterCombinations.size());
+        System.out.println("FP Permutations     :: " + fluorophorePermutations.size());
+        System.out.println("Total Computations : " + totalComputations);
+        
+        int count = 0;
+        for (int[] filterCombo : filterCombinations) {
+            for (int[] fluorophorePerm : fluorophorePermutations) {
+                List<SelectionInfo> currentSelection = ExhaustiveSelection.getSelection(n, fluorophorePerm, filterCombo, fluorophores, lasers, detectors);
+                //if(weHaveData(currentSelection)){
+                if(weHaveSignalData(currentSelection)){
+                    count++;
+                } else {
+                    continue;
+                }
+            }
+        }
+
+        System.out.println("Number of solutions for " + n + " fp are: " + count );
+        
+        
+    }
+    
+
     private static void exhaustivePlots(int n, Map<String, Fluorophore> spectralMaps, Cytometer cytometer, String prefix) throws IOException, InterruptedException {
 
         //String exhaustivefp = basefp + "exhaustivePlots" + Utilities.getSeparater();
@@ -1830,7 +2024,11 @@ plt.fill(xnoi,ynoi,facecolor='r',alpha=0.6)
             bottom.add(line);
         }*/
 
-        Utilities.writeToFile(basefp + prefix + "_" + n + "fp.csv", lines);
+        Utilities.writeToFile(basefp + setfp + Utilities.getSeparater() + "fprun" + Utilities.getSeparater()  + prefix + "_" + n + "fp.csv", lines);
+        
+        
+        
+        
         //Utilities.writeToFile(basefp + prefix + "_" + n + "fp_top10.csv", top);
         //Utilities.writeToFile(basefp + prefix + "_" + n + "fp_bottom10.csv", bottom);
         

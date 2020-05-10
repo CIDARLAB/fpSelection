@@ -92,6 +92,34 @@ public class fpSpectraParse {
         return parse(f);
     }
     
+    /*
+    public static void adjustBrightness(File brightness, Map<String,Fluorophore> fps){
+        List<String[]> lines = Utilities.getCSVFileContentAsList(brightness);
+        adjustBrightness(lines,fps);
+
+    }
+
+    private static void adjustBrightness(List<String[]> lines, Map<String,Fluorophore> fps){
+        double maxEC = Double.valueOf(lines.get(0)[2]);
+        String normalized = lines.get(0)[0];
+        for(String[] line:lines){
+            double ec = Double.valueOf(line[2]);
+            String normal = line[0];
+            if(ec > maxEC){
+                maxEC = ec; 
+                normalized = normal;
+            }
+        }
+        
+        for(String[] line:lines){
+            double value = (Double.valueOf(line[2]))/maxEC;
+            String fp = line[0];
+            fps.get(fp).setEc(value);
+            fps.get(fp).setEcNormalizedTo(normalized);
+            fps.get(fp).setQy(Double.valueOf(line[3]));
+        }
+    }*/
+
     public static void addBrightness(File brightness, Map<String, Fluorophore> fps){
         List<String[]> lines = Utilities.getCSVFileContentAsList(brightness);
         addBrightness(lines,fps);

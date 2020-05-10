@@ -34,6 +34,20 @@ public class Fluorophore {
     @Setter
     @Getter
     private String brightnessNormalizedTo;
+
+    /*
+    @Setter
+    @Getter
+    private double ec;
+
+    @Setter
+    @Getter
+    private String ecNormalizedTo;
+
+
+    @Getter
+    @Setter
+    private double qy;*/
     
     //Emission or Excitation 
     public TreeMap<Double, Double> EMspectrum;

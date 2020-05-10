@@ -6,3 +6,8 @@
 /fpSelection/caseStudies/
 .idea
 fpSelection/nb-configuration.xml
+*/.classpath
+*/.factorypath
+*/.project
+*/.settings/
+*/.vscode/
