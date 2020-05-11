@@ -117,7 +117,7 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
 
         for (Map.Entry<Double, Double> entry : noise.entrySet()) {
 
-            dataSet.add(new Point(entry.getKey(), entry.getValue()));
+            dataSet.add(new Point(entry.getKey(), entry.getValue()/100 ));
         }
         return dataSet;
     }

@@ -152,9 +152,9 @@ public class PlotAdaptor {
                     newPlot.addPlot(emPlot);
                     newPlot.addPlot(boundsPlot);
                     newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + String.format("%s; %s; %s", entry.selectedFluorophore.name, entry.selectedLaser.getName(), entry.selectedDetector.identifier));
-                    newPlot.getAxis("x").setBoundaries(300, 900);
+                    newPlot.getAxis("x").setBoundaries(300, 800);
                     newPlot.getAxis("y").setLabel("Intensity (%)");
-                    newPlot.getAxis("y").setBoundaries(0, 125);
+                    newPlot.getAxis("y").setBoundaries(0, 1.05);
                     first = false;
                     later = true;
                 } //otherwise add to graph object that is added to javaplot
@@ -164,9 +164,9 @@ public class PlotAdaptor {
                     g.addPlot(emPlot);
                     g.addPlot(boundsPlot);
                     g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + String.format("%s; %s; %s", entry.selectedFluorophore.name, entry.selectedLaser.getName(), entry.selectedDetector.identifier));
-                    g.getAxis("x").setBoundaries(300, 900);
+                    g.getAxis("x").setBoundaries(300, 800);
                     g.getAxis("y").setLabel("Intensity (%)");
-                    g.getAxis("y").setBoundaries(0, 125);
+                    g.getAxis("y").setBoundaries(0, 1.05);
                     newPlot.addGraph(g);
                     later = false;
                 }
