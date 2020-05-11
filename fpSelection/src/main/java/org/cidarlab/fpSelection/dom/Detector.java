@@ -41,17 +41,17 @@ public String parameter;
         int min = filterMidpoint - filterWidth/2;
         int max = filterMidpoint + filterWidth/2;
         
-        for(int i = 0; i < 121; i++)
+        for(int i = 0; i < 100; i++)
         {
-            draw.add(new Point(min, i));
+            draw.add(new Point(min, i/100.0));
         }
         for(int j = min; j < max; j++)
         {
-            draw.add(new Point(j,120));
+            draw.add(new Point(j,1.0));
         }
-        for(int k = 120; k > 0; k--)
+        for(int k = 100; k > 0; k--)
         {
-            draw.add(new Point(max, k));
+            draw.add(new Point(max, k/100.0));
         }
         
         return draw;

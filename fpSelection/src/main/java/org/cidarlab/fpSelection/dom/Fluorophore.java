@@ -80,7 +80,7 @@ public class Fluorophore {
 
         for (Map.Entry<Double, Double> entry : EMspectrum.entrySet()) {
 
-            dataSet.add(new Point(entry.getKey(), multiplier / 100 * entry.getValue()));
+            dataSet.add(new Point(entry.getKey(), multiplier * entry.getValue()));
         }
         return dataSet;
     }
