@@ -67,9 +67,9 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
     @Override
     public String toString(){
         String str = "";
-        str += "Fluorophore: " + this.selectedFluorophore.name + " :: ";
-        str += "Laser: " + this.selectedLaser.getName() + " :: ";
-        str += "Detector: " + this.selectedDetector.identifier + ".";
+        str += this.selectedFluorophore.name + " (";
+        str += this.selectedLaser.getName() + " - ";
+        str += this.selectedDetector.identifier + ") ";
         return str;
     }
     

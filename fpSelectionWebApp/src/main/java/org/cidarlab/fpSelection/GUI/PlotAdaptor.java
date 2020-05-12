@@ -124,15 +124,23 @@ public class PlotAdaptor {
                 //add noise plot
                 PointDataSet noiseDataSet = (entry.makeNoiseDataSet());
                 AbstractPlot noisePlot = new DataSetPlot(noiseDataSet);
-                noisePlot.setTitle("Bleedthrough in " + entry.selectedLaser.getName());
+                noisePlot.setTitle("Aggregate Bleedthrough");
                 noisePlot.set("fs", "transparent solid 0.2 noborder");
 
                 //add emission plot
                 Fluorophore fp = entry.selectedFluorophore;
                 // FP ; Laser ; Filter ; Signal ; Bleedthrough
                 double signal = fp.express(entry.selectedLaser, entry.selectedDetector);
+                selectionSummary += entry.toString() + ". Signal = " + String.format("%.3f", (signal/100.0)) + ". Bleedthrough = [";
+                for(SelectionInfo otherEntries:info){
+                    if(otherEntries.selectedFluorophore.name != fp.name){
+                        double bt = otherEntries.selectedFluorophore.express(entry.selectedLaser, entry.selectedDetector);                
+                        selectionSummary += otherEntries.selectedFluorophore.name + " = " + String.format("%.3f", (bt/100.0)) + "; ";        
+                    }
+                }
+
                 double bleedthrough = entry.expressNoise(entry.selectedDetector);
-                selectionSummary += entry.toString() + " :: Signal: " + String.format("%.3f", signal) + " :: Bleedthrough: " + String.format("%.3f", bleedthrough) + "\r\n";
+                selectionSummary += "]\r\n";
                 snrCount++;
 
                 PointDataSet EMDataSet = (fp.makeEMDataSet(entry.selectedLaser));
@@ -151,10 +159,10 @@ public class PlotAdaptor {
                     newPlot.addPlot(noisePlot);
                     newPlot.addPlot(emPlot);
                     newPlot.addPlot(boundsPlot);
-                    newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + String.format("%s; %s; %s", entry.selectedFluorophore.name, entry.selectedLaser.getName(), entry.selectedDetector.identifier));
+                    newPlot.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + String.format("%s (%s-%s)", entry.selectedFluorophore.name, entry.selectedLaser.getName(), entry.selectedDetector.identifier));
                     newPlot.getAxis("x").setBoundaries(300, 800);
-                    newPlot.getAxis("y").setLabel("Intensity (%)");
-                    newPlot.getAxis("y").setBoundaries(0, 1.05);
+                    newPlot.getAxis("y").setLabel("Intensity");
+                    newPlot.getAxis("y").setBoundaries(0, 1.10);
                     first = false;
                     later = true;
                 } //otherwise add to graph object that is added to javaplot
@@ -163,10 +171,10 @@ public class PlotAdaptor {
                     g.addPlot(noisePlot);
                     g.addPlot(emPlot);
                     g.addPlot(boundsPlot);
-                    g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + String.format("%s; %s; %s", entry.selectedFluorophore.name, entry.selectedLaser.getName(), entry.selectedDetector.identifier));
+                    g.getAxis("x").setLabel("Wavelength (nm)'\r\nset title '" + String.format("%s (%s-%s)", entry.selectedFluorophore.name, entry.selectedLaser.getName(), entry.selectedDetector.identifier));
                     g.getAxis("x").setBoundaries(300, 800);
-                    g.getAxis("y").setLabel("Intensity (%)");
-                    g.getAxis("y").setBoundaries(0, 1.05);
+                    g.getAxis("y").setLabel("Intensity");
+                    g.getAxis("y").setBoundaries(0, 1.10);
                     newPlot.addGraph(g);
                     later = false;
                 }
