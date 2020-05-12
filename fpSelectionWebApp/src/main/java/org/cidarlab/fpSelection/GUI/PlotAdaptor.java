@@ -131,7 +131,7 @@ public class PlotAdaptor {
                 Fluorophore fp = entry.selectedFluorophore;
                 // FP ; Laser ; Filter ; Signal ; Bleedthrough
                 double signal = fp.express(entry.selectedLaser, entry.selectedDetector);
-                selectionSummary += entry.toString() + ". Signal = " + String.format("%.3f", (signal/100.0)) + ". Bleedthrough = [";
+                selectionSummary += entry.toString() + ", Signal = " + String.format("%.3f", (signal/100.0)) + ", Bleedthrough = [";
                 for(SelectionInfo otherEntries:info){
                     if(otherEntries.selectedFluorophore.name != fp.name){
                         double bt = otherEntries.selectedFluorophore.express(entry.selectedLaser, entry.selectedDetector);                

@@ -69,7 +69,7 @@ public class SelectionInfo implements Comparable<SelectionInfo>{
         String str = "";
         str += this.selectedFluorophore.name + " (";
         str += this.selectedLaser.getName() + " - ";
-        str += this.selectedDetector.identifier + ") ";
+        str += this.selectedDetector.identifier + ")";
         return str;
     }
     
