@@ -1,9 +1,10 @@
+<!--
 <ul class="nav nav-tabs" style="margin-top: 100px;">
     <li class="tooltipNav active" title="Choose fluorophores based on cytometer/laser settings"><a href="/MainServlet">FP Selection</a></li>
-    <!--<li class="tooltipNav" title="Test the SNR of your own custom fluorophore/cytometer/laser settings"><a href="/MyFP">"My" FP</a></li>-->
+    <li class="tooltipNav" title="Test the SNR of your own custom fluorophore/cytometer/laser settings"><a href="/MyFP">"My" FP</a></li>
 </ul>
-<br>
-<fieldset>
+-->
+<fieldset style="margin-top: 150px;">
     <legend>Settings</legend>
     <form id="MainForm" enctype="multipart/form-data" method="post" name="goodForm">
         <div class="wrapperDiv">
@@ -56,9 +57,11 @@
                     <option value="SimulatedAnnealingServlet">Simulated Annealing</option>
                 </select>
             </div>
+            <!--
             <div class="form-group semiExhaustive" title="Choose the percent of combinations the beam width algorithm will search. The higher the percent, the slower the computation will be, but it will be closer to the optimal solution.">
                 <input class="form-control input-sm" id="topPercent" type ="number" value="10" step="any" name = "topPercent" style="display:none;"/>
             </div>
+            -->
             <div style="clear:both"></div>
         </div>
         <div class="wrapperDiv">
