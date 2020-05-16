@@ -55,7 +55,7 @@ public class FluorophoreTest {
         theDetector.filterMidpoint = 500;
         theDetector.filterWidth = 20;
         //express = (intensity/100 * riemann sum)/filterWidth
-        double expResult = 850/20;
+        double expResult = 950.0/20.0;
         double result = instance.express(theLaser, theDetector);
         assertEquals(expResult, result, 0.0);
     }
