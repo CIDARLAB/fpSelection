@@ -1,9 +1,6 @@
-/fpSelection/resources/
+/fpSelection/caseStudies/results/
 /fpSelection/nbproject/
 */target/
-/fpSelection/resources/fpSelectionData/
-/fpSelection/IPformbackup.odt
-/fpSelection/caseStudies/
 .idea
 *.iml
 fpSelection/nb-configuration.xml
