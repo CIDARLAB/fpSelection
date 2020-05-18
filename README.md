@@ -1,46 +1,20 @@
-# fpSelection
+# FPselection
 
-Requires Java 8
+Install and Run FPselection
+----------------------------
+Instructions to install FPselection can be found in [INSTALL.md](INSTALL.md).
 
-## Dependencies
 
-### gnuplot
+Contributing to this project
+----------------------------
 
-Install gd for image (png, jpeg, gif) support:
+Anyone and everyone is welcome to contribute. Please take a moment to
+review the [guidelines for contributing](CONTRIBUTING.md).
 
-**apt package manager**
-```
-sudo apt install libgd-dev
-```
+* [Bug reports](CONTRIBUTING.md#bugs)
+* [Feature requests](CONTRIBUTING.md#features)
+* [Pull requests](CONTRIBUTING.md#pull-requests)
 
-**yum package manager**
-```
-sudo yum install gd-devel
-```
-
-Compile gnuplot from source to capture dependencies:
-- https://sourceforge.net/projects/gnuplot/
-
-Compile & install gnuplot (gnuplot 5.2.8 used in this example)
-
-```
-cd path/to/your/gnuplot-5.2.8.tar.gz
-tar -xvf gnuplot-5.2.8.tar.gz
-cd gnuplot-5.2.8
-./configure
-sudo make install
-```
-
-### maven
-
-```
-sudo apt install maven
-```
-
-## Install
-
-### Package fpSelection
-```
-cd path/to/fpSelection/fpSelection
-
-```
+Contact Us
+----------------------------
+If you would like to receive updates from the FPselection team regarding bug fixes, patches, feature updates or if you would like to contact the FPselection team, please check the links in [CONTACT.md](CONTACT.md)
