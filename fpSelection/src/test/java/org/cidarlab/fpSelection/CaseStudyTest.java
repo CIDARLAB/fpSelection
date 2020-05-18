@@ -81,10 +81,8 @@ public class CaseStudyTest {
     private static int exhaustiveLim = 1000;
 
 
-    /**
-     * Commenting out this test as the case study files don't exist in master, causing tests to fail.
-     */
-//    @Test
+    // These tests need to be rewritten based on the latest refactor.
+    // @Test
     public void testCaseStudy() throws IOException, InterruptedException {
 
         Cytometer harvardFortessa = fpFortessaParse.parse(harvardFortessafp, false);
