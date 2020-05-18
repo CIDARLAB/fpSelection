@@ -81,7 +81,7 @@ public class Performance {
     
     private static int exhaustiveLim = 1000000;
     
-    @Test
+    //@Test
     public void testExhausiveCount()  throws IOException, InterruptedException {
         Cytometer harvardFortessa = fpFortessaParse.parse(harvardFortessafp, false);
         //Cytometer harvardSony = fpFortessaParse.parse(harvardSonyfp, false);
@@ -113,7 +113,7 @@ public class Performance {
         
     }
 
-    @Test
+    //@Test
     public void testStochasticAlgorithms() throws IOException, InterruptedException {
         Cytometer harvardFortessa = fpFortessaParse.parse(harvardFortessafp, false);
         //Cytometer harvardSony = fpFortessaParse.parse(harvardSonyfp, false);
@@ -920,23 +920,6 @@ public class Performance {
         return ((System.currentTimeMillis() - currenttime));
 
     }
-    
-    
-    
-    @Test
-    public void testNumberOfRunsSimmAnn(){
-        double temp = 10000;
-        double rate = 0.001;
-        int count = 0;
-        
-        while(temp > 1){       
-            count++;
-            temp *= (1 - rate);
-        }
-        
-        System.out.println("Number of iterations:: " + count);
-            
-    }   
     
     
     public static Laser getLaser(Cytometer c, String lname){

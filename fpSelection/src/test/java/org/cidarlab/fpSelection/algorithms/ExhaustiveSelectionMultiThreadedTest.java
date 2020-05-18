@@ -42,7 +42,7 @@ public class ExhaustiveSelectionMultiThreadedTest {
     /**
      * Test of getCombinations method, of class ExhaustiveSelectionMultiThreaded.
      */
-    @Test
+    //@Test
     public void testGetCombinations() {
         System.out.println("getCombinations");
         int n = 4;
@@ -57,7 +57,7 @@ public class ExhaustiveSelectionMultiThreadedTest {
     /**
      * Test of getPermutations method, of class ExhaustiveSelectionMultiThreaded.
      */
-    @Test
+    //@Test
     public void testGetPermutations() {
         System.out.println("getPermutations");
         int n = 4;
