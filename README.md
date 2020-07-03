@@ -1,4 +1,7 @@
+<img src="resources/images/fullLogo.png">
+
 # FPselection
+
 
 Install and Run FPselection
 ----------------------------
