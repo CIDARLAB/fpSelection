@@ -25,6 +25,7 @@ import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
+import java.util.Random;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.imageio.ImageIO;
@@ -36,6 +37,17 @@ import javax.imageio.ImageIO;
 public class Utilities {
     
     
+    
+
+    public static ThreadLocal<Random> threadRandom(final long seed) {
+        return new ThreadLocal<Random>(){
+            @Override
+            protected Random initialValue() {
+                return new Random(seed);
+            }
+        };
+    }
+    
     public static int getRandom(int min, int max) {
         if (min == max) {
             return min;
@@ -43,7 +55,15 @@ public class Utilities {
         int randomNum = ThreadLocalRandom.current().nextInt(min, max + 1);
         return randomNum;
     }
-    
+
+    public static int getRandom(int min, int max, ThreadLocal<Random> random){
+        if (min == max) {
+            return min;
+        }
+        int randomNum = random.get().nextInt((max - min) + 1) + min;
+        return randomNum;
+    }
+
     public static void printDebugStatement(String message){
         System.out.println("#########################################");
         System.out.println("######################" + message);

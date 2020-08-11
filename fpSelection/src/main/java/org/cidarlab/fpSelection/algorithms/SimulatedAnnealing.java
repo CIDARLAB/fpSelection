@@ -28,7 +28,7 @@ public class SimulatedAnnealing {
 
     private static double temperature = 10000;
     private static double coolingRate = 0.001;
-    private static int numberOfThreads = 1;
+    private static int numberOfThreads = 50;
 
     public static List<SelectionInfo> run(int n, Map<String, Fluorophore> masterList, Cytometer cyto) {
         
