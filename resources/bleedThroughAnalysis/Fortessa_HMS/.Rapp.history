@@ -1,0 +1,162 @@
+library(flowCore)
+library(ggcyto)
+list <- c(1, 2483, 1332, 0, 0, 35, 119, 0, 1863, 2, 2191, 3, 465, 11, 750, 99, 1099, 995, 1, 0, 0)
+list
+mean(list)
+sd(list)
+treg <- c(0,4,3,1169,58,0,21,21,2523,3,2549,2,0,6,35,10,3952,1209,0)
+kep <- c(0,1503,345,0,42,4,344,106,99,86,869,379,2284,296,0,2353,2316,261,727,0,362,193,0)
+mean(treg)
+mean(kep)
+MeanAD(treg)
+mad(treg)
+sd(treg)
+sd(kep)
+mad(kep)
+mean(treg) + sd(treg)
+mean(kep) + sd(kep)
+setwd("Dropbox (HMS)/Evan_general/Fall2019/fpSelection_caseStudies/fprun_100710/Fortessa_HMS/")
+list.files()
+setwd("..")
+source("FPselection_overlap_analysis.R")
+library(ggcyto)
+setwd("Fortessa_HMS/")
+f1 <- read.FCS("Specimen_001_mApple_015.fcs")
+f2 <- read.FCS("Specimen_001_mOrange_002.fcs")
+f3 <- read.FCS("Specimen_001_mCherry_006.fcs.fcs")
+f3 <- read.FCS("Specimen_001_mCherry_006.fcs")
+f4 <- read.FCS("Specimen_001_tagRFP_010.fcs")
+f5 <- read.FCS("Specimen_001_iRFP713_012.fcs")
+autoplot(f1) + scale_x_log10()
+p1 <- autoplot(f1) + scale_x_log10()
+ggsave(p1, "mApple.png")
+ggsave("mApple.png", p1)
+p1
+ggsave("mApple.png")
+png("mApple.png")
+p1
+dev.off()
+pdf("mApple.png")
+p1
+dev.off()
+pdf("mApple.pdf")
+p1
+dev.off()
+p2 <- autoplot(f2) + scale_x_log10()
+p3 <- autoplot(f3) + scale_x_log10()
+p4 <- autoplot(f4) + scale_x_log10()
+p5 <- autoplot(f5) + scale_x_log10()
+pdf("mOrange.pdf")
+p2
+dev.off()
+pdf("mCherry.pdf")
+p3
+dev.off()
+pdf("TagRFP.pdf")
+p4
+dev.off()
+pdf("TagRFP.pdf")
+p4
+dev.off()
+p4
+pdf("iRFP713.pdf")
+p5
+dev.off()
+f5 <- read.FCS("Specimen_001_Negative_control_001.fcs")
+f0 <- read.FCS("Specimen_001_Negative_control_001.fcs")
+p0 <- autoplot(f0) + scale_x_log10()
+pdf("Negative.pdf")
+p0
+dev.off()
+p4 <- autoplot(f4) + scale_x_log10()
+p4
+p5 <- autoplot(f5) + scale_x_log10()
+p5
+pdf("TagRFP.pdf")
+p4
+dev.of()
+dev.off()
+p4
+pdf("iRFP713.pdf")
+p5
+dev.off()
+p1
+f5 <- read.FCS("Specimen_001_iRFP713_012.fcs")
+p5 <- autoplot(f5) + scale_x_log10()
+p5
+p0
+p0 <- autoplot(f0) + scale_x_logicle()
+p0
+p0 <- autoplot(f0)
+p0
+p1
+p2
+p3
+p4
+p5
+p0
+s <- c("Specimen_001_DsRed2_014.fcs", "Specimen_001_iRFP713_012.fcs", "Specimen_001_mApple_015.fcs", "Specimen_001_mCherry_006.fcs", "Specimen_001_mOrange_002.fcs")
+fs <- read.flowSet(s)
+autoplot(fs, x='PE-A')
+autoplot(fs, x='PE-A') + scale_x_logicle()
+s <- c("Specimen_001_DsRed2_014.fcs", "Specimen_001_iRFP713_012.fcs", "Specimen_001_mApple_015.fcs", "Specimen_001_mCherry_006.fcs", "Specimen_001_mOrange_002.fcs", "Specimen_001_Negative_control_001.fcs")
+fs <- read.flowSet(s)
+autoplot(fs, x='PE-A') + scale_x_logicle()
+s <- c("Specimen_001_tagRFP_010.fcs", "Specimen_001_iRFP713_012.fcs", "Specimen_001_mApple_015.fcs", "Specimen_001_mCherry_006.fcs", "Specimen_001_mOrange_002.fcs", "Specimen_001_Negative_control_001.fcs")
+fs <- read.flowSet(s)
+autoplot(fs, x='PE-A') + scale_x_logicle()
+ggsave("PE.png")
+autoplot(fs, x='YFP-A') + scale_x_logicle()
+ggsave("YFP.png")
+autoplot(fs, x='PE-Cy5-A') + scale_x_logicle()
+ggsave("PE-Cy5.png")
+autoplot(fs, x='PE-Texas Red-A') + scale_x_logicle()
+ggsave("PE-Texas_red.png")
+autoplot(fs, x='APC-Cy7-A') + scale_x_logicle()
+ggsave("APC-Cy7.png")
+p5
+f5 <- read.FCS("Specimen_001_iRFP713_012.fcs")
+p5 <- autoplot(f5) + scale_x_log10()
+p5
+p5 <- autoplot(f5, x="APC-Cy7-A") + scale_x_log10()
+p5
+setwd("..")
+source("FPselection_overlap_analysis.R")
+setwd("Fortessa_HMS/")
+s <- c("Specimen_001_mKO_007.fcs", "Specimen_001_iRFP713_012.fcs", "Specimen_001_mApple_015.fcs", "Specimen_001_mCerulean_008.fcs", "Specimen_001_Sirius_003.fcs", "Specimen_001_Negative_control_001.fcs")
+fs <- read.flowSet(s)
+autoplot(fs, x='PE-A') + scale_x_logicle()
+ggsave("PE.png")
+autoplot(fs, x='Indo-1 (Violet)-A') + scale_x_logicle()
+ggsave("Indo-1_(Violet).png")
+autoplot(fs, x='Pacific Blue-A') + scale_x_logicle()
+ggsave("Pacific_Blue.png")
+autoplot(fs, x='PE-Texas Red-A') + scale_x_logicle()
+ggsave("PE-Texas_red.png")
+autoplot(fs, x='APC-Cy7-A') + scale_x_logicle()
+ggsave("APC-Cy7.png")
+autoplot(fs, x='YFP-A') + scale_x_logicle()
+autoplot(fs, x='GFP-A') + scale_x_logicle()
+ggsave("GFP.png")
+f6 <- read.FCS("Specimen_001_EYFP_016.fcs")
+p6 <- autoplot(f6) + scale_x_log10()
+p6
+p1
+pdf("mApple.pdf")
+p1
+dev.off()
+pdf("EYFP.pdf")
+p6
+dev.off()
+s2 <- c("Specimen_001_mApple_015.fcs", "Specimen_001_EYFP_016.fcs")
+fs2 <- read.flowSet(s2)
+autoplot(fs, x='PE-A') + scale_x_logicle()
+autoplot(fs2, x='PE-A') + scale_x_logicle()
+ggsave("mApple_EYFP_PE.png")
+autoplot(fs2, x='PE-Texas Red-A') + scale_x_logicle()
+ggsave("mApple_EYFP_PE_Texas_Red.png")
+autoplot(fs2, x='PE-Cy5-A') + scale_x_logicle()
+autoplot(fs2, x='YFP-A') + scale_x_logicle()
+ggsave("mApple_EYFP_YFP.png")
+autoplot(fs2, x='GFP-A') + scale_x_logicle()
+ggsave("mApple_EYFP_GFP.png")
