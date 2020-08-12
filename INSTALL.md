@@ -17,7 +17,10 @@ docker build -t fpselection .
 docker run -p 8080:8080 fpselection
 ```
 
-The webapp should now be accessible from localhost:8080
+The webapp should now be accessible from [localhost:8080](localhost:8080). You should be able to see the following screen on your browser. 
+
+<img src="resources/images/mainPage.png">
+
 
 ## Manual Installation
 

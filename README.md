@@ -7,6 +7,21 @@ Install and Run FPselection
 ----------------------------
 Instructions to install FPselection can be found in [INSTALL.md](INSTALL.md).
 
+Case Studies
+----------------------------
+
+The [Case Study](fpSelection/caseStudies) folder contains the files required to recreate the case studies of the FPselection manuscript. To learn more about the input files, please refer to the [README](fpSelection/caseStudies/README.md) file.
+
+The Flow Cytometry Standard (fcs) data files containing measurements from the 3 cytometers can be found in the following folders: 
+- [Cytoflex LX](resources/bleedThroughAnalysis/CytoFlex_HMS)
+- [BD LSRFortessa](resources/bleedThroughAnalysis/Fortessa_HMS)
+- [Miltenyi MACSquant VYB](resources/bleedThroughAnalysis/MACSQuant_HMS)
+
+Compensation matrix creation
+----------------------------
+
+We have also included our scripts to help create compensation matrices from raw cytometry data using R Bioconductor packages. The scripts and the [README](resources/bleedThroughAnalysis/README.md) can be found in this [folder](resources/bleedThroughAnalysis).  
+
 
 Contributing to this project
 ----------------------------
