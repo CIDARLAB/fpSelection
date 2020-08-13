@@ -41,6 +41,10 @@
         <servlet-class>org.cidarlab.fpSelection.servlets.Documentation</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>Compensation</servlet-name>
+        <servlet-class>org.cidarlab.fpSelection.servlets.Compensation</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>Tools</servlet-name>
         <servlet-class>org.cidarlab.fpSelection.servlets.Tools</servlet-class>
     </servlet>
@@ -91,6 +95,10 @@
     <servlet-mapping>
         <servlet-name>Tools</servlet-name>
         <url-pattern>/Tools</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>Compensation</servlet-name>
+        <url-pattern>/Compensation</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>Attributions</servlet-name>
