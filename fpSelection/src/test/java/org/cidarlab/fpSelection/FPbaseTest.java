@@ -65,18 +65,32 @@ public class FPbaseTest {
     }
 
     @Test
-    public void testIterationCount(){
-        double temp = 1000000;
-        double rate = 0.001;
+    public void testSelectionMatrix() throws IOException, InterruptedException{
+        String resfp = basefp + "fpbase" + Utilities.getSeparater() + "results_seed0.csv";
+        List<String[]> lines = Utilities.getCSVFileContentAsList(resfp);
 
+        Cytometer harvardCytoflex = fpFortessaParse.parse(harvardCytoFlexfp, false);
+        Map<String, Fluorophore> fpmap = fpSpectraParse.parse(spectrafp);
+        List<SelectionInfo> selection = TestUtilities.getConfiguration(lines.get(0),3,fpmap,harvardCytoflex);
+
+        TestUtilities.printConfigSignals(selection,basefp + "fpbase" + Utilities.getSeparater() + "seed0rank0matrix.csv");
+    }
+
+
+    private static int getIterationCount(double temp, double rate){
         int count = 0;
-
         while(temp > 1){
             count++;
             temp *= (1 - rate);
         }
-        Assert.assertEquals(count,13809);
+        return count;
 
+    }
+    @Test
+    public void testIterationCount(){        
+        Assert.assertEquals(getIterationCount(1000000,0.001),13809);
+        Assert.assertEquals(getIterationCount(10000,0.001),9206);
+        
     }
 
     @Test

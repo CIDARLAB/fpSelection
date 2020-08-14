@@ -54,7 +54,92 @@ public class TestUtilities {
         //line += snr.getSignalNoiseList().get(maps.get(key)).getKey() + "," + snr.getSignalNoiseList().get(maps.get(key)).getValue();
         return line;
     }
-    
+   
+
+    public static Laser getLaser(Cytometer c, String lname) {
+        for (Laser l : c.lasers) {
+            if (l.getName().equals(lname)) {
+                return l;
+            }
+        }
+        System.out.println("This shouldn't happen");
+        return null;
+    }
+
+    public static Detector getDetector(Laser l, String dname) {
+        for (Detector d : l.detectors) {
+            if (d.identifier.equals(dname)) {
+                return d;
+            }
+        }
+        System.out.println("This shouldn't happen");
+        return null;
+    }
+
+    public static List<SelectionInfo> getConfiguration(String[] row, int features, Map<String, Fluorophore> fpmap, Cytometer c) {
+        int n = row.length / features;
+        List<SelectionInfo> config = new ArrayList<SelectionInfo>();
+        for (int i = 0; i < row.length-1; i += features) {
+            Fluorophore fp = fpmap.get(row[i]);
+            Laser l = getLaser(c, row[i + 1]);
+            Detector d = getDetector(l, row[i + 2]);
+            SelectionInfo si = new SelectionInfo();
+            si.setSelectedFluorophore(fp);
+            si.setSelectedLaser(l);
+            si.setSelectedDetector(d);
+            config.add(si);
+        }
+        
+        return config;
+    }
+
+    private static List<Double> normalize(List<Double> vals) {
+        double max = vals.get(0);
+        for (Double d : vals) {
+            if (d > max) {
+                max = d;
+            }
+        }
+        List<Double> norm = new ArrayList<Double>();
+        for (Double d : vals) {
+            if (max != 0)
+                norm.add(d / max);
+            else
+                norm.add(d);
+        }
+        return norm;
+    }
+
+    public static void printConfigSignals(List<SelectionInfo> config, String filefp) {
+
+        List<String> lines = new ArrayList<String>();
+
+        List<Fluorophore> fps = new ArrayList<Fluorophore>();
+        String header = "";
+        for (SelectionInfo si : config) {
+            fps.add(si.getSelectedFluorophore());
+            //header += ("," + si.getSelectedLaser().getName() + " (" + si.getSelectedDetector().identifier + ")");
+            header += ("," + si.getSelectedFluorophore().name);
+        }
+        lines.add(header);
+
+        for (int i = 0; i < config.size(); i++) {
+            SelectionInfo si = config.get(i);
+            String configline = si.getSelectedLaser().getName() + " (" + si.getSelectedDetector().identifier + ")";
+
+            List<Double> sigs = new ArrayList<Double>();
+            for (Fluorophore fp : fps) {
+                sigs.add(fp.express(si.getSelectedLaser(), si.getSelectedDetector()));
+            }
+            for (Double d : normalize(sigs)) {
+                configline += ("," + d);
+            }
+            lines.add(configline);
+        }
+
+        Utilities.writeToFile(filefp, lines);
+
+    }
 
     //Get Random set of fluorophores - Seeded
     private static List<Fluorophore> getRandomFluorophores(int n, List<Fluorophore> fluorophores,ThreadLocal<Random> threadrandom){
